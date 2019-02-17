@@ -4,10 +4,12 @@
 	"type": "wordpress-plungin",
 	"autoload": {
 		"psr-4": {
-			"ConstantContact\\WooCommerce\\": "src/"
+			"ConstantContact\\WooCommerce\\": "src/",
+			"WDS\\": "src/WDS/"
 		}
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^7"
-	}
+	},
+	"minimum-stability": "dev"
 }
