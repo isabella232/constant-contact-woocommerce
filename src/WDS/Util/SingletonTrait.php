@@ -34,8 +34,9 @@ trait SingletonTrait {
 	 */
 	public static function get_instance( $args = [] ) {
 		$called_class = get_called_class();
+		$is_instance  = static::$instance instanceof $called_class;
 
-		if ( ! ( static::$instance instanceof $called_class ) ) {
+		if ( ! $is_instance ) {
 			static::$instance = new static( $args );
 		}
 
