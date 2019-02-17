@@ -18,8 +18,6 @@
  * License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
  */
 
-use ConstantContact\WooCommerce\Util\WooCompat;
-
 // Autoload things.
 $autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
 
@@ -30,16 +28,26 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-// Ensure requirements.
-if ( ! WooCompat::is_woo_available() ) {
-	// translators: placeholder is the minimum supported WooCommerce version.
-	throw new \Exception( sprintf( __( 'WooCommerce version "%s" or greater must be installed and activated to use this plugin.', 'cc-woo' ), WooCompat::get_minimum_version() ) );
+/**
+ * Main plugin helper.
+ *
+ * @since 0.0.1
+ * @author Zach Owen <zach@webdevstudios>
+ * @return object
+ */
+function cc_woo() {
+	return \ConstantContact\WooCommerce\Plugin::get_instance(
+		[
+			'plugin_file' => __FILE__,
+		]
+	);
 }
 
-if ( ! WooCompat::is_woo_compatible() ) {
-	// translators: placeholder is the minimum supported WooCommerce version.
-	throw new \Exception( sprintf( __( 'WooCommerce version "%s" or greater is required to use this plugin.', 'cc-woo' ), WooCompat::get_minimum_version() ) );
-}
+cc_woo();
+
+// Setup the plugin instance.
+add_action( 'plugins_loaded', [ '\\ConstantContact\\WooCommerce\\Plugin', 'maybe_deactivate' ] );
+register_deactivation_hook( __FILE__, [ '\\ConstantContact\\WooCommerce\\View\\Admin\\Notice', 'maybe_display_notices' ] );
 
 // Hook things!
-\ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
+# \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
