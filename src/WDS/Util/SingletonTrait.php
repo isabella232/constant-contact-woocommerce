@@ -11,7 +11,7 @@
  * @package cc-woo
  */
 
-namespace WDS\Util;
+namespace WebDevStudios\Utility;
 
 trait SingletonTrait {
 	/**

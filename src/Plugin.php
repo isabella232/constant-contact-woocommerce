@@ -17,8 +17,8 @@ use ConstantContact\WooCommerce\Util\WooCompat;
  * @since 0.0.1
  */
 final class Plugin {
-	use \WDS\Util\SingletonTrait;
-	use \WDS\Util\AccessibleTrait;
+	use \WebDevStudios\Utility\SingletonTrait;
+	use \WebDevStudios\Utility\AccessibleTrait;
 
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 

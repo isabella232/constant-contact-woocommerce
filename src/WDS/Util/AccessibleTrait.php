@@ -9,7 +9,7 @@
  * @package wds-utils
  */
 
-namespace WDS\Util;
+namespace WebDevStudios\Utility;
 
 /**
  * Accessible Fields Trait
