@@ -35,8 +35,8 @@ require_once $autoloader;
 );
 
 // Setup the plugin instance.
-add_action( 'plugins_loaded', [ '\\ConstantContact\\WooCommerce\\Plugin', 'maybe_deactivate' ] );
-register_deactivation_hook( __FILE__, [ '\\ConstantContact\\WooCommerce\\View\\Admin\\Notice', 'maybe_display_notices' ] );
+add_action( 'plugins_loaded', [ ConstantContact\WooCommerce\Plugin::class, 'maybe_deactivate' ] );
+register_deactivation_hook( __FILE__, [ \ConstantContact\WooCommerce\View\Admin\Notice::class, 'maybe_display_notices' ] );
 
 // Hook things!
 # \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
