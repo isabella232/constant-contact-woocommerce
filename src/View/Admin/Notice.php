@@ -78,16 +78,6 @@ class Notice {
 	}
 
 	/**
-	 * Hook in to WordPress.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios.com>
-	 */
-	public function hooks() {
-		add_action( 'admin_notices', [ $this, 'maybe_display_notices' ] );
-	}
-
-	/**
 	 * Display notices, if there are any.
 	 *
 	 * This method will also delete the notices transient if they are displayed.
