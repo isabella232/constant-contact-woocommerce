@@ -28,22 +28,11 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-/**
- * Main plugin helper.
- *
- * @since 0.0.1
- * @author Zach Owen <zach@webdevstudios>
- * @return object
- */
-function cc_woo() {
-	return \ConstantContact\WooCommerce\Plugin::get_instance(
-		[
-			'plugin_file' => __FILE__,
-		]
-	);
-}
-
-cc_woo();
+\ConstantContact\WooCommerce\Plugin::get_instance(
+	[
+		'plugin_file' => __FILE__,
+	]
+);
 
 // Setup the plugin instance.
 add_action( 'plugins_loaded', [ '\\ConstantContact\\WooCommerce\\Plugin', 'maybe_deactivate' ] );
