@@ -47,17 +47,17 @@ final class Plugin {
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
 	public static function deactivate( $reason ) {
-		if ( self::get_instance()->is_active() ) {
-			deactivate_plugins( self::get_instance()->get_plugin_file() );
-			return new \ConstantContact\WooCommerce\View\Admin\Notice(
-				[
-					'class'   => 'error',
-					'message' => $reason,
-				]
-			);
+		if ( ! self::get_instance()->is_active() ) {
+			throw new \Exception( $reason );
 		}
 
-		throw new \Exception( $reason );
+		deactivate_plugins( self::get_instance()->get_plugin_file() );
+		new \ConstantContact\WooCommerce\View\Admin\Notice(
+			[
+				'class'   => 'error',
+				'message' => $reason,
+			]
+		);
 	}
 
 	/**
