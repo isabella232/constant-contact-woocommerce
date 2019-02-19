@@ -9,7 +9,7 @@
 
 namespace ConstantContact\WooCommerce;
 
-use ConstantContact\WooCommerce\Util\WooCompat;
+use ConstantContact\WooCommerce\Utility\CompatibilityCheck;
 
 /**
  * "Core" plugin class.
@@ -93,16 +93,18 @@ final class Plugin {
 	 */
 	public static function maybe_deactivate() {
 		try {
+			$compatilibty_check = new CompatibilityCheck( '\\WooCommerce' );
+
 			// Ensure requirements.
-			if ( ! WooCompat::is_woo_available() ) {
+			if ( ! $compatilibty_check->is_available() ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), WooCompat::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( __( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), CompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 
-			if ( ! WooCompat::is_woo_compatible() ) {
+			if ( ! $compatilibty_check->is_compatible( \WooCommerce::instance() ) ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), WooCompat::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( __( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), CompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 		} catch ( \Exception $e ) {

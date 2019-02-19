@@ -9,15 +9,16 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce\Util;
+namespace ConstantContact\WooCommerce\Utility;
+
+use \WebDevStudios\Utility\PluginCompatibility;
 
 /**
  * Tests if WooCommerce is available and compatible.
  *
  * @since 0.0.1
  */
-class WooCompat {
-
+class CompatibilityCheck extends PluginCompatibility {
 	/**
 	 * The minimum WooCommerce version.
 	 *
@@ -33,8 +34,8 @@ class WooCompat {
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @return bool
 	 */
-	public static function is_woo_available() {
-		return class_exists( '\WooCommerce' );
+	public function is_available() : bool {
+		return class_exists( $this->classname );
 	}
 
 	/**
@@ -42,10 +43,10 @@ class WooCompat {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
+	 * @param object $instance An instance of the WooCommerce class.
 	 * @return bool
 	 */
-	public static function is_woo_compatible() {
-		$woo = \WooCommerce::instance();
-		return 0 >= version_compare( self::MINIMUM_WOO_VERSION, $woo->version );
+	public function is_compatible( $instance ) : bool {
+		return 0 >= version_compare( self::MINIMUM_WOO_VERSION, $instance->version );
 	}
 }
