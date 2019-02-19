@@ -43,15 +43,14 @@ final class Plugin {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $reason The reason for deactivating.
-	 * @return mixed
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
-	public static function deactivate( $reason ) {
-		if ( ! self::get_instance()->is_active() ) {
+	public function deactivate( $reason ) {
+		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
 		}
 
-		deactivate_plugins( self::get_instance()->get_plugin_file() );
+		deactivate_plugins( $this->get_plugin_file() );
 		new \ConstantContact\WooCommerce\View\Admin\Notice(
 			[
 				'class'   => 'error',
@@ -67,7 +66,7 @@ final class Plugin {
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @throws \Exception When WooCommerce is not found or compatible.
 	 */
-	public static function maybe_deactivate() {
+	public function maybe_deactivate() {
 		try {
 			// Ensure requirements.
 			if ( ! WooCompat::is_woo_available() ) {
@@ -82,7 +81,7 @@ final class Plugin {
 				throw new \Exception( $message );
 			}
 		} catch ( \Exception $e ) {
-			self::deactivate( $e->getMessage() );
+			$this->deactivate( $e->getMessage() );
 		}
 	}
 
