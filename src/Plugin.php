@@ -111,7 +111,7 @@ final class Plugin {
 	}
 
 	/**
-	 * Parse the arguments.
+	 * Handle the arugments supplied, and ensure they are valid for this class.
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
