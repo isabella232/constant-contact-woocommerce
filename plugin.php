@@ -28,15 +28,21 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-\ConstantContact\WooCommerce\Plugin::get_instance(
-	[
-		'plugin_file' => __FILE__,
-	]
-);
+use ConstantContact\WooCommerce\Plugin;
+use ConstantContact\WooCommerce\View\Admin\Notice;
+
+/**
+ * Get an instance of the plugin class.
+ *
+ * @since 0.0.1
+ * @var \ConstantContact\WooCommerce\Plugin
+ */
+$plugin = Plugin::get_instance();
+$plugin->setup_plugin( __FILE__ );
 
 // Setup the plugin instance.
-add_action( 'plugins_loaded', [ ConstantContact\WooCommerce\Plugin::class, 'maybe_deactivate' ] );
-register_deactivation_hook( __FILE__, [ \ConstantContact\WooCommerce\View\Admin\Notice::class, 'maybe_display_notices' ] );
+add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
+register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 // Hook things!
 # \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
