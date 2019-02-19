@@ -76,12 +76,16 @@ final class Plugin {
 		}
 
 		deactivate_plugins( self::get_instance()->args['plugin_file'] );
+
 		new \ConstantContact\WooCommerce\View\Admin\Notice(
-			[
-				'class'   => 'error',
-				'message' => $reason,
-			]
+			new \WebDevStudios\View\Admin\NoticeMessage(
+				$reason,
+				'error',
+				true
+			)
 		);
+
+		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
 	}
 
 	/**
