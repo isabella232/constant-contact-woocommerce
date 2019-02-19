@@ -29,15 +29,14 @@ trait SingletonTrait {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param array $args Array of arguments to pass to constructor.
 	 * @return object
 	 */
-	public static function get_instance( $args = [] ) {
+	public static function get_instance() {
 		$called_class = get_called_class();
 		$is_instance  = static::$instance instanceof $called_class;
 
 		if ( ! $is_instance ) {
-			static::$instance = new static( $args );
+			static::$instance = new static();
 		}
 
 		return static::$instance;

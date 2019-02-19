@@ -18,7 +18,6 @@ use ConstantContact\WooCommerce\Util\WooCompat;
  */
 final class Plugin {
 	use \WebDevStudios\Utility\SingletonTrait;
-	use \WebDevStudios\Utility\AccessibleTrait;
 
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
@@ -31,35 +30,12 @@ final class Plugin {
 	private $is_active = false;
 
 	/**
-	 * Array of arguments supplied to this class.
+	 * The plugin file path, should be __FILE__ of the main entry point script.
 	 *
 	 * @since 0.0.1
-	 * @var array
+	 * @var string
 	 */
-	private $args = [];
-
-	/**
-	 * Array of accessible fields.
-	 *
-	 * @since 0.0.1
-	 * @var array
-	 */
-	protected static $accessible_fields = [
-		'is_active',
-		'args',
-	];
-
-	/**
-	 * Constructor! Kick things off.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @param array $args Array of plugin arguments.
-	 */
-	public function __construct( $args = [] ) {
-		$this->parse_args( $args );
-		$this->setup_instance();
-	}
+	private $plugin_file;
 
 	/**
 	 * Deactivate this plugin.
@@ -67,15 +43,14 @@ final class Plugin {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $reason The reason for deactivating.
-	 * @return mixed
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
-	public static function deactivate( $reason ) {
-		if ( ! self::get_instance()->is_active ) {
+	public function deactivate( $reason ) {
+		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
 		}
 
-		deactivate_plugins( self::get_instance()->args['plugin_file'] );
+		deactivate_plugins( $this->get_plugin_file() );
 
 		new \ConstantContact\WooCommerce\View\Admin\Notice(
 			new \WebDevStudios\View\Admin\NoticeMessage(
@@ -95,7 +70,7 @@ final class Plugin {
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @throws \Exception When WooCommerce is not found or compatible.
 	 */
-	public static function maybe_deactivate() {
+	public function maybe_deactivate() {
 		try {
 			// Ensure requirements.
 			if ( ! WooCompat::is_woo_available() ) {
@@ -110,33 +85,8 @@ final class Plugin {
 				throw new \Exception( $message );
 			}
 		} catch ( \Exception $e ) {
-			self::deactivate( $e->getMessage() );
+			$this->deactivate( $e->getMessage() );
 		}
-	}
-
-	/**
-	 * Parse the arguments.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @param array $args Array of arguments to parse.
-	 */
-	private function parse_args( $args ) {
-		static $defaults = [
-			'plugin_file' => '',
-		];
-
-		$args = wp_parse_args( $args, $defaults );
-
-		foreach ( array_keys( $args ) as $key ) {
-			if ( isset( $defaults[ $key ] ) ) {
-				continue;
-			}
-
-			unset( $args[ $key ] );
-		}
-
-		$this->args = $args;
 	}
 
 	/**
@@ -146,13 +96,37 @@ final class Plugin {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
+	 * @param string $plugin_file The plugin file path of the entry script.
 	 * @package cc-woo
 	 */
-	private function setup_instance() {
+	public function setup_plugin( string $plugin_file ) {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$this->is_active = is_plugin_active( plugin_basename( $this->args['plugin_file'] ) );
+		$this->plugin_file = $plugin_file;
+		$this->is_active   = is_plugin_active( plugin_basename( $this->plugin_file ) );
+	}
+
+	/**
+	 * Returns whether the plugin is active.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	public function is_active() : bool {
+		return $this->is_active;
+	}
+
+	/**
+	 * Get the plugin file path.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen Zach Owen <zach@webdevstudios>
+	 * @return string
+	 */
+	public function get_plugin_file() : string {
+		return $this->plugin_file;
 	}
 }
