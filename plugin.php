@@ -28,11 +28,7 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-\ConstantContact\WooCommerce\Plugin::get_instance(
-	[
-		'plugin_file' => __FILE__,
-	]
-);
+\ConstantContact\WooCommerce\Plugin::get_instance()->setup_plugin( __FILE__ );
 
 // Setup the plugin instance.
 add_action( 'plugins_loaded', [ ConstantContact\WooCommerce\Plugin::class, 'maybe_deactivate' ] );
