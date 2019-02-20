@@ -18,7 +18,7 @@ use \WebDevStudios\Utility\PluginCompatibility;
  *
  * @since 0.0.1
  */
-class CompatibilityCheck extends PluginCompatibility {
+class PluginCompatibilityCheck extends PluginCompatibility {
 	/**
 	 * The minimum WooCommerce version.
 	 *
