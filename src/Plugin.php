@@ -45,7 +45,7 @@ final class Plugin {
 	 * @param string $reason The reason for deactivating.
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
-	public function deactivate( $reason ) {
+	private function deactivate( $reason ) {
 		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
 		}
