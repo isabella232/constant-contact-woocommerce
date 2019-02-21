@@ -98,27 +98,6 @@ abstract class Settings implements SettingsInterface {
 	}
 
 	/**
-	 * Create a Settings class with a SettingsConfig.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @param \WebDevStudios\SettingsConfig $config The configuration object for the settings.
-	 */
-	public function __construct( $config ) {
-		$this->config = $config;
-	}
-
-	/**
-	 * Hook into WordPress to set up our settings.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 */
-	public function register_hooks() {
-		add_action( 'admin_init', [ $this, 'configure_settings' ] );
-	}
-
-	/**
 	 * Add a settings section.
 	 *
 	 * See https://developer.wordpress.org/reference/functions/add_settings_section/
