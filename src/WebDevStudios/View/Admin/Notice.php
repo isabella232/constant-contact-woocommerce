@@ -80,6 +80,6 @@ abstract class Notice {
 	 * @return array
 	 */
 	public static function get_notices() : array {
-		return get_transient( static::TRANSIENT_KEY ) ?? [];
+		return get_transient( static::TRANSIENT_KEY ) ?: [];
 	}
 }
