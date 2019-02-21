@@ -9,6 +9,8 @@
 
 namespace WebDevStudios;
 
+use WebDevStudios\OopsWP\Utility\Hookable;
+
 /**
  * Settings Abstract
  *
@@ -16,7 +18,7 @@ namespace WebDevStudios;
  *
  * @since 0.0.1
  */
-abstract class Settings implements SettingsInterface {
+abstract class Settings implements SettingsInterface, Hookable {
 	/**
 	 * The current settings section ID.
 	 *
@@ -50,7 +52,7 @@ abstract class Settings implements SettingsInterface {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
-	abstract public function configure_settings();
+	abstract public function configure();
 
 	/**
 	 * Create a Settings class with a SettingsConfig.
@@ -70,7 +72,7 @@ abstract class Settings implements SettingsInterface {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function register_hooks() {
-		add_action( 'admin_init', [ $this, 'configure_settings' ] );
+		add_action( 'admin_init', [ $this, 'configure' ] );
 	}
 
 	/**
@@ -112,8 +114,8 @@ abstract class Settings implements SettingsInterface {
 	 * @param string   $title The title of the settings section, shown as the section heading.
 	 * @param callable $callback The callback to display the section.
 	 */
-	protected function add_settings_section( string $id, string $title, callable $callback ) {
-		add_settings_section( $id, $title, $callback, $this->config->get_page() );
+	protected function add_section( string $id, string $title, callable $callback ) {
+		add_section( $id, $title, $callback, $this->config->get_page() );
 		$this->current_section = $id;
 	}
 
@@ -126,8 +128,8 @@ abstract class Settings implements SettingsInterface {
 	 * @param string   $title The field title, used to create the field label.
 	 * @param callable $callback The callback to display the field input(s).
 	 */
-	protected function add_settings_field( string $field_id, string $title, callable $callback ) {
-		add_settings_field(
+	protected function add_field( string $field_id, string $title, callable $callback ) {
+		add_field(
 			$field_id,
 			$title,
 			$callback,

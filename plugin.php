@@ -31,14 +31,21 @@ require_once $autoloader;
 use ConstantContact\WooCommerce\Plugin;
 use ConstantContact\WooCommerce\View\Admin\Notice;
 
+$settings = new \ConstantContact\WooCommerce\Settings(
+	new \WebDevStudios\SettingsConfig(
+		'constant_contact_woo_settings',
+		__FILE__ // @TODO This needs to be the page of the Woo tab.
+	)
+);
+
 /**
  * Get an instance of the plugin class.
  *
  * @since 0.0.1
  * @var \ConstantContact\WooCommerce\Plugin
  */
-$plugin = Plugin::get_instance();
-$plugin->setup_plugin( __FILE__ );
+$plugin = new \ConstantContact\WooCommerce\Plugin( __FILE__, $settings );
+$plugin->run();
 
 // Setup the plugin instance.
 add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
@@ -46,16 +53,13 @@ register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ]
 
 // Hook things!
 # \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
+
 /** Instantiate settings.
  *
  * @since 0.0.1
  * @type \WebDevStudios\Settings
  */
 $settings = new \ConstantContact\WooCommerce\Settings(
-	new \WebDevStudios\SettingsConfig(
-		'constant_contact_woo_settings',
-		__FILE__ // @TODO This needs to be the page of the Woo tab.
-	)
 );
 
 add_action( 'admin_init', [ $settings, 'register_hooks' ] );

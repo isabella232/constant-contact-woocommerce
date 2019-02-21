@@ -16,15 +16,6 @@ namespace WebDevStudios;
  */
 interface SettingsInterface {
 	/**
-	 * Create a Settings class with a SettingsConfig.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @param \WebDevStudios\SettingsConfig $config The configuration object for the settings.
-	 */
-	public function __construct( $config );
-
-	/**
 	 * Main configuration method.
 	 *
 	 * This method will be hooked to `admin_init`, you should do your settings
@@ -33,7 +24,7 @@ interface SettingsInterface {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
-	public function configure_settings();
+	public function configure();
 
 	/**
 	 * Unregisters defined settings.
@@ -42,12 +33,4 @@ interface SettingsInterface {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function unregister_settings();
-
-	/**
-	 * Hook into WordPress to set up our settings.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios>
-	 */
-	public function register_hooks();
 }

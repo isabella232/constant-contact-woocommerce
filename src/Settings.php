@@ -33,12 +33,12 @@ class Settings extends \WebDevStudios\Settings {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
-	public function configure_settings() {
+	public function configure() {
 		$this->register_settings();
-		$this->add_settings_section( 'cc-account-info', 'Constant Contact Store Information', [ $this, 'do_account_info_content' ] );
+		$this->add_section( 'cc-account-info', 'Constant Contact Store Information', [ $this, 'do_account_info_content' ] );
 
-		$this->add_settings_field( 'cc-first-name-field', __( 'First Name', 'cc-woo' ), [ $this, 'render_first_name_field' ] );
-		$this->add_settings_field( 'cc-last-name-field', __( 'Last Name', 'cc-woo' ), [ $this, 'render_last_name_field' ] );
-		$this->add_settings_field( 'cc-store-name-field', __( 'Store Name', 'cc-woo' ), [ $this, 'render_store_name_field' ] );
+		$this->add_field( 'cc-first-name-field', __( 'First Name', 'cc-woo' ), [ $this, 'render_first_name_field' ] );
+		$this->add_field( 'cc-last-name-field', __( 'Last Name', 'cc-woo' ), [ $this, 'render_last_name_field' ] );
+		$this->add_field( 'cc-store-name-field', __( 'Store Name', 'cc-woo' ), [ $this, 'render_store_name_field' ] );
 	}
 }
