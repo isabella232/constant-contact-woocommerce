@@ -1,7 +1,7 @@
 {
-	"name": "constant-contact/woocommerce",
+	"name": "webdevstudios/constant-contact-woocommerce",
 	"description": "Integrate Constant Contact and WooCommerce",
-	"type": "wordpress-plungin",
+	"type": "wordpress-plugin",
 	"autoload": {
 		"psr-4": {
 			"ConstantContact\\WooCommerce\\": "src/"
@@ -9,5 +9,8 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^7"
+	},
+	"require": {
+		"composer/installers": "^1.6"
 	}
 }
