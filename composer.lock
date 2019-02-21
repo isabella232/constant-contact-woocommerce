@@ -4,8 +4,39 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "555d5f44f6e9bdf595531a267c585ccd",
-    "packages": [],
+    "content-hash": "5addb47c81f073bbaf2b8dd0c1c20821",
+    "packages": [
+        {
+            "name": "webdevstudios/oops-wp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:webdevstudios/oops-wp.git",
+                "reference": "867e68f278766cdb5223ed67596ee9065f97235f"
+            },
+            "require": {
+                "php": "^7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WebDevStudios\\OopsWP\\": "src/"
+                }
+            },
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Ward",
+                    "email": "jeremy.ward@webdevstudios.com",
+                    "role": "Senior Backend Engineer"
+                }
+            ],
+            "description": "A collection of interfaces and class structures to promote object-oriented programming practices in WordPress.",
+            "time": "2019-02-17 19:49:32"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
@@ -761,7 +792,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-02-17T08:22:04+00:00"
+            "time": "2019-02-17 08:22:04"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1481,7 +1512,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "webdevstudios/oops-wp": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
