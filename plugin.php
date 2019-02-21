@@ -46,3 +46,16 @@ register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ]
 
 // Hook things!
 # \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
+/** Instantiate settings.
+ *
+ * @since 0.0.1
+ * @type \WebDevStudios\Settings
+ */
+$settings = new \ConstantContact\WooCommerce\Settings(
+	new \WebDevStudios\SettingsConfig(
+		'constant_contact_woo_settings',
+		__FILE__ // @TODO This needs to be the page of the Woo tab.
+	)
+);
+
+add_action( 'admin_init', [ $settings, 'register_hooks' ] );
