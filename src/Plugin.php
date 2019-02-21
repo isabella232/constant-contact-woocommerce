@@ -50,7 +50,7 @@ final class Plugin {
 			throw new \Exception( $reason );
 		}
 
-		deactivate_plugins( $this->get_plugin_file() );
+		deactivate_plugins( $this->plugin_file );
 
 		new \ConstantContact\WooCommerce\View\Admin\Notice(
 			new \WebDevStudios\View\Admin\NoticeMessage(
