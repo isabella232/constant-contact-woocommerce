@@ -9,6 +9,8 @@
 
 namespace ConstantContact\WooCommerce;
 
+use WebDevStudios\Settings;
+use WebDevStudios\OopsWP\Utility\Runnable;
 use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
 
 /**
@@ -16,9 +18,7 @@ use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
  *
  * @since 0.0.1
  */
-final class Plugin {
-	use \WebDevStudios\Utility\SingletonTrait;
-
+final class Plugin implements Runnable {
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
 	/**
@@ -36,6 +36,14 @@ final class Plugin {
 	 * @var string
 	 */
 	private $plugin_file;
+
+	/**
+	 * The plugin settings instance.
+	 *
+	 * @since 0.0.1
+	 * @var \WebDevStudios\Settings
+	 */
+	private $settings;
 
 	/**
 	 * Deactivate this plugin.
@@ -99,15 +107,27 @@ final class Plugin {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
+	 * @param \WebDevStudios\Settings $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function setup_plugin( string $plugin_file ) {
+	public function __constructor( string $plugin_file, Settings $settings ) {
+		$this->plugin_file = $plugin_file;
+		$this->settings    = $settings;
+	}
+
+	/**
+	 * Run things once the plugin instance is ready.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios>
+	 */
+	public function run() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$this->plugin_file = $plugin_file;
-		$this->is_active   = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->settings->register_hooks();
 	}
 
 	/**
