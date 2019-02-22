@@ -69,6 +69,9 @@ final class Plugin implements Runnable {
 		);
 
 		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
+
+		// Suppress WordPress "Plugin activated."...because it's not.
+		unset( $_GET['activate'] );
 	}
 
 	/**
