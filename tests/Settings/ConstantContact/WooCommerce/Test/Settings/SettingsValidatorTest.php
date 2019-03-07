@@ -17,7 +17,7 @@ class SettingsValidatorTest extends TestCase {
 	 * @since  2019-03-07
 	 * @return void
 	 */
-	public function is_valid() {
+	public function is_valid_when_admin_provides_perfectly_formatted_data() {
 
 	}
 }
