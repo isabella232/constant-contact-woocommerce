@@ -16,16 +16,6 @@ namespace ConstantContact\CCForWoo\Api;
  * @package ConstantContact\WooCommerce\Api
  * @since   2019-03-07
  */
-class RequestHandler {
-	private $url;
+abstract class RequestHandler {
 
-
-
-
-
-	public function settings_request( SettingsSubmitter $settings ) {
-		$data = $settings->get_data();
-
-
-	}
 }
