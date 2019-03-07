@@ -12,7 +12,7 @@
 	},
 	"autoload-dev": {
 		"psr-4": {
-			"ConstantContact\\WooCommerce\\Tests\\": "tests/"
+			"WebDevStudios\\CCForWoo\\Tests\\": "tests/"
 		}
 	},
 	"require-dev": {
