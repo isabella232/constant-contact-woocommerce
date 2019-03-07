@@ -3,17 +3,17 @@
  * Abstract class for API request objects.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\CCForWoo\Api
+ * @package WebDevStudios\CCForWoo\Api
  * @since   2019-03-07
  */
 
-namespace ConstantContact\CCForWoo\Api;
+namespace WebDevStudios\CCForWoo\Api;
 
 /**
  * Class Request
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\CCForWoo\Api
+ * @package WebDevStudios\CCForWoo\Api
  * @since   2019-03-07
  */
 abstract class Request {

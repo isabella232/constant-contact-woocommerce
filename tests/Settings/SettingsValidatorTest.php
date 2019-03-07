@@ -1,5 +1,5 @@
 <?php
-namespace ConstantContact\WooCommerce\Test\Settings;
+namespace WebDevStudios\CCForWoo\Test\Settings;
 
 use PHPUnit\Framework\TestCase;
 
@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  * Class SettingsValidatorTest
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\WooCommerce\Test\Settings
+ * @package WebDevStudios\CCForWoo\Test\Settings
  * @since   2019-03-07
  */
 class SettingsValidatorTest extends TestCase {

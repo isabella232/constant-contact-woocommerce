@@ -3,19 +3,19 @@
  * Concrete implementation of the Request class specific to submitting settings.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\CCForWoo\Api
+ * @package WebDevStudios\CCForWoo\Api
  * @since   2019-03-07
  */
 
-namespace ConstantContact\CCForWoo\Api;
+namespace WebDevStudios\CCForWoo\Api;
 
-use ConstantContact\WooCommerce\Settings\SettingsModel;
+use WebDevStudios\CCForWoo\Settings\SettingsModel;
 
 /**
  * Class SettingsSubmitter
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\CCForWoo\Api
+ * @package WebDevStudios\CCForWoo\Api
  * @since   2019-03-07
  */
 class SettingsRequest extends Request {

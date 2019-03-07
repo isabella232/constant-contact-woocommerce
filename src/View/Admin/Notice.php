@@ -10,7 +10,7 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce\View\Admin;
+namespace WebDevStudios\CCForWoo\View\Admin;
 
 /**
  * Notice Class

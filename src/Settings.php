@@ -7,7 +7,7 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce;
+namespace WebDevStudios\CCForWoo;
 
 /**
  * Settings class for CC+Woo

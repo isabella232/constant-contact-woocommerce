@@ -5,11 +5,11 @@
  * This class is used to verify that data submitted to the plugin settings are valid and correctly formatted.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\WooCommerce\Settings
+ * @package WebDevStudios\CCForWoo\Settings
  * @since   2019-03-07
  */
 
-namespace ConstantContact\WooCommerce\Settings;
+namespace WebDevStudios\CCForWoo\Settings;
 
 use WebDevStudios\Utility\Validatable;
 
@@ -17,7 +17,7 @@ use WebDevStudios\Utility\Validatable;
  * Class SettingsValidator
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\WooCommerce\Settings
+ * @package WebDevStudios\CCForWoo\Settings
  * @since   2019-03-07
  */
 class SettingsValidator implements Validatable {

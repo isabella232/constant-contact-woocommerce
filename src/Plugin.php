@@ -7,11 +7,11 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce;
+namespace WebDevStudios\CCForWoo;
 
 use WebDevStudios\Settings;
 use WebDevStudios\OopsWP\Utility\Runnable;
-use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
+use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
  * "Core" plugin class.
@@ -60,7 +60,7 @@ final class Plugin implements Runnable {
 
 		deactivate_plugins( $this->plugin_file );
 
-		new \ConstantContact\WooCommerce\View\Admin\Notice(
+		new \WebDevStudios\CCForWoo\View\Admin\Notice(
 			new \WebDevStudios\View\Admin\NoticeMessage(
 				$reason,
 				'error',
@@ -68,7 +68,7 @@ final class Plugin implements Runnable {
 			)
 		);
 
-		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
+		\WebDevStudios\CCForWoo\View\Admin\Notice::set_notices();
 	}
 
 	/**

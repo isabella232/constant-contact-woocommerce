@@ -3,17 +3,17 @@
  * Value object for the Settings page submission.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\WooCommerce\Settings
+ * @package WebDevStudios\CCForWoo\Settings
  * @since   2019-03-07
  */
 
-namespace ConstantContact\WooCommerce\Settings;
+namespace WebDevStudios\CCForWoo\Settings;
 
 /**
  * Class SettingsModel
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
- * @package ConstantContact\WooCommerce\Settings
+ * @package WebDevStudios\CCForWoo\Settings
  * @since   2019-03-07
  */
 class SettingsModel {

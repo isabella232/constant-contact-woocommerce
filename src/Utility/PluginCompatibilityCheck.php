@@ -9,7 +9,7 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce\Utility;
+namespace WebDevStudios\CCForWoo\Utility;
 
 use \WebDevStudios\Utility\PluginCompatibility;
 
