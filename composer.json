@@ -18,7 +18,6 @@
 	"require-dev": {
 		"phpunit/phpunit": "^7"
 	},
-	"minimum-stability": "dev",
 	"require": {
 		"webdevstudios/oops-wp": "^0.1",
 		"composer/installers": "^1.6"
