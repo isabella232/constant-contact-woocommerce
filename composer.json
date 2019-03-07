@@ -8,6 +8,14 @@
 			"ConstantContact\\WooCommerce\\": "src/"
 		}
 	},
+	"scripts": {
+		"test": [ "./vendor/bin/phpunit" ]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"ConstantContact\\WooCommerce\\Tests\\": "tests/"
+		}
+	},
 	"require-dev": {
 		"phpunit/phpunit": "^7"
 	},
