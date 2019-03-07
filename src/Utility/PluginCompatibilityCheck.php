@@ -11,7 +11,7 @@
 
 namespace WebDevStudios\CCForWoo\Utility;
 
-use \WebDevStudios\Utility\PluginCompatibility;
+use \WebDevStudios\CCForWoo\Utility\PluginCompatibility;
 
 /**
  * Tests if WooCommerce is available and compatible.

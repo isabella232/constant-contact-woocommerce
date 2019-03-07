@@ -17,7 +17,7 @@ namespace WebDevStudios\CCForWoo\View\Admin;
  *
  * @since 0.0.1
  */
-class Notice extends \WebDevStudios\View\Admin\Notice {
+class Notice extends \WebDevStudios\CCForWoo\View\Admin\NoticeAbstract {
 	/**
 	 * Transient key used in the database.
 	 *

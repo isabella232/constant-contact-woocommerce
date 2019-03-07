@@ -30,9 +30,11 @@ require_once $autoloader;
 
 use WebDevStudios\CCForWoo\Plugin;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
+use WebDevStudios\CCForWoo\Settings\SettingsTab;
+use WebDevStudios\CCForWoo\Settings\SettingsConfig;
 
-$settings = new \WebDevStudios\CCForWoo\Settings(
-	new \WebDevStudios\SettingsConfig(
+$settings = new SettingsTab(
+	new SettingsConfig(
 		'constant_contact_woo_settings',
 		__FILE__ // @TODO This needs to be the page of the Woo tab.
 	)
@@ -57,6 +59,6 @@ register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ]
 /** Instantiate settings.
  *
  * @since 0.0.1
- * @type \WebDevStudios\Settings
+ * @type \ConstantContactCCForWooSettings
  */
 add_action( 'admin_init', [ $settings, 'register_hooks' ] );

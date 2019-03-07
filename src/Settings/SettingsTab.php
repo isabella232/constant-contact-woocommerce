@@ -7,14 +7,14 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios\CCForWoo;
+namespace WebDevStudios\CCForWoo\Settings;
 
 /**
  * Settings class for CC+Woo
  *
  * @since 0.0.1
  */
-class Settings extends \WebDevStudios\Settings {
+class SettingsTab extends \WebDevStudios\CCForWoo\Settings\SettingsAbstract {
 	/**
 	 * Array of settings to un/register.
 	 *
