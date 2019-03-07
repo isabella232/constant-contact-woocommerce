@@ -1,5 +1,5 @@
 {
-	"name": "constant-contact/woocommerce",
+	"name": "webdevstudios/constant-contact-woocommerce",
 	"description": "Integrate Constant Contact and WooCommerce",
 	"type": "wordpress-plugin",
 	"autoload": {
@@ -8,15 +8,12 @@
 			"ConstantContact\\WooCommerce\\": "src/"
 		}
 	},
-	"repositories": [{
-		"type": "composer",
-		"url": "https://packages.wdslab.com"
-	}],
 	"require-dev": {
 		"phpunit/phpunit": "^7"
 	},
 	"minimum-stability": "dev",
 	"require": {
-		"webdevstudios/oops-wp": "dev-master"
+		"webdevstudios/oops-wp": "^0.1",
+		"composer/installers": "^1.6"
 	}
 }
