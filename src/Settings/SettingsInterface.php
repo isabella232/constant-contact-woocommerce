@@ -7,7 +7,7 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\CCForWoo\Settings;
+namespace WebDevStudios\CCForWoo\Settings;
 
 /**
  * Settings Interface

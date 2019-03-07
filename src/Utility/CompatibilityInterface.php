@@ -7,7 +7,7 @@
  * @package wds-utility
  */
 
-namespace ConstantContact\CCForWoo\Utility;
+namespace WebDevStudios\CCForWoo\Utility;
 
 /**
  * Interface for Compatibility Checks

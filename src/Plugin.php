@@ -7,11 +7,11 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\CCForWoo;
+namespace WebDevStudios\CCForWoo;
 
-use ConstantContact\CCForWoo\Settings\SettingsTab;
+use WebDevStudios\CCForWoo\Settings\SettingsTab;
 use WebDevStudios\OopsWP\Utility\Runnable;
-use ConstantContact\CCForWoo\Utility\PluginCompatibilityCheck;
+use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
  * "Core" plugin class.
@@ -41,7 +41,7 @@ final class Plugin implements Runnable {
 	 * The plugin settings instance.
 	 *
 	 * @since 0.0.1
-	 * @var \ConstantContact\CCForWoo\Settings\SettingsTab
+	 * @var \WebDevStudios\CCForWoo\Settings\SettingsTab
 	 */
 	private $settings;
 
@@ -62,15 +62,15 @@ final class Plugin implements Runnable {
 
 		deactivate_plugins( $this->plugin_file );
 
-		new \ConstantContact\CCForWoo\View\Admin\Notice(
-			new \ConstantContact\CCForWoo\View\Admin\NoticeMessage(
+		new \WebDevStudios\CCForWoo\View\Admin\Notice(
+			new \WebDevStudios\CCForWoo\View\Admin\NoticeMessage(
 				$reason,
 				'error',
 				true
 			)
 		);
 
-		\ConstantContact\CCForWoo\View\Admin\Notice::set_notices();
+		\WebDevStudios\CCForWoo\View\Admin\Notice::set_notices();
 	}
 
 	/**
@@ -109,7 +109,7 @@ final class Plugin implements Runnable {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @param \ConstantContact\CCForWoo\Settings\SettingsTab $settings An instance of the configuration for settings.
+	 * @param \WebDevStudios\CCForWoo\Settings\SettingsTab $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
 	public function __construct( string $plugin_file, SettingsTab $settings ) {

@@ -9,7 +9,7 @@
  * @package wds-view
  */
 
-namespace ConstantContact\CCForWoo\View\Admin;
+namespace WebDevStudios\CCForWoo\View\Admin;
 
 /**
  * Notice Abstract
@@ -46,7 +46,7 @@ abstract class NoticeAbstract {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param \ConstantContact\CCForWoo\View\Admin\NoticeMessage $message The message to display.
+	 * @param \WebDevStudios\CCForWoo\View\Admin\NoticeMessage $message The message to display.
 	 */
 	public function __construct( NoticeMessage $message ) {
 		self::$queued_notices[] = $message;

@@ -8,7 +8,7 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\CCForWoo\View\Admin;
+namespace WebDevStudios\CCForWoo\View\Admin;
 
 /**
  * Notice Message

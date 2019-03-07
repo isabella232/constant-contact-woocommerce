@@ -28,10 +28,10 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-use ConstantContact\CCForWoo\Plugin;
-use ConstantContact\CCForWoo\View\Admin\Notice;
-use ConstantContact\CCForWoo\Settings\SettingsTab;
-use ConstantContact\CCForWoo\Settings\SettingsConfig;
+use WebDevStudios\CCForWoo\Plugin;
+use WebDevStudios\CCForWoo\View\Admin\Notice;
+use WebDevStudios\CCForWoo\Settings\SettingsTab;
+use WebDevStudios\CCForWoo\Settings\SettingsConfig;
 
 $settings = new SettingsTab(
 	new SettingsConfig(
@@ -44,9 +44,9 @@ $settings = new SettingsTab(
  * Get an instance of the plugin class.
  *
  * @since 0.0.1
- * @var \ConstantContact\CCForWoo\Plugin
+ * @var \WebDevStudios\CCForWoo\Plugin
  */
-$plugin = new \ConstantContact\CCForWoo\Plugin( __FILE__, $settings );
+$plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__, $settings );
 $plugin->run();
 
 // Setup the plugin instance.
@@ -54,7 +54,7 @@ add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
 register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 // Hook things!
-# \ConstantContact\CCForWoo\Views\Admin\WooSettingsTab::hooks();
+# \WebDevStudios\CCForWoo\Views\Admin\WooSettingsTab::hooks();
 
 /** Instantiate settings.
  *

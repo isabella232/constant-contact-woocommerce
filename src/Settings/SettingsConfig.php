@@ -9,7 +9,7 @@
  * @package wds-settings
  */
 
-namespace ConstantContact\CCForWoo\Settings;
+namespace WebDevStudios\CCForWoo\Settings;
 
 /**
  * Settings Configuration class.
