@@ -9,16 +9,16 @@
 
 namespace ConstantContact\WooCommerce;
 
-use ConstantContact\WooCommerce\Util\WooCompat;
+use WebDevStudios\Settings;
+use WebDevStudios\OopsWP\Utility\Runnable;
+use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
 
 /**
  * "Core" plugin class.
  *
  * @since 0.0.1
  */
-final class Plugin {
-	use \WebDevStudios\Utility\SingletonTrait;
-
+final class Plugin implements Runnable {
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
 	/**
@@ -38,6 +38,14 @@ final class Plugin {
 	private $plugin_file;
 
 	/**
+	 * The plugin settings instance.
+	 *
+	 * @since 0.0.1
+	 * @var \WebDevStudios\Settings
+	 */
+	private $settings;
+
+	/**
 	 * Deactivate this plugin.
 	 *
 	 * @since 0.0.1
@@ -50,13 +58,17 @@ final class Plugin {
 			throw new \Exception( $reason );
 		}
 
-		deactivate_plugins( $this->get_plugin_file() );
+		deactivate_plugins( $this->plugin_file );
+
 		new \ConstantContact\WooCommerce\View\Admin\Notice(
-			[
-				'class'   => 'error',
-				'message' => $reason,
-			]
+			new \WebDevStudios\View\Admin\NoticeMessage(
+				$reason,
+				'error',
+				true
+			)
 		);
+
+		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
 	}
 
 	/**
@@ -68,16 +80,18 @@ final class Plugin {
 	 */
 	public function maybe_deactivate() {
 		try {
+			$compatibility_checker = new PluginCompatibilityCheck( '\\WooCommerce' );
+
 			// Ensure requirements.
-			if ( ! WooCompat::is_woo_available() ) {
+			if ( ! $compatibility_checker->is_available() ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), WooCompat::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( __( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 
-			if ( ! WooCompat::is_woo_compatible() ) {
+			if ( ! $compatibility_checker->is_compatible( \WooCommerce::instance() ) ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), WooCompat::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( __( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 		} catch ( \Exception $e ) {
@@ -93,15 +107,27 @@ final class Plugin {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
+	 * @param \WebDevStudios\Settings $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function setup_plugin( string $plugin_file ) {
+	public function __construct( string $plugin_file, Settings $settings ) {
+		$this->plugin_file = $plugin_file;
+		$this->settings    = $settings;
+	}
+
+	/**
+	 * Run things once the plugin instance is ready.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios>
+	 */
+	public function run() {
 		if ( ! function_exists( 'is_plugin_active' ) ) {
 			include_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		$this->plugin_file = $plugin_file;
-		$this->is_active   = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->settings->register_hooks();
 	}
 
 	/**
