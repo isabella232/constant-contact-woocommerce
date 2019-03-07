@@ -7,7 +7,7 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios\Utility;
+namespace WebDevStudios\CCForWoo\Utility;
 
 /**
  * Plugin Compatibility Class

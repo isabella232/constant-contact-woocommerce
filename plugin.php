@@ -28,11 +28,13 @@ if ( ! file_exists( $autoloader ) ) {
 
 require_once $autoloader;
 
-use ConstantContact\WooCommerce\Plugin;
-use ConstantContact\WooCommerce\View\Admin\Notice;
+use WebDevStudios\CCForWoo\Plugin;
+use WebDevStudios\CCForWoo\View\Admin\Notice;
+use WebDevStudios\CCForWoo\Settings\SettingsTab;
+use WebDevStudios\CCForWoo\Settings\SettingsConfig;
 
-$settings = new \ConstantContact\WooCommerce\Settings(
-	new \WebDevStudios\SettingsConfig(
+$settings = new SettingsTab(
+	new SettingsConfig(
 		'constant_contact_woo_settings',
 		__FILE__ // @TODO This needs to be the page of the Woo tab.
 	)
@@ -42,9 +44,9 @@ $settings = new \ConstantContact\WooCommerce\Settings(
  * Get an instance of the plugin class.
  *
  * @since 0.0.1
- * @var \ConstantContact\WooCommerce\Plugin
+ * @var \WebDevStudios\CCForWoo\Plugin
  */
-$plugin = new \ConstantContact\WooCommerce\Plugin( __FILE__, $settings );
+$plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__, $settings );
 $plugin->run();
 
 // Setup the plugin instance.
@@ -52,11 +54,11 @@ add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
 register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 // Hook things!
-# \ConstantContact\WooCommerce\Views\Admin\WooSettingsTab::hooks();
+# \WebDevStudios\CCForWoo\Views\Admin\WooSettingsTab::hooks();
 
 /** Instantiate settings.
  *
  * @since 0.0.1
- * @type \WebDevStudios\Settings
+ * @type \ConstantContactCCForWooSettings
  */
 add_action( 'admin_init', [ $settings, 'register_hooks' ] );
