@@ -2,7 +2,7 @@
 /**
  * Settings page configuration object.
  *
- * Used to configure settings for the \ConstantContactCCForWooSettings class.
+ * Used to configure settings for the \WebDevStudios\CCForWoo\Settings\SettingsTab class.
  *
  * @since 0.0.1
  * @author Zach Owen <zach@webdevstudios>

@@ -59,6 +59,6 @@ register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ]
 /** Instantiate settings.
  *
  * @since 0.0.1
- * @type \ConstantContactCCForWooSettings
+ * @type \WebDevStudios\CCForWoo\Settings\SettingsTab
  */
 add_action( 'admin_init', [ $settings, 'register_hooks' ] );
