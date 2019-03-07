@@ -4,8 +4,7 @@
 	"type": "wordpress-plugin",
 	"autoload": {
 		"psr-4": {
-			"WebDevStudios\\": "src/WebDevStudios/",
-			"ConstantContact\\WooCommerce\\": "src/"
+			"ConstantContact\\CCForWoo\\": "src/"
 		}
 	},
 	"require-dev": {

@@ -2,14 +2,14 @@
 /**
  * Settings page configuration object.
  *
- * Used to configure settings for the \WebDevStudios\Settings class.
+ * Used to configure settings for the \ConstantContactCCForWooSettings class.
  *
  * @since 0.0.1
  * @author Zach Owen <zach@webdevstudios>
  * @package wds-settings
  */
 
-namespace WebDevStudios;
+namespace ConstantContact\CCForWoo\Settings;
 
 /**
  * Settings Configuration class.

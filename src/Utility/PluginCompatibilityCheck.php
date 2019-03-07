@@ -9,9 +9,9 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce\Utility;
+namespace ConstantContact\CCForWoo\Utility;
 
-use \WebDevStudios\Utility\PluginCompatibility;
+use \ConstantContact\CCForWoo\Utility\PluginCompatibility;
 
 /**
  * Tests if WooCommerce is available and compatible.

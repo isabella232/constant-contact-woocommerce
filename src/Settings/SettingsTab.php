@@ -7,14 +7,14 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce;
+namespace ConstantContact\CCForWoo\Settings;
 
 /**
  * Settings class for CC+Woo
  *
  * @since 0.0.1
  */
-class Settings extends \WebDevStudios\Settings {
+class SettingsTab extends \ConstantContact\CCForWoo\Settings\SettingsAbstract {
 	/**
 	 * Array of settings to un/register.
 	 *

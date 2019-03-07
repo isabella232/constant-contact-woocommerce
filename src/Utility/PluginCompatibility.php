@@ -7,7 +7,7 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios\Utility;
+namespace ConstantContact\CCForWoo\Utility;
 
 /**
  * Plugin Compatibility Class

@@ -7,11 +7,11 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce;
+namespace ConstantContact\CCForWoo;
 
-use WebDevStudios\Settings;
+use ConstantContact\CCForWoo\Settings\SettingsTab;
 use WebDevStudios\OopsWP\Utility\Runnable;
-use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
+use ConstantContact\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
  * "Core" plugin class.
@@ -41,7 +41,7 @@ final class Plugin implements Runnable {
 	 * The plugin settings instance.
 	 *
 	 * @since 0.0.1
-	 * @var \WebDevStudios\Settings
+	 * @var \ConstantContact\CCForWoo\Settings\SettingsTab
 	 */
 	private $settings;
 
@@ -54,21 +54,23 @@ final class Plugin implements Runnable {
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
 	private function deactivate( $reason ) {
+		unset( $_GET['activate'] );
+
 		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
 		}
 
 		deactivate_plugins( $this->plugin_file );
 
-		new \ConstantContact\WooCommerce\View\Admin\Notice(
-			new \WebDevStudios\View\Admin\NoticeMessage(
+		new \ConstantContact\CCForWoo\View\Admin\Notice(
+			new \ConstantContact\CCForWoo\View\Admin\NoticeMessage(
 				$reason,
 				'error',
 				true
 			)
 		);
 
-		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
+		\ConstantContact\CCForWoo\View\Admin\Notice::set_notices();
 	}
 
 	/**
@@ -107,10 +109,10 @@ final class Plugin implements Runnable {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @param \WebDevStudios\Settings $settings An instance of the configuration for settings.
+	 * @param \ConstantContact\CCForWoo\Settings\SettingsTab $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function __construct( string $plugin_file, Settings $settings ) {
+	public function __construct( string $plugin_file, SettingsTab $settings ) {
 		$this->plugin_file = $plugin_file;
 		$this->settings    = $settings;
 	}

@@ -10,14 +10,14 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce\View\Admin;
+namespace ConstantContact\CCForWoo\View\Admin;
 
 /**
  * Notice Class
  *
  * @since 0.0.1
  */
-class Notice extends \WebDevStudios\View\Admin\Notice {
+class Notice extends \ConstantContact\CCForWoo\View\Admin\NoticeAbstract {
 	/**
 	 * Transient key used in the database.
 	 *

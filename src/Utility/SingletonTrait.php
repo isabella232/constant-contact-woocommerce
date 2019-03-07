@@ -11,7 +11,7 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios\Utility;
+namespace ConstantContact\CCForWoo\Utility;
 
 trait SingletonTrait {
 	/**

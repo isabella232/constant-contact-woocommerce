@@ -9,14 +9,14 @@
  * @package wds-view
  */
 
-namespace WebDevStudios\View\Admin;
+namespace ConstantContact\CCForWoo\View\Admin;
 
 /**
  * Notice Abstract
  *
  * @since 0.0.1
  */
-abstract class Notice {
+abstract class NoticeAbstract {
 	/**
 	 * The transient key to store notices under.
 	 *
@@ -46,7 +46,7 @@ abstract class Notice {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param \WebDevStudios\View\Admin\NoticeMessage $message The message to display.
+	 * @param \ConstantContact\CCForWoo\View\Admin\NoticeMessage $message The message to display.
 	 */
 	public function __construct( NoticeMessage $message ) {
 		self::$queued_notices[] = $message;

@@ -7,7 +7,7 @@
  * @package wds-settings
  */
 
-namespace WebDevStudios;
+namespace ConstantContact\CCForWoo\Settings;
 
 use WebDevStudios\OopsWP\Utility\Hookable;
 
@@ -18,7 +18,7 @@ use WebDevStudios\OopsWP\Utility\Hookable;
  *
  * @since 0.0.1
  */
-abstract class Settings implements SettingsInterface, Hookable {
+abstract class SettingsAbstract implements SettingsInterface, Hookable {
 	/**
 	 * The current settings section ID.
 	 *
@@ -31,7 +31,7 @@ abstract class Settings implements SettingsInterface, Hookable {
 	 * The settings configuration instance.
 	 *
 	 * @since 0.0.1
-	 * @var \WebDevStudios\SettingsConfig
+	 * @var \ConstantContact\CCForWoo\Settings\SettingsConfig
 	 */
 	protected $config = null;
 
@@ -59,7 +59,7 @@ abstract class Settings implements SettingsInterface, Hookable {
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
-	 * @param \WebDevStudios\SettingsConfig $config The configuration object for the settings.
+	 * @param \ConstantContact\CCForWoo\Settings\SettingsConfig $config The configuration object for the settings.
 	 */
 	public function __construct( $config ) {
 		$this->config = $config;
