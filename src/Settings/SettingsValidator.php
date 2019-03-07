@@ -49,7 +49,17 @@ class SettingsValidator implements Validatable {
 	 * @return bool
 	 */
 	public function is_valid(): bool {
-		// @TODO Add failing conditions.
-		return true;
+		return $this->import_preferences_match_permissions();
+	}
+
+	/**
+	 * Compare settings to import historical data to store admin's confirmation of permission to e-mail customers.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-07
+	 * @return bool
+	 */
+	private function import_preferences_match_permissions() : bool {
+		return $this->settings->get_import_historical_data() === $this->settings->get_permission_confirmed();
 	}
 }
