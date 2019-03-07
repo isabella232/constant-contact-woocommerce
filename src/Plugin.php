@@ -110,7 +110,7 @@ final class Plugin implements Runnable {
 	 * @param \WebDevStudios\Settings $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function __constructor( string $plugin_file, Settings $settings ) {
+	public function __construct( string $plugin_file, Settings $settings ) {
 		$this->plugin_file = $plugin_file;
 		$this->settings    = $settings;
 	}
