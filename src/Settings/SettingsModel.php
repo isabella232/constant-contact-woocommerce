@@ -203,4 +203,26 @@ class SettingsModel {
 	public function get_email_address(): string {
 		return $this->email_address;
 	}
+
+	/**
+	 * Get the value for whether to import a store's historical data.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-07
+	 * @return bool
+	 */
+	public function get_import_historical_data() : bool {
+		return $this->import_historical_data;
+	}
+
+	/**
+	 * Get the value for whether a store admin has confirmed it has permission to e-mail customers.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-07
+	 * @return bool
+	 */
+	public function get_permission_confirmed() : bool {
+		return $this->permission_confirmed;
+	}
 }
