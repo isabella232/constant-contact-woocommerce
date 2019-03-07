@@ -59,7 +59,4 @@ register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ]
  * @since 0.0.1
  * @type \WebDevStudios\Settings
  */
-$settings = new \ConstantContact\WooCommerce\Settings(
-);
-
 add_action( 'admin_init', [ $settings, 'register_hooks' ] );
