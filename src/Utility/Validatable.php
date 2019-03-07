@@ -7,7 +7,7 @@
  * @since 2019-03-07
  */
 
-namespace WebDevStudios\Utility;
+namespace WebDevStudios\CCForWoo\Utility;
 
 /**
  * Interface Validatable

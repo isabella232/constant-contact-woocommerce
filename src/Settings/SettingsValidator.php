@@ -11,7 +11,7 @@
 
 namespace WebDevStudios\CCForWoo\Settings;
 
-use WebDevStudios\Utility\Validatable;
+use WebDevStudios\CCForWoo\Utility\Validatable;
 
 /**
  * Class SettingsValidator
