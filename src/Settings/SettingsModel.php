@@ -74,15 +74,33 @@ class SettingsModel {
 	private $email_address;
 
 	/**
+	 * The store admin has opt-in to import historical data.
+	 *
+	 * @var bool
+	 * @since 2019-03-07
+	 */
+	private $import_historical_data;
+
+	/**
+	 * The store admin has confirmed they have permission to e-mail customers.
+	 *
+	 * @var bool
+	 * @since 2019-03-07
+	 */
+	private $permission_confirmed;
+
+	/**
 	 * SettingsModel constructor.
 	 *
-	 * @param string $first_name    Store admin's first name.
-	 * @param string $last_name     Store admin's last name.
-	 * @param string $phone_number  Store admin's phone number.
-	 * @param string $store_name    Name of the store.
-	 * @param string $currency      Currency of the store.
-	 * @param string $country_code  Country code of the store.
-	 * @param string $email_address Store admin's e-mail address.
+	 * @param string $first_name             Store admin's first name.
+	 * @param string $last_name              Store admin's last name.
+	 * @param string $phone_number           Store admin's phone number.
+	 * @param string $store_name             Name of the store.
+	 * @param string $currency               Currency of the store.
+	 * @param string $country_code           Country code of the store.
+	 * @param string $email_address          Store admin's e-mail address.
+	 * @param bool   $import_historical_data Store admin opts in to import historical data.
+	 * @param bool   $permission_confirmed   Store admin confirms their permission to e-mail customers.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
@@ -94,15 +112,19 @@ class SettingsModel {
 		$store_name,
 		$currency,
 		$country_code,
-		$email_address
+		$email_address,
+		$import_historical_data = false,
+		$permission_confirmed = false
 	) {
-		$this->first_name    = $first_name;
-		$this->last_name     = $last_name;
-		$this->phone_number  = $phone_number;
-		$this->store_name    = $store_name;
-		$this->currency      = $currency;
-		$this->country_code  = $country_code;
-		$this->email_address = $email_address;
+		$this->first_name             = $first_name;
+		$this->last_name              = $last_name;
+		$this->phone_number           = $phone_number;
+		$this->store_name             = $store_name;
+		$this->currency               = $currency;
+		$this->country_code           = $country_code;
+		$this->email_address          = $email_address;
+		$this->import_historical_data = $import_historical_data;
+		$this->permission_confirmed   = $permission_confirmed;
 	}
 
 	/**
