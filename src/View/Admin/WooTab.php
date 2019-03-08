@@ -14,15 +14,39 @@ if ( ! class_exists( 'WC_Settings_Page' ) ) {
 	require_once $woo_settings_abstract;
 }
 
+/**
+ * Class WooTab
+ *
+ * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
+ * @package WebDevStudios\CCForWoo\View\Admin
+ * @since   2019-03-08
+ */
 class WooTab extends \WC_Settings_Page implements Hookable {
+	/**
+	 * @var string
+	 * @since 2019-03-08
+	 */
 	protected $id = 'cc_woo';
 
+	/**
+	 * @var string
+	 * @since 2019-03-08
+	 */
 	protected $label = 'Constant Contact';
 
+	/**
+	 * WooTab constructor.
+	 *
+	 * @since  2019-03-08
+	 */
 	public function __construct() {
 		// noop
 	}
 
+	/**
+	 * @since  2019-03-08
+	 * @return void
+	 */
 	public function register_hooks() {
 		add_filter( 'woocommerce_settings_tabs_array', array( $this, 'add_settings_page' ), 99 );
 		add_action( 'woocommerce_sections_' . $this->id, array( $this, 'output_sections' ) );
@@ -54,6 +78,10 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		} );
 	}
 
+	/**
+	 * @since  2019-03-08
+	 * @return array|mixed|void
+	 */
 	public function get_sections() {
 		$sections = [
 			''                     => __( 'Store Information', 'my-textdomain' ),
@@ -63,6 +91,12 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
 	}
 
+	/**
+	 * @param string $current_section
+	 *
+	 * @since  2019-03-08
+	 * @return array
+	 */
 	public function get_settings( $current_section = '' ) {
 		$settings = [];
 
@@ -101,19 +135,25 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 						'type'  => 'text',
 					],
 					[
-						'title' => 'Currency',
-						'id' => 'store_information_currency',
-						'desc' => 'This field is read from your General settings.',
-						'type' => 'text',
+						'title'             => 'Currency',
+						'id'                => 'store_information_currency',
+						'desc'              => 'This field is read from your General settings.',
+						'type'              => 'text',
 						'custom_attributes' => [
 							'readonly' => 'readonly',
-						'value' => 'a',
+							'value'    => 'a',
 						],
+					],
+					[
+						'title' => 'Contact E-mail Address',
+						'id'    => 'store_information_contact_email',
+						'desc'  => '',
+						'type'  => 'email',
 					],
 					[
 						'type' => 'sectionend',
 						'id'   => 'store_information_options',
-					]
+					],
 				];
 				break;
 
