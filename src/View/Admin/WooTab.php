@@ -1,11 +1,18 @@
 <?php
+/**
+ * Constant Contact WooCommerce Settings Tab
+ *
+ * @since 2019-03-07
+ * @author Zach Owen <zach@webdevstudios>, Jeremy Ward <jeremy.ward@webdevstudios.com>
+ * @package cc-woo
+ */
 
 namespace WebDevStudios\CCForWoo\View\Admin;
 
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 if ( ! class_exists( 'WC_Settings_Page' ) ) {
-	$woo_settings_abstract =  WP_PLUGIN_DIR . '/woocommerce/includes/admin/settings/class-wc-settings-page.php';
+	$woo_settings_abstract = WP_PLUGIN_DIR . '/woocommerce/includes/admin/settings/class-wc-settings-page.php';
 
 	if ( ! file_exists( $woo_settings_abstract ) ) {
 		throw new \Exception( __( 'Woo?' ) );
