@@ -49,6 +49,8 @@ $settings = new SettingsTab(
 $plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__, $settings );
 $plugin->run();
 
+add_action( 'plugins_loaded', [ new \WebDevStudios\CCForWoo\View\Admin\WooTab(), 'register_hooks' ] );
+
 // Setup the plugin instance.
 add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
 register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
