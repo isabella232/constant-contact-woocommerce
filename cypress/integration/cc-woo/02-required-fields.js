@@ -26,7 +26,7 @@
 
 function test_required( name, element ) {
 	it('Sees a required ' + name + ' field', function() {
-		cy.login( '/wp-admin/admin.php?page=wc-settings&tab=cc_woo' )
+		cy.login(Cypress.env('cc_woo_url'))
 		cy.get('body').should('contain', name)
 		cy.get( element ).should('have.attr', 'required')
 	})

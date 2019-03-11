@@ -5,7 +5,7 @@
 
 describe('As a Store Owner on the CC Woo Settings Page', function(){
 	it( 'a button that reads "Connect with Constant Contact"', function(){
-		cy.login('http://lab.local/wp-admin/admin.php?page=wc-settings&tab=cc_woo')
+		cy.login(Cypress.env('cc_woo_url'))
 		cy.get('body').then(($body) => {
 			if ( $body.text().match(/Connect with Constant Contact/) ) {
 				return
