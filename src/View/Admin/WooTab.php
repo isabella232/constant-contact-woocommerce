@@ -341,7 +341,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	}
 
 	/**
-	 * Displays the Connect to Constant Contact button if we're good to go.
+	 * Displays the Connect with Constant Contact button if we're good to go.
 	 *
 	 * @since 2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
@@ -361,15 +361,15 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	}
 
 	/**
-	 * Add the Connect to Constant Contact button when displaying the form.
+	 * Add the Connect with Constant Contact button when displaying the form.
 	 *
 	 * @since 2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function add_cc_connect_button() {
 ?>
-<button class="button button-primary">
-	Connect to Constant Contact
+<button class="button button-primary" type="submit" name="cc_woo_action" value="connect">
+	Connect with Constant Contact
 </button>
 <?php
 	}
