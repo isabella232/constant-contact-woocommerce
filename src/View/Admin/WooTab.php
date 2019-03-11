@@ -192,24 +192,36 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 				'desc'  => '',
 				'id'    => 'store_information_first_name',
 				'type'  => 'text',
+				'custom_attributes' => [
+					'required' => 'required',
+				]
 			],
 			[
 				'title' => __( 'Last Name', 'cc-woo' ),
 				'desc'  => '',
 				'id'    => 'store_information_last_name',
 				'type'  => 'text',
+				'custom_attributes' => [
+					'required' => 'required',
+				]
 			],
 			[
 				'title' => __( 'Phone Number', 'cc-woo' ),
 				'id'    => 'store_information_phone_number',
 				'desc'  => '',
 				'type'  => 'text',
+				'custom_attributes' => [
+					'required' => 'required',
+				]
 			],
 			[
 				'title' => __( 'Store Name', 'cc-woo' ),
 				'id'    => 'store_information_store_name',
 				'desc'  => '',
 				'type'  => 'text',
+				'custom_attributes' => [
+					'required' => 'required',
+				]
 			],
 			[
 				'title'             => __( 'Currency', 'cc-woo' ),
@@ -222,10 +234,22 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 				],
 			],
 			[
+				'title' => __( 'Country Code', 'cc-woo' ),
+				'id'    => 'store_information_country_code',
+				'type'  => 'text',
+				'custom_attributes' => [
+					'size' => 6,
+					'required' => 'required',
+				],
+			],
+			[
 				'title' => __( 'Contact E-mail Address', 'cc-woo' ),
 				'id'    => 'store_information_contact_email',
 				'desc'  => '',
 				'type'  => 'email',
+				'custom_attributes' => [
+					'required' => 'required',
+				]
 			],
 			[
 				'type' => 'sectionend',
