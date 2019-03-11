@@ -1,3 +1,4 @@
 /vendor/*
 /node_modules/*
 .nvimrc
+cypress.env.json
