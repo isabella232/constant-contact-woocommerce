@@ -73,7 +73,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
-		add_filter( 'woocommerce_admin_settings_sanitize_option_store_information_phone_number', [ $this, 'sanitize_phone_number' ] );
+		add_filter( 'woocommerce_admin_settings_sanitize_option_cc_woo_store_information_phone_number', [ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connect_button' ] );
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 
@@ -84,7 +84,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		add_action( 'woocommerce_admin_field_cc_connect_button', [ $this, 'add_cc_connect_button' ] );
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 
-		add_filter( 'pre_option_store_information_currency', 'get_woocommerce_currency' );
+		add_filter( 'pre_option_cc_woo_store_information_currency', 'get_woocommerce_currency' );
 		add_filter( 'pre_update_option_customer_marketing_opt_in_consent', [ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
 
@@ -185,12 +185,12 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 				'title' => __( 'Store Information', 'cc-woo' ),
 				'type'  => 'title',
 				'desc'  => 'All fields are required.',
-				'id'    => 'store_information_settings',
+				'id'    => 'cc_woo_store_information_settings',
 			],
 			[
 				'title'             => __( 'First Name', 'cc-woo' ),
 				'desc'              => '',
-				'id'                => 'store_information_first_name',
+				'id'                => 'cc_woo_store_information_first_name',
 				'type'              => 'text',
 				'custom_attributes' => [
 					'required' => 'required',
@@ -199,7 +199,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			[
 				'title'             => __( 'Last Name', 'cc-woo' ),
 				'desc'              => '',
-				'id'                => 'store_information_last_name',
+				'id'                => 'cc_woo_store_information_last_name',
 				'type'              => 'text',
 				'custom_attributes' => [
 					'required' => 'required',
@@ -207,7 +207,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Phone Number', 'cc-woo' ),
-				'id'                => 'store_information_phone_number',
+				'id'                => 'cc_woo_store_information_phone_number',
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -216,7 +216,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Store Name', 'cc-woo' ),
-				'id'                => 'store_information_store_name',
+				'id'                => 'cc_woo_store_information_store_name',
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -225,7 +225,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Currency', 'cc-woo' ),
-				'id'                => 'store_information_currency',
+				'id'                => 'cc_woo_store_information_currency',
 				'desc'              => __( 'This field is read from your General settings.', 'cc-woo' ),
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -235,7 +235,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Country Code', 'cc-woo' ),
-				'id'                => 'store_information_country_code',
+				'id'                => 'cc_woo_store_information_country_code',
 				'type'              => 'text',
 				'custom_attributes' => [
 					'size'     => 6,
@@ -244,7 +244,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Contact E-mail Address', 'cc-woo' ),
-				'id'                => 'store_information_contact_email',
+				'id'                => 'cc_woo_store_information_contact_email',
 				'desc'              => '',
 				'type'              => 'email',
 				'custom_attributes' => [
@@ -253,7 +253,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'type' => 'sectionend',
-				'id'   => 'store_information_settings',
+				'id'   => 'cc_woo_store_information_settings',
 			],
 		];
 	}
@@ -413,8 +413,8 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function validate_name() {
-		$first_name = get_option( 'store_information_first_name', '' );
-		$last_name  = get_option( 'store_information_last_name', '' );
+		$first_name = get_option( 'cc_woo_store_information_first_name', '' );
+		$last_name  = get_option( 'cc_woo_store_information_last_name', '' );
 
 		return ! empty( trim( $first_name ) ) && ! empty( trim( $last_name ) );
 	}
@@ -427,7 +427,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function validate_store_name() {
-		return ! empty( trim( get_option( 'store_information_store_name', '' ) ) );
+		return ! empty( trim( get_option( 'cc_woo_store_information_store_name', '' ) ) );
 	}
 
 	/**
@@ -438,7 +438,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function validate_email() {
-		$email = get_option( 'store_information_contact_email', '' );
+		$email = get_option( 'cc_woo_store_information_contact_email', '' );
 		$email = filter_var( $email, FILTER_VALIDATE_EMAIL );
 
 		return null !== $email;
@@ -452,7 +452,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	public function validate_phone() {
-		$value = preg_match( '/^\(?\d{3}\)?\-?\d{3}\-?\d{4}$/', get_option( 'store_information_phone_number' ), $matches );
+		$value = preg_match( '/^\(?\d{3}\)?\-?\d{3}\-?\d{4}$/', get_option( 'cc_woo_store_information_phone_number' ), $matches );
 
 		if ( ! empty( $matches[0] ) ) {
 			return true;
@@ -591,6 +591,6 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function validate_country_code() {
-		return ! empty( get_option( 'store_information_country_code', '' ) );
+		return ! empty( get_option( 'cc_woo_store_information_country_code', '' ) );
 	}
 }
