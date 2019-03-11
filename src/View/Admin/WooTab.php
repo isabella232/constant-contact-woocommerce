@@ -221,6 +221,17 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 					'size'     => 4,
 				],
 			],
+			/*
+			[
+				'title' => __( 'Country Code', 'cc-woo' ),
+				'id'    => 'store_information_country_code',
+				'type'  => 'text',
+				'custom_attributes' => [
+					'size' => 6,
+					'required' => 'required',
+				],
+			],
+			 */
 			[
 				'title' => __( 'Contact E-mail Address', 'cc-woo' ),
 				'id'    => 'store_information_contact_email',
@@ -345,7 +356,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	public function add_cc_connect_button() {
 ?>
 <button class="button button-primary">
-	Connect to Constant Contact
+	Connect with Constant Contact
 </button>
 <?php
 	}
@@ -371,6 +382,10 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		}
 
 		if ( ! $this->validate_email() ) {
+			return false;
+		}
+
+		if ( ! $this->validate_country_code() ) {
 			return false;
 		}
 
@@ -553,5 +568,9 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		}
 
 		return $settings;
+	}
+
+	private function validate_country_code() {
+		return ! empty( get_option( 'store_information_country_code', '' ) );
 	}
 }
