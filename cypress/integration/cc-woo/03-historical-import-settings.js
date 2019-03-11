@@ -38,4 +38,13 @@ describe('As a store owner on the CC Woo Settings page Historical Import section
 			}
 		})
 	})
+
+	/**
+	 * As WordPress
+	 * If a store owner selects "no" for importing historical data
+	 * I should not display a checkbox to give them the option to say they have permission to email customers
+	 * And I should set the permissions value to false.
+	 */
+	it('Does not see a consent checkbox if the import option is "No"', function(){
+	})
 })
