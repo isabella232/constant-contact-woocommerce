@@ -398,6 +398,10 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			return false;
 		}
 
+		if ( ! $this->validate_country_code() ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -577,5 +581,16 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Validates the Country Code field.
+	 *
+	 * @since 2019-03-11
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function validate_country_code() {
+		return ! empty( get_option( 'store_information_country_code', '' ) );
 	}
 }
