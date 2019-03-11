@@ -85,7 +85,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 
 		add_filter( 'pre_option_cc_woo_store_information_currency', 'get_woocommerce_currency' );
-		add_filter( 'pre_update_option_customer_marketing_opt_in_consent', [ $this, 'maybe_prevent_opt_in_consent' ] );
+		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent', [ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
 
 	/**
@@ -121,7 +121,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 				break;
 
 			case 'customer_data_import':
-				$settings = $this->get_customer_marketing_settings();
+				$settings = $this->get_customer_data_settings();
 				break;
 		}
 
@@ -265,24 +265,24 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @author Zach Owen <zach@webdevstudios>
 	 * @return array
 	 */
-	private function get_customer_marketing_settings() {
+	private function get_customer_data_settings() {
 		$settings = [
 			[
 				'title' => __( 'Historical Customer Data Import', 'cc-woo' ),
-				'id'    => 'customer_marketing_settings',
+				'id'    => 'cc_woo_customer_data_settings',
 				'type'  => 'title',
 			],
 			[
 				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
 				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.', 'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => 'customer_marketing_email_opt_in_default',
+				'id'    => 'cc_woo_customer_data_email_opt_in_default',
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
 				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
 				'type'    => 'select',
-				'id'      => 'customer_marketing_allow_import',
+				'id'      => 'cc_woo_customer_data_allow_import',
 				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'default' => 'no',
 				'options' => [
@@ -293,22 +293,22 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		];
 
 		$can_import  = false;
-		$has_consent = 'no' !== get_option( 'customer_marketing_opt_in_consent', 'no' );
+		$has_consent = 'no' !== get_option( 'cc_woo_customer_data_opt_in_consent', 'no' );
 
-		if ( 'no' !== get_option( 'customer_marketing_allow_import', 'no' ) ) {
+		if ( 'no' !== get_option( 'cc_woo_customer_data_allow_import', 'no' ) ) {
 			$can_import = true;
 
 			$settings[] = [
 				'title' => __( 'User information consent', 'cc-woo' ),
 				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.', 'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => 'customer_marketing_opt_in_consent',
+				'id'    => 'cc_woo_customer_data_opt_in_consent',
 			];
 		}
 
 		if ( $can_import && $has_consent ) {
 			$settings[] = [
-				'id'    => 'customer_marketing_opt_in_import',
+				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
 				'title' => 'Import Customer Data',
 			];
@@ -316,7 +316,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 
 		$settings[] = [
 			'type' => 'sectionend',
-			'id'   => 'customer_marketing_settings',
+			'id'   => 'cc_woo_customer_data_settings',
 		];
 
 		return $settings;
@@ -331,7 +331,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function maybe_prevent_opt_in_consent( $value ) {
-		$allow_import = get_option( 'customer_marketing_allow_import' );
+		$allow_import = get_option( 'cc_woo_customer_data_allow_import' );
 
 		if ( 'no' === $allow_import ) {
 			return 'no';
