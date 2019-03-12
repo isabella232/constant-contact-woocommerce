@@ -17,8 +17,6 @@ class SettingsValidatorTest extends TestCase {
 	 * Assert that settings are valid when admins select to import historical data and confirm their permission to e-mail customers.
 	 *
 	 * @test
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-07
 	 */
 	public function settings_are_valid_if_import_historical_data_and_permission_confirmed_are_both_true() {
 		$settings = new SettingsModel(
@@ -35,16 +33,13 @@ class SettingsValidatorTest extends TestCase {
 
 		$validator = new SettingsValidator( $settings );
 
-		$this->assertTrue( true, $validator->is_valid() );
+		$this->assertTrue( $validator->is_valid() );
 	}
 
 	/**
 	 * Assert that settings are valid when admins select not to import historical data.
 	 *
 	 * @test
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-07
-	 * @return void
 	 */
 	public function settings_are_valid_if_import_historical_data_is_false() {
 		$settings = new SettingsModel(
@@ -61,6 +56,164 @@ class SettingsValidatorTest extends TestCase {
 
 		$validator = new SettingsValidator( $settings );
 
-		$this->assertTrue( true, $validator->is_valid() );
+		$this->assertTrue( $validator->is_valid() );
+	}
+
+	/**
+	 * Historical data and user consent options should be the same value.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_import_historical_data_and_user_consent_are_mismatched() {
+		$settings = new SettingsModel(
+			'Abbi',
+			'Jacobson',
+			'555-555-5555',
+			'Solstice',
+			'$',
+			'us',
+			'cleaner@solstice.com',
+			true,
+			false
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * First name is required, so the validator should fail.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_first_name_is_empty() {
+		$settings = new SettingsModel(
+			'',
+			'Glazer',
+			'555-555-5555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * Last name is a required field.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_last_name_is_empty() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'',
+			'555-555-5555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * Phone number is a required field.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_phone_number_is_empty() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * Company name is a required field.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_company_name_is_empty() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'555-555-5555',
+			'',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function settings_are_invalid_if_country_code_is_empty() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'555-555-5555',
+			'Deals! Deals! Deals!',
+			'$',
+			'',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * @test
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 */
+	public function settings_are_invalid_if_email_is_empty() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'555-555-5555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
 	}
 }
