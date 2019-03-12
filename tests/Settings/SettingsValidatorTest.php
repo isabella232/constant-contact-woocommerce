@@ -1,5 +1,5 @@
 <?php
-namespace ConstantContact\WooCommerce\Test\Settings;
+namespace WebDevStudios\CCForWoo\Test\Settings;
 
 use PHPUnit\Framework\TestCase;
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
