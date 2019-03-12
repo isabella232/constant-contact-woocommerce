@@ -10,6 +10,7 @@
 namespace WebDevStudios\CCForWoo;
 
 use WebDevStudios\CCForWoo\Settings\SettingsTab;
+use WebDevStudios\CCForWoo\Settings\SettingsConfig;
 use WebDevStudios\OopsWP\Utility\Runnable;
 use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
@@ -112,9 +113,14 @@ final class Plugin implements Runnable {
 	 * @param \WebDevStudios\CCForWoo\Settings\SettingsTab $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function __construct( string $plugin_file, SettingsTab $settings ) {
+	public function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
-		$this->settings    = $settings;
+		$this->settings    = new SettingsTab(
+			new SettingsConfig(
+				'constant_contact_woo_settings',
+				$plugin_file // @TODO This needs to be the page of the Woo tab.
+			)
+		);
 	}
 
 	/**

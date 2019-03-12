@@ -30,15 +30,6 @@ require_once $autoloader;
 
 use WebDevStudios\CCForWoo\Plugin;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
-use WebDevStudios\CCForWoo\Settings\SettingsTab;
-use WebDevStudios\CCForWoo\Settings\SettingsConfig;
-
-$settings = new SettingsTab(
-	new SettingsConfig(
-		'constant_contact_woo_settings',
-		__FILE__ // @TODO This needs to be the page of the Woo tab.
-	)
-);
 
 /**
  * Get an instance of the plugin class.
@@ -46,7 +37,7 @@ $settings = new SettingsTab(
  * @since 0.0.1
  * @var \WebDevStudios\CCForWoo\Plugin
  */
-$plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__, $settings );
+$plugin = new Plugin( __FILE__ );
 $plugin->run();
 
 add_action( 'plugins_loaded', [ new \WebDevStudios\CCForWoo\View\Admin\WooTab(), 'register_hooks' ] );
