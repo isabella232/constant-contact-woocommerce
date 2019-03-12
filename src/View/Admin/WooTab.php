@@ -2,8 +2,8 @@
 /**
  * Constant Contact WooCommerce Settings Tab
  *
- * @since 2019-03-07
- * @author Zach Owen <zach@webdevstudios>, Jeremy Ward <jeremy.ward@webdevstudios.com>
+ * @since   2019-03-07
+ * @author  Zach Owen <zach@webdevstudios>, Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package cc-woo
  */
 
@@ -32,6 +32,76 @@ if ( ! class_exists( 'WC_Settings_Page' ) ) {
  */
 class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
+	 * Store owner first name field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const FIRST_NAME_FIELD = 'cc_woo_store_information_first_name';
+
+	/**
+	 * Store owner last name field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const LAST_NAME_FIELD = 'cc_woo_store_information_last_name';
+
+	/**
+	 * Store phone number field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const PHONE_NUMBER_FIELD = 'cc_woo_store_information_phone_number';
+
+	/**
+	 * Store name field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const STORE_NAME_FIELD = 'cc_woo_store_information_store_name';
+
+	/**
+	 * Store currency field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const CURRENCY_FIELD = 'cc_woo_store_information_currency';
+
+	/**
+	 * Store country code field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const COUNTRY_CODE_FIELD = 'cc_woo_store_information_country_code';
+
+	/**
+	 * Store contact e-mail field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
+
+	/**
+	 * Customer opt-in default field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const CUSTOMER_OPT_IN_DEFAULT_FIELD = 'cc_woo_customer_data_email_opt_in_default';
+
+	/**
+	 * Historical customer data import field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const ALL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
+
+	/**
+	 * Store has user consent field.
+	 *
+	 * @since 2019-03-12
+	 */
+	const CUSTOMER_OPT_IN_CONSENT_FIELD = 'cc_woo_customer_data_opt_in_consent';
+
+	/**
 	 * Settings section ID.
 	 *
 	 * @var string
@@ -55,6 +125,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 */
 	private $errors = [];
 
+
 	/**
 	 * WooTab constructor.
 	 *
@@ -75,7 +146,8 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
-		add_filter( 'woocommerce_admin_settings_sanitize_option_cc_woo_store_information_phone_number', [ $this, 'sanitize_phone_number' ] );
+		add_filter( 'woocommerce_admin_settings_sanitize_option_cc_woo_store_information_phone_number',
+			[ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connect_button' ] );
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 
@@ -87,7 +159,8 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 
 		add_filter( 'pre_option_cc_woo_store_information_currency', 'get_woocommerce_currency' );
-		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent', [ $this, 'maybe_prevent_opt_in_consent' ] );
+		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent',
+			[ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
 
 	/**
@@ -129,22 +202,26 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 
 		$settings = $this->process_errors( $settings );
 		$settings = $this->adjust_styles( $settings );
+
 		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] );
 	}
 
 	/**
 	 * Add our settings group to the REST API.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $groups The array of groups being sent to the API.
+	 *
 	 * @return array
 	 */
 	public function add_rest_group( $groups ) {
 		$groups[] = [
 			'id'          => 'cc_woo',
 			'label'       => __( 'Constant Contact WooCommerce', 'cc-woo' ),
-			'description' => __( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.', 'cc-woo' ),
+			'description' => __( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
+				'cc-woo' ),
 		];
 
 		return $groups;
@@ -153,9 +230,11 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Add fields to the REST API for our settings.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $settings The array of settings going to the API.
+	 *
 	 * @return array
 	 */
 	public function add_rest_fields( $settings ) {
@@ -177,7 +256,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Gets the settings for the Store Information section.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 * @return array
 	 */
@@ -192,7 +271,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			[
 				'title'             => __( 'First Name', 'cc-woo' ),
 				'desc'              => '',
-				'id'                => 'cc_woo_store_information_first_name',
+				'id'                => self::FIRST_NAME_FIELD,
 				'type'              => 'text',
 				'custom_attributes' => [
 					'required' => 'required',
@@ -201,7 +280,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			[
 				'title'             => __( 'Last Name', 'cc-woo' ),
 				'desc'              => '',
-				'id'                => 'cc_woo_store_information_last_name',
+				'id'                => self::LAST_NAME_FIELD,
 				'type'              => 'text',
 				'custom_attributes' => [
 					'required' => 'required',
@@ -209,7 +288,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Phone Number', 'cc-woo' ),
-				'id'                => 'cc_woo_store_information_phone_number',
+				'id'                => self::PHONE_NUMBER_FIELD,
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -218,7 +297,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Store Name', 'cc-woo' ),
-				'id'                => 'cc_woo_store_information_store_name',
+				'id'                => self::STORE_NAME_FIELD,
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -227,7 +306,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Currency', 'cc-woo' ),
-				'id'                => 'cc_woo_store_information_currency',
+				'id'                => self::CURRENCY_FIELD,
 				'desc'              => __( 'This field is read from your General settings.', 'cc-woo' ),
 				'type'              => 'text',
 				'custom_attributes' => [
@@ -237,7 +316,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Country Code', 'cc-woo' ),
-				'id'                => 'cc_woo_store_information_country_code',
+				'id'                => self::COUNTRY_CODE_FIELD,
 				'type'              => 'text',
 				'custom_attributes' => [
 					'size'     => 6,
@@ -246,7 +325,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'             => __( 'Contact E-mail Address', 'cc-woo' ),
-				'id'                => 'cc_woo_store_information_contact_email',
+				'id'                => self::EMAIL_FIELD,
 				'desc'              => '',
 				'type'              => 'email',
 				'custom_attributes' => [
@@ -263,7 +342,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Get the customer marketing settings.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 * @return array
 	 */
@@ -276,15 +355,17 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			],
 			[
 				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
-				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.', 'cc-woo' ),
+				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.',
+					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => 'cc_woo_customer_data_email_opt_in_default',
+				'id'    => self::CUSTOMER_OPT_IN_DEFAULT_FIELD,
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
-				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
+				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
+					'cc-woo' ),
 				'type'    => 'select',
-				'id'      => 'cc_woo_customer_data_allow_import',
+				'id'      => self::ALL_CUSTOMER_IMPORT_FIELD,
 				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'default' => 'no',
 				'options' => [
@@ -295,16 +376,17 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		];
 
 		$can_import  = false;
-		$has_consent = 'no' !== get_option( 'cc_woo_customer_data_opt_in_consent', 'no' );
+		$has_consent = 'no' !== get_option( self::CUSTOMER_OPT_IN_CONSENT_FIELD, 'no' );
 
-		if ( 'no' !== get_option( 'cc_woo_customer_data_allow_import', 'no' ) ) {
+		if ( 'no' !== get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ) ) {
 			$can_import = true;
 
 			$settings[] = [
 				'title' => __( 'User information consent', 'cc-woo' ),
-				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.', 'cc-woo' ),
+				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
+					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => 'cc_woo_customer_data_opt_in_consent',
+				'id'    => self::CUSTOMER_OPT_IN_CONSENT_FIELD,
 			];
 		}
 
@@ -327,13 +409,15 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Prevent the opt-in consent from being set if importing is not enabled.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param mixed $value The value being set for the opt-in option.
+	 *
 	 * @return string
 	 */
 	public function maybe_prevent_opt_in_consent( $value ) {
-		$allow_import = get_option( 'cc_woo_customer_data_allow_import' );
+		$allow_import = get_option( self::ALL_CUSTOMER_IMPORT_FIELD );
 
 		if ( 'no' === $allow_import ) {
 			return 'no';
@@ -345,9 +429,11 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Displays the Connect with Constant Contact button if we're good to go.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $settings The current settings array.
+	 *
 	 * @return array
 	 */
 	public function maybe_add_connect_button( $settings ) {
@@ -365,34 +451,34 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Add the Connect with Constant Contact button when displaying the form.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function add_cc_connect_button() {
-?>
-<button class="button button-primary" type="submit" name="cc_woo_action" value="connect">
-	Connect with Constant Contact
-</button>
-<?php
+		?>
+		<button class="button button-primary" type="submit" name="cc_woo_action" value="connect">
+			Connect with Constant Contact
+		</button>
+		<?php
 	}
 
 	/**
 	 * Check to see if the settings meet the requirements to connect to CC.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 * @return bool
 	 */
 	private function meets_connect_requirements() {
 		$model = new SettingsModel(
-			get_option( 'cc_woo_store_information_first_name', '' ),
-			get_option( 'cc_woo_store_information_last_name', '' ),
-			get_option( 'cc_woo_store_information_phone_number', '' ),
-			get_option( 'cc_woo_store_information_store_name', '' ),
-			get_option( 'cc_woo_store_information_currency', '' ),
-			get_option( 'cc_woo_store_information_country_code' ),
-			get_option( 'cc_woo_store_information_contact_email' ),
-			get_option( 'cc_woo_customer_data_allow_import', 'no' ),
+			get_option( self::FIRST_NAME_FIELD, '' ),
+			get_option( self::LAST_NAME_FIELD, '' ),
+			get_option( self::PHONE_NUMBER_FIELD, '' ),
+			get_option( self::STORE_NAME_FIELD, '' ),
+			get_option( self::CURRENCY_FIELD, '' ),
+			get_option( self::COUNTRY_CODE_FIELD ),
+			get_option( self::EMAIL_FIELD ),
+			get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ),
 			get_option( 'cc_woo_custom_data_opt_in_consent', 'no' )
 		);
 
@@ -404,7 +490,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Verify that all option values meet the minimum requirements.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 * @return void
 	 */
@@ -423,9 +509,11 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Validate a field's value is set, otherwise log an error.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $field The field to validate.
+	 *
 	 * @return void
 	 */
 	private function validate_value( $field ) {
@@ -438,15 +526,18 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		}
 
 		// translators: placeholder is the field's title.
-		$this->errors[ $field['id'] ] = sprintf( __( 'The "%s" field is required to connect to Constant Contact.', 'cc-woo' ), $field['title'] );
+		$this->errors[ $field['id'] ] = sprintf( __( 'The "%s" field is required to connect to Constant Contact.',
+			'cc-woo' ), $field['title'] );
 	}
 
 	/**
 	 * Sanitize the phone number to only include digits, -, and (, )
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param mixed $value The incoming phone number value.
+	 *
 	 * @return string
 	 */
 	public function sanitize_phone_number( $value ) {
@@ -456,9 +547,11 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Process errors logged for form fields.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $settings An array of settings fields.
+	 *
 	 * @return array
 	 */
 	private function process_errors( $settings ) {
@@ -487,7 +580,7 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * This is used to prevent errors from appearing before the user has submitted the form,
 	 * i.e. after a fresh installation.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function update_setup_option() {
@@ -497,9 +590,11 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	/**
 	 * Make all form elements for our settings `display:block`.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
 	 * @param array $settings Array of settings to adjust.
+	 *
 	 * @return array
 	 */
 	private function adjust_styles( $settings ) {
