@@ -44,7 +44,7 @@ final class Plugin implements Runnable, Hookable {
 	 * The plugin settings instance.
 	 *
 	 * @since 0.0.1
-	 * @var \WebDevStudios\CCForWoo\Settings\SettingsTab
+	 * @var WooTab
 	 */
 	private $settings;
 
@@ -155,7 +155,8 @@ final class Plugin implements Runnable, Hookable {
 	 * @return void
 	 */
 	public function load_custom_settings_tab() {
-		( new WooTab() )->register_hooks();
+		$this->settings = new WooTab();
+		$this->settings->register_hooks();
 	}
 
 	/**
