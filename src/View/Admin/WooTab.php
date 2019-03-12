@@ -12,16 +12,7 @@ namespace WebDevStudios\CCForWoo\View\Admin;
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
 use WebDevStudios\OopsWP\Utility\Hookable;
-
-if ( ! class_exists( 'WC_Settings_Page' ) ) {
-	$woo_settings_abstract = WP_PLUGIN_DIR . '/woocommerce/includes/admin/settings/class-wc-settings-page.php';
-
-	if ( ! file_exists( $woo_settings_abstract ) ) {
-		throw new \Exception( __( 'Woo?' ) );
-	}
-
-	require_once $woo_settings_abstract;
-}
+use WC_Settings_Page;
 
 /**
  * Class WooTab
@@ -30,7 +21,7 @@ if ( ! class_exists( 'WC_Settings_Page' ) ) {
  * @package WebDevStudios\CCForWoo\View\Admin
  * @since   2019-03-08
  */
-class WooTab extends \WC_Settings_Page implements Hookable {
+class WooTab extends WC_Settings_Page implements Hookable {
 	/**
 	 * Store owner first name field.
 	 *

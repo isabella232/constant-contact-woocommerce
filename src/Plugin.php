@@ -11,8 +11,6 @@ namespace WebDevStudios\CCForWoo;
 
 use WebDevStudios\OopsWP\Utility\Hookable;
 use WebDevStudios\OopsWP\Utility\Runnable;
-use WebDevStudios\CCForWoo\Settings\SettingsTab;
-use WebDevStudios\CCForWoo\Settings\SettingsConfig;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
 use WebDevStudios\CCForWoo\View\Admin\WooTab;
@@ -119,12 +117,6 @@ final class Plugin implements Runnable, Hookable {
 	 */
 	public function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
-		$this->settings    = new SettingsTab(
-			new SettingsConfig(
-				'constant_contact_woo_settings',
-				$plugin_file // @TODO This needs to be the page of the Woo tab.
-			)
-		);
 	}
 
 	/**
@@ -154,8 +146,16 @@ final class Plugin implements Runnable, Hookable {
 		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
-		add_action( 'plugins_loaded', [ new WooTab(), 'register_hooks' ] );
-		add_action( 'admin_init', [ $this->settings, 'register_hooks' ] );
+		add_action( 'woocommerce_get_settings_pages', [ $this, 'load_custom_settings_tab' ] );
+	}
+
+	/**
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-12
+	 * @return void
+	 */
+	public function load_custom_settings_tab() {
+		( new WooTab() )->register_hooks();
 	}
 
 	/**
