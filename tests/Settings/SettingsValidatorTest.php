@@ -8,6 +8,7 @@ use WebDevStudios\CCForWoo\Settings\SettingsValidator;
 /**
  * Class SettingsValidatorTest
  *
+ * @group SettingsValidator
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package ConstantContact\WooCommerce\Test\Settings
  * @since   2019-03-07
@@ -208,6 +209,69 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function settings_are_valid_if_phone_number_has_no_hyphens() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'5555555555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertTrue( $validator->is_valid() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function settings_are_valid_if_phone_number_begins_with_country_code() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'+15555555555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertTrue( $validator->is_valid() );
+	}
+
+	/**
+	 * @test
+	 */
+	public function settings_are_invalid_if_phone_number_contains_nonnumeric_characters() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'555-55-ILANA',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
 			true,
 			true
 		);
