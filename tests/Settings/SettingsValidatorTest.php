@@ -280,4 +280,25 @@ class SettingsValidatorTest extends TestCase {
 
 		$this->assertFalse( $validator->is_valid() );
 	}
+
+	/**
+	 * @test
+	 */
+	public function settings_are_invalid_if_email_is_missing_at_sign() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'555-555-5555',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilanadealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
 }
