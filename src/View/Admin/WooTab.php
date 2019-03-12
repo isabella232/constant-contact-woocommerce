@@ -392,8 +392,8 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 			get_option( 'cc_woo_store_information_currency', '' ),
 			get_option( 'cc_woo_store_information_country_code' ),
 			get_option( 'cc_woo_store_information_contact_email' ),
-			true,
-			true
+			get_option( 'cc_woo_customer_data_allow_import', 'no' ),
+			get_option( 'cc_woo_custom_data_opt_in_consent', 'no' )
 		);
 
 		$validator = new SettingsValidator( $model );
