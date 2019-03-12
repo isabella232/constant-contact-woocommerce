@@ -100,7 +100,7 @@ class SettingsValidator implements Validatable {
 	 * @return bool
 	 */
 	private function has_valid_email() {
-		return null !== filter_var( $this->settings->get_email_address(), FILTER_VALIDATE_EMAIL );
+		return ! empty( filter_var( $this->settings->get_email_address(), FILTER_VALIDATE_EMAIL ) );
 	}
 
 	/**
