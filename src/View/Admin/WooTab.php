@@ -9,6 +9,8 @@
 
 namespace WebDevStudios\CCForWoo\View\Admin;
 
+use WebDevStudios\CCForWoo\Settings\SettingsModel;
+use WebDevStudios\CCForWoo\Settings\SettingsValidator;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 if ( ! class_exists( 'WC_Settings_Page' ) ) {
@@ -382,100 +384,21 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function meets_connect_requirements() {
-		if ( ! $this->validate_name() ) {
-			return false;
-		}
+		$model = new SettingsModel(
+			get_option( 'cc_woo_store_information_first_name', '' ),
+			get_option( 'cc_woo_store_information_last_name', '' ),
+			get_option( 'cc_woo_store_information_phone_number', '' ),
+			get_option( 'cc_woo_store_information_store_name', '' ),
+			get_option( 'cc_woo_store_information_currency', '' ),
+			get_option( 'cc_woo_store_information_country_code' ),
+			get_option( 'cc_woo_store_information_contact_email' ),
+			true,
+			true
+		);
 
-		if ( ! $this->validate_phone() ) {
-			return false;
-		}
+		$validator = new SettingsValidator( $model );
 
-		if ( ! $this->validate_store_name() ) {
-			return false;
-		}
-
-		if ( ! $this->validate_email() ) {
-			return false;
-		}
-
-		if ( ! $this->validate_country_code() ) {
-			return false;
-		}
-
-		return true;
-	}
-
-	/**
-	 * Verify that the name is valid.
-	 *
-	 * @since 2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	private function validate_name() {
-		$first_name = get_option( 'cc_woo_store_information_first_name', '' );
-		$last_name  = get_option( 'cc_woo_store_information_last_name', '' );
-
-		return ! empty( trim( $first_name ) ) && ! empty( trim( $last_name ) );
-	}
-
-	/**
-	 * Verify that the store name is valid.
-	 *
-	 * @since 2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	private function validate_store_name() {
-		return ! empty( trim( get_option( 'cc_woo_store_information_store_name', '' ) ) );
-	}
-
-	/**
-	 * Verify that the email address is valid.
-	 *
-	 * @since 2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	private function validate_email() {
-		$email = get_option( 'cc_woo_store_information_contact_email', '' );
-		$email = filter_var( $email, FILTER_VALIDATE_EMAIL );
-
-		return null !== $email;
-	}
-
-	/**
-	 * Verify that the phone number is valid.
-	 *
-	 * @since 2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	public function validate_phone() {
-		$value = preg_match( '/^\(?\d{3}\)?\-?\d{3}\-?\d{4}$/', get_option( 'cc_woo_store_information_phone_number' ), $matches );
-
-		if ( ! empty( $matches[0] ) ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Sanitize the phone number to only include digits, -, and (, )
-	 *
-	 * @since 2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @param mixed $value The incoming phone number value.
-	 * @return string
-	 */
-	public function sanitize_phone_number( $value ) {
-		if ( ! is_scalar( $value ) ) {
-			return '';
-		}
-
-		$phone = preg_replace( '/[^\d-()]+/', '', $value );
-		return $phone;
+		return $validator->is_valid();
 	}
 
 	/**
@@ -516,6 +439,18 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 
 		// translators: placeholder is the field's title.
 		$this->errors[ $field['id'] ] = sprintf( __( 'The "%s" field is required to connect to Constant Contact.', 'cc-woo' ), $field['title'] );
+	}
+
+	/**
+	 * Sanitize the phone number to only include digits, -, and (, )
+	 *
+	 * @since 2019-03-08
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @param mixed $value The incoming phone number value.
+	 * @return string
+	 */
+	public function sanitize_phone_number( $value ) {
+		return is_scalar( $value ) ? preg_replace( '/[^\d-()]+/', '', $value ) : '';
 	}
 
 	/**
@@ -581,16 +516,5 @@ class WooTab extends \WC_Settings_Page implements Hookable {
 		}
 
 		return $settings;
-	}
-
-	/**
-	 * Validates the Country Code field.
-	 *
-	 * @since 2019-03-11
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	private function validate_country_code() {
-		return ! empty( get_option( 'cc_woo_store_information_country_code', '' ) );
 	}
 }
