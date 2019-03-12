@@ -9,9 +9,13 @@
 
 namespace WebDevStudios\CCForWoo;
 
+use WebDevStudios\OopsWP\Utility\Hookable;
+use WebDevStudios\OopsWP\Utility\Runnable;
 use WebDevStudios\CCForWoo\Settings\SettingsTab;
 use WebDevStudios\CCForWoo\Settings\SettingsConfig;
-use WebDevStudios\OopsWP\Utility\Runnable;
+use WebDevStudios\CCForWoo\View\Admin\Notice;
+use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
+use WebDevStudios\CCForWoo\View\Admin\WooTab;
 use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
@@ -19,7 +23,7 @@ use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
  *
  * @since 0.0.1
  */
-final class Plugin implements Runnable {
+final class Plugin implements Runnable, Hookable {
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
 	/**
@@ -63,15 +67,15 @@ final class Plugin implements Runnable {
 
 		deactivate_plugins( $this->plugin_file );
 
-		new \WebDevStudios\CCForWoo\View\Admin\Notice(
-			new \WebDevStudios\CCForWoo\View\Admin\NoticeMessage(
+		new Notice(
+			new NoticeMessage(
 				$reason,
 				'error',
 				true
 			)
 		);
 
-		\WebDevStudios\CCForWoo\View\Admin\Notice::set_notices();
+		Notice::set_notices();
 	}
 
 	/**
@@ -135,7 +139,23 @@ final class Plugin implements Runnable {
 		}
 
 		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
-		$this->settings->register_hooks();
+		$this->register_hooks();
+	}
+
+	/**
+	 * Register the plugin's hooks with WordPress.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-12
+	 * @return void
+	 */
+	public function register_hooks() {
+		// Setup the plugin instance.
+		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
+
+		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
+		add_action( 'plugins_loaded', [ new WooTab(), 'register_hooks' ] );
+		add_action( 'admin_init', [ $this->settings, 'register_hooks' ] );
 	}
 
 	/**

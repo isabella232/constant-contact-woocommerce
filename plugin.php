@@ -21,37 +21,16 @@
 // Autoload things.
 $autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
 
-if ( ! file_exists( $autoloader ) ) {
+// @TODO We'll probably want to ship the autoloader and dependencies with the plugin and not require folks to have to run Composer.
+if ( ! is_readable( $autoloader ) ) {
 	// translators: placeholder is the current directory.
 	throw new \Exception( sprintf( __( 'Please run `composer install` in the plugin folder "%s" and try activating this plugin again.', 'cc-woo' ), dirname( __FILE__ ) ) );
 }
 
 require_once $autoloader;
 
-use WebDevStudios\CCForWoo\Plugin;
-use WebDevStudios\CCForWoo\View\Admin\Notice;
-
-/**
- * Get an instance of the plugin class.
- *
- * @since 0.0.1
- * @var \WebDevStudios\CCForWoo\Plugin
- */
-$plugin = new Plugin( __FILE__ );
+$plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__ );
 $plugin->run();
-
-add_action( 'plugins_loaded', [ new \WebDevStudios\CCForWoo\View\Admin\WooTab(), 'register_hooks' ] );
-
-// Setup the plugin instance.
-add_action( 'plugins_loaded', [ $plugin, 'maybe_deactivate' ] );
-register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 // Hook things!
 # \WebDevStudios\CCForWoo\Views\Admin\WooSettingsTab::hooks();
-
-/** Instantiate settings.
- *
- * @since 0.0.1
- * @type \WebDevStudios\CCForWoo\Settings\SettingsTab
- */
-add_action( 'admin_init', [ $settings, 'register_hooks' ] );
