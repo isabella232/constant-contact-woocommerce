@@ -9,11 +9,10 @@
 
 namespace WebDevStudios\CCForWoo;
 
-use WebDevStudios\OopsWP\Utility\Hookable;
-use WebDevStudios\OopsWP\Utility\Runnable;
+use WebDevStudios\CCForWoo\View\ViewRegistrar;
+use WebDevStudios\OopsWP\Structure\ServiceRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
-use WebDevStudios\CCForWoo\View\Admin\WooTab;
 use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
@@ -21,7 +20,7 @@ use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
  *
  * @since 0.0.1
  */
-final class Plugin implements Runnable, Hookable {
+final class Plugin extends ServiceRegistrar {
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
 	/**
@@ -41,12 +40,12 @@ final class Plugin implements Runnable, Hookable {
 	private $plugin_file;
 
 	/**
-	 * The plugin settings instance.
-	 *
-	 * @since 0.0.1
-	 * @var WooTab
+	 * @var array
+	 * @since 2019-03-13
 	 */
-	private $settings;
+	protected $services = [
+		ViewRegistrar::class,
+	];
 
 	/**
 	 * Deactivate this plugin.
@@ -131,7 +130,7 @@ final class Plugin implements Runnable, Hookable {
 		}
 
 		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
-		$this->register_hooks();
+		parent::run();
 	}
 
 	/**
@@ -146,17 +145,6 @@ final class Plugin implements Runnable, Hookable {
 		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
 
 		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
-		add_action( 'woocommerce_get_settings_pages', [ $this, 'load_custom_settings_tab' ] );
-	}
-
-	/**
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-12
-	 * @return void
-	 */
-	public function load_custom_settings_tab() {
-		$this->settings = new WooTab();
-		$this->settings->register_hooks();
 	}
 
 	/**
