@@ -10,7 +10,7 @@
 namespace WebDevStudios\CCForWoo\View;
 
 use WebDevStudios\CCForWoo\View\Admin\WooTab;
-use WebDevStudios\CCForWoo\View\Checkout\BillingFieldsFilter;
+use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
@@ -34,7 +34,7 @@ class ViewRegistrar extends Service {
 	 * @since 2019-03-13
 	 */
 	protected $forms = [
-		BillingFieldsFilter::class,
+		NewsletterPreferenceCheckbox::class,
 	];
 
 
