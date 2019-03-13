@@ -29,13 +29,13 @@ class ViewRegistrar extends Service {
 		WooTab::class,
 	];
 
-	// /**
-	//  * @var array
-	//  * @since 2019-03-13
-	//  */
-	// protected $forms = [
-	// 	BillingFieldsFilter::class,
-	// ];
+	/**
+	 * @var array
+	 * @since 2019-03-13
+	 */
+	protected $forms = [
+		BillingFieldsFilter::class,
+	];
 
 
 	/**
@@ -45,7 +45,7 @@ class ViewRegistrar extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_get_settings_pages', [ $this, 'register_settings' ] );
-		// add_action( 'init', [ $this, 'register_forms' ] );
+		add_action( 'init', [ $this, 'register_forms' ] );
 	}
 
 	/**
