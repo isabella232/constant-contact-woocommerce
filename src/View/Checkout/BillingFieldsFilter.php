@@ -11,6 +11,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Checkout;
 
+use WebDevStudios\CCForWoo\View\Admin\WooTab;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 /**
@@ -27,41 +28,43 @@ class BillingFieldsFilter implements Hookable {
 	 * @since 2019-03-13
 	 */
 	public function register_hooks() {
-		add_filter( 'woocommerce_billing_fields', [ $this, 'add_newsletter_checkbox' ] );
+		add_action( 'woocommerce_after_checkout_billing_form', [ $this, 'add_newsletter_checkbox' ] );
 	}
 
 	/**
 	 * Add the newsletter checkbox to the set of fields in the billing form.
 	 *
-	 * @param array $fields Array of form fields from WooCommerce.
-	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-13
-	 * @return array
 	 */
-	public function add_newsletter_checkbox( array $fields ) {
-		return array_merge( $fields, $this->get_newsletter_checkbox_field( $fields ) );
+	public function add_newsletter_checkbox() {
+		woocommerce_form_field( 'customer_newsletter_opt_in', [
+			'type'  => 'checkbox',
+			'class' => [ 'input-checkbox' ],
+			'label' => __( 'I agree to receive marketing e-mails', 'cc-woo' ),
+		], $this->get_default_checkbox_state() );
 	}
 
 	/**
-	 * Get the newsletter checkbox field registration values.
-	 *
-	 * @param array $fields WooCommerce billing form fields.
+	 * Get the default state of the newsletter opt-in checkbox.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-13
-	 * @return array
+	 * @return bool
 	 */
-	private function get_newsletter_checkbox_field( array $fields ) {
-		// We want this checkbox displayed right after the billing email.
-		$priority = $fields['billing_email']['priority'] ?? 110;
+	private function get_default_checkbox_state() : bool {
+		$store_default = ( 'yes' === get_option( 'cc_woo_customer_data_email_opt_in_default' ) );
 
-		return [
-			'newsletter_opt_in' => [
-				'label'        => __( 'I agree to receive marketing e-mails', 'cc-woo' ),
-				'priority'     => $priority + 1,
-				'type'         => 'checkbox',
-			],
-		];
+		if ( ! is_user_logged_in() ) {
+			return $store_default;
+		}
+
+		$user_preference = get_user_meta( get_current_user_id(), 'cc_woo_newsletter_opted_in' );
+
+		if ( $user_preference ) {
+			return 'yes' === $user_preference;
+		}
+
+		return $store_default;
 	}
 }
