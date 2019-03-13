@@ -53,18 +53,30 @@ class BillingFieldsFilter implements Hookable {
 	 * @return bool
 	 */
 	private function get_default_checkbox_state() : bool {
-		$store_default = ( 'yes' === get_option( 'cc_woo_customer_data_email_opt_in_default' ) );
+		return is_user_logged_in() ? $this->get_user_default_checkbox_setting() : $this->get_store_default_checkbox_setting();
+	}
 
-		if ( ! is_user_logged_in() ) {
-			return $store_default;
-		}
+	/**
+	 * Get the default checkbox state from a user's preferences.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-13
+	 * @return bool
+	 */
+	private function get_user_default_checkbox_setting() : bool {
+		$user_preference = get_user_meta( get_current_user_id(), 'cc_woo_customer_agrees_to_marketing', true );
 
-		$user_preference = get_user_meta( get_current_user_id(), 'cc_woo_newsletter_opted_in' );
+		return ! empty( $user_preference ) ? 'yes' === $user_preference : $this->get_store_default_checkbox_setting();
+	}
 
-		if ( $user_preference ) {
-			return 'yes' === $user_preference;
-		}
-
-		return $store_default;
+	/**
+	 * Get the store's default checkbox state.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-13
+	 * @return bool
+	 */
+	private function get_store_default_checkbox_setting() : bool {
+		return 'yes' === get_option( 'cc_woo_customer_data_email_opt_in_default' );
 	}
 }
