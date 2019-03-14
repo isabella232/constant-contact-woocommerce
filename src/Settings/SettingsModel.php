@@ -106,15 +106,15 @@ class SettingsModel {
 	 * @since  2019-03-07
 	 */
 	public function __construct(
-		$first_name,
-		$last_name,
-		$phone_number,
-		$store_name,
-		$currency,
-		$country_code,
-		$email_address,
-		$import_historical_data = 'no',
-		$permission_confirmed = 'no'
+		string $first_name,
+		string $last_name,
+		string $phone_number,
+		string $store_name,
+		string $currency,
+		string $country_code,
+		string $email_address,
+		string $import_historical_data = 'no',
+		string $permission_confirmed = 'no'
 	) {
 		$this->first_name             = $first_name;
 		$this->last_name              = $last_name;
