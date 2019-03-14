@@ -242,7 +242,7 @@ class SettingsValidatorTest extends TestCase {
 	/**
 	 * @test
 	 */
-	public function settings_are_invalid_if_phone_number_contains_nonnumeric_characters() {
+	public function settings_are_valid_if_phone_number_contains_nonnumeric_characters() {
 		$settings = new SettingsModel(
 			'Ilana',
 			'Glazer',
@@ -256,8 +256,7 @@ class SettingsValidatorTest extends TestCase {
 		);
 
 		$validator = new SettingsValidator( $settings );
-
-		$this->assertFalse( $validator->is_valid() );
+		$this->assertTrue( $validator->is_valid() );
 	}
 
 	/**
