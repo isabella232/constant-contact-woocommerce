@@ -99,8 +99,8 @@ class SettingsModel {
 	 * @param string $currency               Currency of the store.
 	 * @param string $country_code           Country code of the store.
 	 * @param string $email_address          Store admin's e-mail address.
-	 * @param bool   $import_historical_data Store admin opts in to import historical data.
-	 * @param bool   $permission_confirmed   Store admin confirms their permission to e-mail customers.
+	 * @param string $import_historical_data Store admin opts in to import historical data.
+	 * @param string $permission_confirmed   Store admin confirms their permission to e-mail customers.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
@@ -113,8 +113,8 @@ class SettingsModel {
 		$currency,
 		$country_code,
 		$email_address,
-		$import_historical_data = false,
-		$permission_confirmed = false
+		$import_historical_data = 'no',
+		$permission_confirmed = 'no'
 	) {
 		$this->first_name             = $first_name;
 		$this->last_name              = $last_name;
@@ -212,7 +212,7 @@ class SettingsModel {
 	 * @return bool
 	 */
 	public function get_import_historical_data() : bool {
-		return $this->import_historical_data;
+		return 'yes' === $this->import_historical_data;
 	}
 
 	/**
@@ -223,6 +223,6 @@ class SettingsModel {
 	 * @return bool
 	 */
 	public function get_permission_confirmed() : bool {
-		return $this->permission_confirmed;
+		return 'yes' === $this->permission_confirmed;
 	}
 }
