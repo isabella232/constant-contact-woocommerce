@@ -370,7 +370,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 		];
 
-		if ( 'yes' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD ) ) {
+		if ( $this->store_owner_confirmed_customer_consent_to_market() ) {
 			$settings[] = [
 				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
@@ -384,6 +384,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		];
 
 		return $settings;
+	}
+
+	/**
+	 * Check whether a store owner has confirmed they have customer consent to market to them.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-14
+	 * @return bool
+	 */
+	private function store_owner_confirmed_customer_consent_to_market() {
+		return 'yes' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
 	}
 
 	/**
