@@ -137,8 +137,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
-		add_filter( 'woocommerce_admin_settings_sanitize_option_cc_woo_store_information_phone_number',
-			[ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connect_button' ] );
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 
@@ -519,20 +517,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		// translators: placeholder is the field's title.
 		$this->errors[ $field['id'] ] = sprintf( __( 'The "%s" field is required to connect to Constant Contact.',
 			'cc-woo' ), $field['title'] );
-	}
-
-	/**
-	 * Sanitize the phone number to only include digits, -, and (, )
-	 *
-	 * @since  2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 *
-	 * @param mixed $value The incoming phone number value.
-	 *
-	 * @return string
-	 */
-	public function sanitize_phone_number( $value ) {
-		return is_scalar( $value ) ? preg_replace( '/[^\d-()]+/', '', $value ) : '';
 	}
 
 	/**

@@ -111,9 +111,7 @@ class SettingsValidator implements Validatable {
 	 * @return bool
 	 */
 	private function has_valid_phone() {
-		$value = preg_match( '/^\(?\d{3}\)?\-?\d{3}\-?\d{4}$/', $this->settings->get_phone_number(), $matches );
-
-		return ! empty( $matches[0] );
+		return ! empty( filter_var( $this->settings->get_phone_number(), FILTER_SANITIZE_STRING ) );
 	}
 
 	/**
