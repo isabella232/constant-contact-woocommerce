@@ -153,6 +153,52 @@ class SettingsValidatorTest extends TestCase {
 	}
 
 	/**
+	 * Phone number is a required field.
+	 *
+	 * @test
+	 */
+	public function settings_are_valid_if_phone_number_starts_with_plus() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'+15553331234',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertTrue( $validator->is_valid() );
+	}
+
+	/**
+	 * Phone number is a required field.
+	 *
+	 * @test
+	 */
+	public function settings_are_invalid_if_phone_number_has_plus_after_first_character() {
+		$settings = new SettingsModel(
+			'Ilana',
+			'Glazer',
+			'1555+3331234',
+			'Deals! Deals! Deals!',
+			'$',
+			'us',
+			'ilana@dealsdealsdeals.com',
+			true,
+			true
+		);
+
+		$validator = new SettingsValidator( $settings );
+
+		$this->assertFalse( $validator->is_valid() );
+	}
+
+	/**
 	 * Company name is a required field.
 	 *
 	 * @test
@@ -242,7 +288,7 @@ class SettingsValidatorTest extends TestCase {
 	/**
 	 * @test
 	 */
-	public function settings_are_valid_if_phone_number_contains_nonnumeric_characters() {
+	public function settings_are_invalid_if_phone_number_contains_nonnumeric_characters() {
 		$settings = new SettingsModel(
 			'Ilana',
 			'Glazer',
@@ -256,7 +302,8 @@ class SettingsValidatorTest extends TestCase {
 		);
 
 		$validator = new SettingsValidator( $settings );
-		$this->assertTrue( $validator->is_valid() );
+
+		$this->assertFalse( $validator->is_valid() );
 	}
 
 	/**
