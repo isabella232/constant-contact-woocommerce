@@ -83,14 +83,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @since 2019-03-12
 	 */
-	const ALL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
+	const ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
 
 	/**
 	 * Store has user consent field.
 	 *
 	 * @since 2019-03-12
 	 */
-	const CUSTOMER_OPT_IN_CONSENT_FIELD = 'cc_woo_customer_data_opt_in_consent';
+	const STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD = 'cc_woo_customer_data_opt_in_consent';
 
 	/**
 	 * Settings section ID.
@@ -349,11 +349,18 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'type'  => 'title',
 			],
 			[
+				'title' => __( 'User information consent', 'cc-woo' ),
+				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
+					'cc-woo' ),
+				'type'  => 'checkbox',
+				'id'    => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+			],
+			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
 				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
 					'cc-woo' ),
 				'type'    => 'select',
-				'id'      => self::ALL_CUSTOMER_IMPORT_FIELD,
+				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
 				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'default' => 'no',
 				'options' => [
@@ -363,22 +370,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 		];
 
-		$can_import  = false;
-		$has_consent = 'no' !== get_option( self::CUSTOMER_OPT_IN_CONSENT_FIELD, 'no' );
-
-		if ( 'no' !== get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ) ) {
-			$can_import = true;
-
-			$settings[] = [
-				'title' => __( 'User information consent', 'cc-woo' ),
-				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
-					'cc-woo' ),
-				'type'  => 'checkbox',
-				'id'    => self::CUSTOMER_OPT_IN_CONSENT_FIELD,
-			];
-		}
-
-		if ( $can_import && $has_consent ) {
+		if ( 'yes' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD ) ) {
 			$settings[] = [
 				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
@@ -405,7 +397,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function maybe_prevent_opt_in_consent( $value ) {
-		$allow_import = get_option( self::ALL_CUSTOMER_IMPORT_FIELD );
+		$allow_import = get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD );
 
 		if ( 'no' === $allow_import ) {
 			return 'no';
@@ -466,7 +458,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
-			get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ),
+			get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, 'no' ),
 			get_option( 'cc_woo_custom_data_opt_in_consent', 'no' )
 		);
 
