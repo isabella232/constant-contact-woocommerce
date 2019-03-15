@@ -296,6 +296,15 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
+				'title'             => __( 'Contact E-mail Address', 'cc-woo' ),
+				'id'                => self::EMAIL_FIELD,
+				'desc'              => '',
+				'type'              => 'email',
+				'custom_attributes' => [
+					'required' => 'required',
+				],
+			],
+			[
 				'title'             => __( 'Currency', 'cc-woo' ),
 				'id'                => self::CURRENCY_FIELD,
 				'desc'              => __( 'This field is read from your General settings.', 'cc-woo' ),
