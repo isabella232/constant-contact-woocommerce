@@ -149,6 +149,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_action( 'woocommerce_admin_field_cc_connect_button', [ $this, 'add_cc_connect_button' ] );
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
+		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
 		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent',
 			[ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
@@ -603,5 +604,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Get the Country code from the WooCommerce settings.
+	 *
+	 * @since 2019-03-15
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return string
+	 */
+	public function get_woo_country() : string {
+		return wc_get_base_location()['country'] ?? '';
 	}
 }
