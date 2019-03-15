@@ -148,8 +148,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'update_setup_option' ] );
 		add_action( 'woocommerce_admin_field_cc_connect_button', [ $this, 'add_cc_connect_button' ] );
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
-
-		add_filter( 'pre_option_cc_woo_store_information_currency', 'get_woocommerce_currency' );
+		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent',
 			[ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
