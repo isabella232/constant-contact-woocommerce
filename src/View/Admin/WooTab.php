@@ -83,14 +83,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @since 2019-03-12
 	 */
-	const ALL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
+	const ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
 
 	/**
 	 * Store has user consent field.
 	 *
 	 * @since 2019-03-12
 	 */
-	const CUSTOMER_OPT_IN_CONSENT_FIELD = 'cc_woo_customer_data_opt_in_consent';
+	const STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD = 'cc_woo_customer_data_opt_in_consent';
 
 	/**
 	 * Settings section ID.
@@ -324,6 +324,12 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
+				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
+				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.', 'cc-woo' ),
+				'type'  => 'checkbox',
+				'id'    => self::CUSTOMER_OPT_IN_DEFAULT_FIELD,
+			],
+			[
 				'type' => 'sectionend',
 				'id'   => 'cc_woo_store_information_settings',
 			],
@@ -345,18 +351,18 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'type'  => 'title',
 			],
 			[
-				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
-				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.',
+				'title' => __( 'User information consent', 'cc-woo' ),
+				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
 					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => self::CUSTOMER_OPT_IN_DEFAULT_FIELD,
+				'id'    => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
 				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
 					'cc-woo' ),
 				'type'    => 'select',
-				'id'      => self::ALL_CUSTOMER_IMPORT_FIELD,
+				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
 				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'default' => 'no',
 				'options' => [
@@ -366,22 +372,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 		];
 
-		$can_import  = false;
-		$has_consent = 'no' !== get_option( self::CUSTOMER_OPT_IN_CONSENT_FIELD, 'no' );
-
-		if ( 'no' !== get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ) ) {
-			$can_import = true;
-
-			$settings[] = [
-				'title' => __( 'User information consent', 'cc-woo' ),
-				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
-					'cc-woo' ),
-				'type'  => 'checkbox',
-				'id'    => self::CUSTOMER_OPT_IN_CONSENT_FIELD,
-			];
-		}
-
-		if ( $can_import && $has_consent ) {
+		if ( $this->store_owner_confirmed_customer_consent_to_market() ) {
 			$settings[] = [
 				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
@@ -398,6 +389,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	}
 
 	/**
+	 * Check whether a store owner has confirmed they have customer consent to market to them.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-14
+	 * @return bool
+	 */
+	private function store_owner_confirmed_customer_consent_to_market() {
+		return 'yes' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
+	}
+
+	/**
 	 * Prevent the opt-in consent from being set if importing is not enabled.
 	 *
 	 * @since  2019-03-08
@@ -408,7 +410,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function maybe_prevent_opt_in_consent( $value ) {
-		$allow_import = get_option( self::ALL_CUSTOMER_IMPORT_FIELD );
+		$allow_import = get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD );
 
 		if ( 'no' === $allow_import ) {
 			return 'no';
@@ -469,8 +471,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
-			get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ),
-			get_option( 'cc_woo_custom_data_opt_in_consent', 'no' )
+			get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, 'no' ),
+			get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, 'no' )
 		);
 
 		$validator = new SettingsValidator( $model );
