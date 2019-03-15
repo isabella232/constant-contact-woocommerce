@@ -166,8 +166,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
