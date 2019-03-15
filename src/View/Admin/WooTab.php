@@ -252,6 +252,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_store_information_settings() {
+		$readonly_from_general_settings = __( 'This field is read from your General settings.', 'cc-woo' );
+
 		return [
 			[
 				'title' => __( 'Store Information', 'cc-woo' ),
@@ -307,7 +309,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			[
 				'title'             => __( 'Currency', 'cc-woo' ),
 				'id'                => self::CURRENCY_FIELD,
-				'desc'              => __( 'This field is read from your General settings.', 'cc-woo' ),
+				'desc'              => $readonly_from_general_settings,
 				'type'              => 'text',
 				'custom_attributes' => [
 					'readonly' => 'readonly',
@@ -317,19 +319,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			[
 				'title'             => __( 'Country Code', 'cc-woo' ),
 				'id'                => self::COUNTRY_CODE_FIELD,
+				'desc'              => $readonly_from_general_settings,
 				'type'              => 'text',
 				'custom_attributes' => [
-					'size'     => 6,
-					'required' => 'required',
-				],
-			],
-			[
-				'title'             => __( 'Contact E-mail Address', 'cc-woo' ),
-				'id'                => self::EMAIL_FIELD,
-				'desc'              => '',
-				'type'              => 'email',
-				'custom_attributes' => [
-					'required' => 'required',
+					'readonly' => 'readonly',
+					'size'     => 4,
 				],
 			],
 			[
