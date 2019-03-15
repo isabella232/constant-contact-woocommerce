@@ -137,7 +137,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
-		add_filter( 'woocommerce_admin_settings_sanitize_option_cc_woo_store_information_phone_number',
+		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD,
 			[ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connect_button' ] );
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
@@ -150,7 +150,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
-		add_filter( 'pre_update_option_cc_woo_customer_data_opt_in_consent',
+		add_filter( 'pre_update_option_' . self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
 			[ $this, 'maybe_prevent_opt_in_consent' ] );
 	}
 
