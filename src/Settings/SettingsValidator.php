@@ -117,8 +117,9 @@ class SettingsValidator implements Validatable {
 			$phone_number = substr( $phone_number, 1 );
 		}
 
-		preg_match( '/^[\d-()]/', $phone_number, $matches );
-		preg_match( '/[^\d-()]/', $phone_number, $invalid_matches );
+		preg_match( '/^[\d\-()]/', $phone_number, $matches );
+		preg_match( '/[^\d\-()]/', $phone_number, $invalid_matches );
+
 		return ! empty( $matches[0] ) && empty( $invalid_matches );
 	}
 
