@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74bec67c299fd878b9eda18c499abd33",
+    "content-hash": "e278c06974627708afae505c25da2818",
     "packages": [
         {
             "name": "composer/installers",
@@ -166,17 +166,99 @@
     ],
     "packages-dev": [
         {
+            "name": "10up/wp_mock",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/10up/wp_mock.git",
+                "reference": "5807261f0d8b89160118e2a1ca6ae134746570ea"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/10up/wp_mock/zipball/5807261f0d8b89160118e2a1ca6ae134746570ea",
+                "reference": "5807261f0d8b89160118e2a1ca6ae134746570ea",
+                "shasum": ""
+            },
+            "require": {
+                "antecedent/patchwork": "^2.1",
+                "mockery/mockery": "^1.0",
+                "php": ">=7.1",
+                "phpunit/phpunit": ">=7.0"
+            },
+            "require-dev": {
+                "behat/behat": "^3.0",
+                "php-coveralls/php-coveralls": "^2.1",
+                "sebastian/comparator": ">=1.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WP_Mock\\": "./php/WP_Mock"
+                },
+                "classmap": [
+                    "php/WP_Mock.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "A mocking library to take the pain out of unit testing for WordPress",
+            "time": "2019-02-26T20:54:47+00:00"
+        },
+        {
+            "name": "antecedent/patchwork",
+            "version": "2.1.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/antecedent/patchwork.git",
+                "reference": "3bb81ace3914c220aa273d1c0603d5e1b454c0d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/antecedent/patchwork/zipball/3bb81ace3914c220aa273d1c0603d5e1b454c0d7",
+                "reference": "3bb81ace3914c220aa273d1c0603d5e1b454c0d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ignas Rudaitis",
+                    "email": "ignas.rudaitis@gmail.com"
+                }
+            ],
+            "description": "Method redefinition (monkey-patching) functionality for PHP.",
+            "homepage": "http://patchwork2.org/",
+            "keywords": [
+                "aop",
+                "aspect",
+                "interception",
+                "monkeypatching",
+                "redefinition",
+                "runkit",
+                "testing"
+            ],
+            "time": "2018-02-19T18:52:50+00:00"
+        },
+        {
             "name": "doctrine/instantiator",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "16ca33ecc67a625de250f476531dfe5de4c32ff2"
+                "reference": "2145e8cd1f6f6a7cef8d4f8c8c4b4e08529e8a8d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/16ca33ecc67a625de250f476531dfe5de4c32ff2",
-                "reference": "16ca33ecc67a625de250f476531dfe5de4c32ff2",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/2145e8cd1f6f6a7cef8d4f8c8c4b4e08529e8a8d",
+                "reference": "2145e8cd1f6f6a7cef8d4f8c8c4b4e08529e8a8d",
                 "shasum": ""
             },
             "require": {
@@ -187,7 +269,8 @@
                 "ext-pdo": "*",
                 "ext-phar": "*",
                 "phpbench/phpbench": "^0.13",
-                "phpstan/phpstan-shim": "^0.9.2",
+                "phpstan/phpstan-phpunit": "^0.11",
+                "phpstan/phpstan-shim": "^0.11",
                 "phpunit/phpunit": "^7.0"
             },
             "type": "library",
@@ -218,7 +301,120 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2019-02-20T06:21:04+00:00"
+            "time": "2019-03-12T22:46:11+00:00"
+        },
+        {
+            "name": "hamcrest/hamcrest-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hamcrest/hamcrest-php.git",
+                "reference": "a8c1c7b982c989ad16c8f17f1834fa5df744b689"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hamcrest/hamcrest-php/zipball/a8c1c7b982c989ad16c8f17f1834fa5df744b689",
+                "reference": "a8c1c7b982c989ad16c8f17f1834fa5df744b689",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3|^7.0"
+            },
+            "replace": {
+                "cordoval/hamcrest-php": "*",
+                "davedevelopment/hamcrest-php": "*",
+                "kodova/hamcrest-php": "*"
+            },
+            "require-dev": {
+                "phpunit/php-file-iterator": "^1.4",
+                "phpunit/phpunit": ">=4.8.35 <5|>=5.4.3 <6",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "hamcrest"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "This is the PHP port of Hamcrest Matchers",
+            "keywords": [
+                "test"
+            ],
+            "time": "2018-11-01T08:19:18+00:00"
+        },
+        {
+            "name": "mockery/mockery",
+            "version": "1.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mockery/mockery.git",
+                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mockery/mockery/zipball/0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
+                "reference": "0eb0b48c3f07b3b89f5169ce005b7d05b18cf1d2",
+                "shasum": ""
+            },
+            "require": {
+                "hamcrest/hamcrest-php": "~2.0",
+                "lib-pcre": ">=7.0",
+                "php": ">=5.6.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~5.7.10|~6.5|~7.0|~8.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Mockery": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Pádraic Brady",
+                    "email": "padraic.brady@gmail.com",
+                    "homepage": "http://blog.astrumfutura.com"
+                },
+                {
+                    "name": "Dave Marshall",
+                    "email": "dave.marshall@atstsolutions.co.uk",
+                    "homepage": "http://davedevelopment.co.uk"
+                }
+            ],
+            "description": "Mockery is a simple yet flexible PHP mock object framework",
+            "homepage": "https://github.com/mockery/mockery",
+            "keywords": [
+                "BDD",
+                "TDD",
+                "library",
+                "mock",
+                "mock objects",
+                "mockery",
+                "stub",
+                "test",
+                "test double",
+                "testing"
+            ],
+            "time": "2019-02-13T09:37:52+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -266,7 +462,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2018-06-11 23:09:50"
+            "time": "2018-06-11T23:09:50+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -321,7 +517,7 @@
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
-            "time": "2018-07-08 19:23:20"
+            "time": "2018-07-08T19:23:20+00:00"
         },
         {
             "name": "phar-io/version",
@@ -583,7 +779,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2018-12-18 15:40:51"
+            "time": "2018-12-18T15:40:51+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -696,7 +892,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2019-02-11 12:49:18"
+            "time": "2019-02-11T12:49:18+00:00"
         },
         {
             "name": "phpunit/php-text-template",
@@ -835,7 +1031,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2019-02-11 12:50:48"
+            "time": "2019-02-11T12:50:48+00:00"
         },
         {
             "name": "phpunit/phpunit",
@@ -843,12 +1039,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "90cff07c1fbadf8ffb404774ad98c845632b443f"
+                "reference": "4909cdfbda7a178f66248a30f460e7efdf82ff75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/90cff07c1fbadf8ffb404774ad98c845632b443f",
-                "reference": "90cff07c1fbadf8ffb404774ad98c845632b443f",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/4909cdfbda7a178f66248a30f460e7efdf82ff75",
+                "reference": "4909cdfbda7a178f66248a30f460e7efdf82ff75",
                 "shasum": ""
             },
             "require": {
@@ -919,7 +1115,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-03-06T05:40:19+00:00"
+            "time": "2019-03-12T05:59:59+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -964,7 +1160,7 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2019-02-11 12:48:46"
+            "time": "2019-02-11T12:48:46+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -1028,7 +1224,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2019-02-11 12:51:04"
+            "time": "2019-02-11T12:51:04+00:00"
         },
         {
             "name": "sebastian/diff",
@@ -1084,7 +1280,7 @@
                 "unidiff",
                 "unified diff"
             ],
-            "time": "2019-02-11 12:50:35"
+            "time": "2019-02-11T12:50:35+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -1137,7 +1333,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2019-02-11 12:51:52"
+            "time": "2019-02-11T12:51:52+00:00"
         },
         {
             "name": "sebastian/exporter",
@@ -1204,7 +1400,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2019-02-11 12:49:46"
+            "time": "2019-02-11T12:49:46+00:00"
         },
         {
             "name": "sebastian/global-state",
@@ -1302,7 +1498,7 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2019-02-11 12:50:05"
+            "time": "2019-02-11T12:50:05+00:00"
         },
         {
             "name": "sebastian/object-reflector",
@@ -1347,7 +1543,7 @@
             ],
             "description": "Allows reflection of object attributes, including inherited and non-public ones",
             "homepage": "https://github.com/sebastianbergmann/object-reflector/",
-            "time": "2019-02-11 12:48:12"
+            "time": "2019-02-11T12:48:12+00:00"
         },
         {
             "name": "sebastian/recursion-context",
@@ -1400,7 +1596,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2019-02-11 12:48:28"
+            "time": "2019-02-11T12:48:28+00:00"
         },
         {
             "name": "sebastian/resource-operations",
@@ -1442,7 +1638,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2018-10-04 04:07:39"
+            "time": "2018-10-04T04:07:39+00:00"
         },
         {
             "name": "sebastian/version",
@@ -1532,7 +1728,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
@@ -1543,7 +1739,7 @@
                 "polyfill",
                 "portable"
             ],
-            "time": "2019-02-06 07:57:58"
+            "time": "2019-02-06T07:57:58+00:00"
         },
         {
             "name": "theseer/tokenizer",
@@ -1639,7 +1835,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "10up/wp_mock": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
