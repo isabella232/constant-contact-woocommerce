@@ -59,6 +59,18 @@ class NewsletterPreference implements Hookable {
 	}
 
 	/**
+	 * Save the user preference to the order meta.
+	 *
+	 * @param int $order_id The order ID.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	public function save_user_preference_to_order( $order_id ) {
+		add_post_meta( $order_id, self::CUSTOMER_PREFERENCE_META_FIELD, $this->get_submitted_customer_preference(), true );
+	}
+
+	/**
 	 * Get the submitted customer newsletter preference.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
@@ -70,17 +82,5 @@ class NewsletterPreference implements Hookable {
 		return isset( $_POST['customer_newsletter_opt_in'] ) && 1 === filter_var( $_POST['customer_newsletter_opt_in'], FILTER_VALIDATE_INT )
 			? 'yes'
 			: 'no';
-	}
-
-	/**
-	 * Save the user preference to the order meta.
-	 *
-	 * @param int $order_id The order ID.
-	 *
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-18
-	 */
-	public function save_user_preference_to_order( $order_id ) {
-		add_post_meta( $order_id, self::CUSTOMER_PREFERENCE_META_FIELD, $this->get_submitted_customer_preference(), true );
 	}
 }
