@@ -11,6 +11,7 @@ namespace WebDevStudios\CCForWoo\View\Admin;
 
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
+use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
 use WebDevStudios\OopsWP\Utility\Hookable;
 use WC_Settings_Page;
 
@@ -70,13 +71,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since 2019-03-12
 	 */
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
-
-	/**
-	 * Customer opt-in default field.
-	 *
-	 * @since 2019-03-12
-	 */
-	const CUSTOMER_OPT_IN_DEFAULT_FIELD = 'cc_woo_customer_data_email_opt_in_default';
 
 	/**
 	 * Historical customer data import field.
@@ -369,7 +363,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
 					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+				'id'    => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),

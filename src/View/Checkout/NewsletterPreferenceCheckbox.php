@@ -11,10 +11,11 @@
 
 namespace WebDevStudios\CCForWoo\View\Checkout;
 
+use WebDevStudios\CCForWoo\Meta\NewsletterPreference;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 /**
- * Class BillingFieldFilter
+ * Class NewsletterPreferenceCheckbox
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\View\Checkout
@@ -22,36 +23,39 @@ use WebDevStudios\OopsWP\Utility\Hookable;
  */
 class NewsletterPreferenceCheckbox implements Hookable {
 	/**
+	 * The name of the option for the store's default preference state.
+	 *
+	 * @var string
+	 * @since 2019-03-18
+	 */
+	const STORE_NEWSLETTER_DEFAULT_OPTION = 'cc_woo_customer_data_email_opt_in_default';
+
+	/**
+	 * The checkbox's meta object.
+	 *
+	 * @var NewsletterPreference
+	 * @since 2019-03-18
+	 */
+	private $meta;
+
+	/**
+	 * NewsletterPreferenceCheckbox constructor.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	public function __construct() {
+		$this->meta = new NewsletterPreference();
+	}
+
+	/**
 	 * Register actions and filters with WordPress.
 	 *
 	 * @since 2019-03-13
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_after_checkout_billing_form', [ $this, 'add_field_to_billing_form' ] );
-		add_action( 'woocommerce_checkout_update_user_meta', [ $this, 'save_user_preference' ] );
-		add_action( 'woocommerce_created_customer', [ $this, 'save_user_preference' ] );
-	}
-
-	/**
-	 * Save the user's newsletter preferences to meta.
-	 *
-	 * @param int $user_id ID of the user.
-	 *
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-13
-	 * @return void
-	 */
-	public function save_user_preference( $user_id ) {
-		if ( ! $user_id ) {
-			return;
-		}
-
-		// @TODO Verify nonce.
-		$preference = isset( $_POST['customer_newsletter_opt_in'] ) && 1 === filter_var( $_POST['customer_newsletter_opt_in'], FILTER_VALIDATE_INT )
-			? 'yes'
-			: 'no';
-
-		update_user_meta( $user_id, 'cc_woo_customer_agrees_to_marketing', $preference );
+		$this->meta->register_hooks();
 	}
 
 	/**
@@ -87,7 +91,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @return bool
 	 */
 	private function get_user_default_checked_state() : bool {
-		$user_preference = get_user_meta( get_current_user_id(), 'cc_woo_customer_agrees_to_marketing', true );
+		$user_preference = get_user_meta( get_current_user_id(), NewsletterPreference::CUSTOMER_PREFERENCE_META_FIELD, true );
 
 		return ! empty( $user_preference ) ? 'yes' === $user_preference : $this->get_store_default_checked_state();
 	}
@@ -100,6 +104,6 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @return bool
 	 */
 	private function get_store_default_checked_state() : bool {
-		return 'yes' === get_option( 'cc_woo_customer_data_email_opt_in_default' );
+		return 'yes' === get_option( self::STORE_NEWSLETTER_DEFAULT_OPTION );
 	}
 }
