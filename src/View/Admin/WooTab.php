@@ -462,7 +462,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
 			get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ),
-			get_option( 'cc_woo_custom_data_opt_in_consent', 'no' )
+			get_option( self::CUSTOMER_OPT_IN_CONSENT_FIELD, 'no' )
 		);
 
 		$validator = new SettingsValidator( $model );
