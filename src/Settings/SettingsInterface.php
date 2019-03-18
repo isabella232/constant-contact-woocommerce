@@ -7,7 +7,7 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios;
+namespace WebDevStudios\CCForWoo\Settings;
 
 /**
  * Settings Interface

@@ -7,18 +7,20 @@
  * @package cc-woo
  */
 
-namespace ConstantContact\WooCommerce;
+namespace WebDevStudios\CCForWoo;
 
-use WebDevStudios\Settings;
-use WebDevStudios\OopsWP\Utility\Runnable;
-use ConstantContact\WooCommerce\Utility\PluginCompatibilityCheck;
+use WebDevStudios\CCForWoo\View\ViewRegistrar;
+use WebDevStudios\OopsWP\Structure\ServiceRegistrar;
+use WebDevStudios\CCForWoo\View\Admin\Notice;
+use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
+use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 
 /**
  * "Core" plugin class.
  *
  * @since 0.0.1
  */
-final class Plugin implements Runnable {
+final class Plugin extends ServiceRegistrar {
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
 
 	/**
@@ -38,12 +40,12 @@ final class Plugin implements Runnable {
 	private $plugin_file;
 
 	/**
-	 * The plugin settings instance.
-	 *
-	 * @since 0.0.1
-	 * @var \WebDevStudios\Settings
+	 * @var array
+	 * @since 2019-03-13
 	 */
-	private $settings;
+	protected $services = [
+		ViewRegistrar::class,
+	];
 
 	/**
 	 * Deactivate this plugin.
@@ -54,24 +56,23 @@ final class Plugin implements Runnable {
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
 	private function deactivate( $reason ) {
+		unset( $_GET['activate'] );
+
 		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
 		}
 
 		deactivate_plugins( $this->plugin_file );
 
-		new \ConstantContact\WooCommerce\View\Admin\Notice(
-			new \WebDevStudios\View\Admin\NoticeMessage(
+		new Notice(
+			new NoticeMessage(
 				$reason,
 				'error',
 				true
 			)
 		);
 
-		\ConstantContact\WooCommerce\View\Admin\Notice::set_notices();
-
-		// Suppress WordPress "Plugin activated."...because it's not.
-		unset( $_GET['activate'] );
+		Notice::set_notices();
 	}
 
 	/**
@@ -110,12 +111,10 @@ final class Plugin implements Runnable {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @param \WebDevStudios\Settings $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
-	public function __construct( string $plugin_file, Settings $settings ) {
+	public function __construct( string $plugin_file ) {
 		$this->plugin_file = $plugin_file;
-		$this->settings    = $settings;
 	}
 
 	/**
@@ -130,7 +129,21 @@ final class Plugin implements Runnable {
 		}
 
 		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
-		$this->settings->register_hooks();
+		parent::run();
+	}
+
+	/**
+	 * Register the plugin's hooks with WordPress.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-12
+	 * @return void
+	 */
+	public function register_hooks() {
+		// Setup the plugin instance.
+		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
+
+		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
 	}
 
 	/**

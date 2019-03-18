@@ -7,7 +7,7 @@
  * @package wds-utility
  */
 
-namespace WebDevStudios\Utility;
+namespace WebDevStudios\CCForWoo\Utility;
 
 /**
  * Interface for Compatibility Checks
