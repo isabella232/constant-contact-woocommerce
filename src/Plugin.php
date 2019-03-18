@@ -9,11 +9,12 @@
 
 namespace WebDevStudios\CCForWoo;
 
-use WebDevStudios\CCForWoo\View\ViewRegistrar;
+use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 use WebDevStudios\OopsWP\Structure\ServiceRegistrar;
+use WebDevStudios\CCForWoo\View\ViewRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
-use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
+use WebDevStudios\CCForWoo\Meta\PluginOption;
 
 /**
  * "Core" plugin class.
@@ -166,5 +167,52 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function get_plugin_file() : string {
 		return $this->plugin_file;
+	}
+
+	/**
+	 * Activate WooCommerce along with Constant Contact + WooCommerce if it's present and not already active.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	private function maybe_activate_woocommerce() {
+		$woocommerce = 'woocommerce/woocommerce.php';
+
+		if ( ! is_plugin_active( $woocommerce ) && in_array( $woocommerce, array_keys( get_plugins() ), true ) ) {
+			activate_plugin( $woocommerce );
+		}
+	}
+
+	/**
+	 * Callback for register_activation_hook.
+	 *
+	 * Performs the plugin's activation routines.
+	 *
+	 * @see register_activation_hook()
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	public function do_activation_process() {
+		$this->maybe_activate_woocommerce();
+
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Callback for register_deactivation_hook.
+	 *
+	 * Performs the plugin's deactivation routines, including notifying Constant Contact of disconnection.
+	 *
+	 * @see register_deactivation_hook()
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 * @return void
+	 */
+	public function do_deactivation_process() {
+		if ( ! get_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY ) ) {
+			return;
+		}
+
+		delete_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY );
 	}
 }
