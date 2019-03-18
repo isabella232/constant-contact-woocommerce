@@ -79,12 +79,10 @@ final class Plugin extends ServiceRegistrar {
 
 		deactivate_plugins( $this->plugin_file );
 
+		$this->do_deactivation_process();
+
 		new Notice(
-			new NoticeMessage(
-				$reason,
-				'error',
-				true
-			)
+			new NoticeMessage( $reason, 'error', true )
 		);
 
 		Notice::set_notices();
@@ -97,7 +95,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @throws \Exception When WooCommerce is not found or compatible.
 	 */
-	public function maybe_deactivate() {
+	public function check_for_required_dependencies() {
 		try {
 			$compatibility_checker = new PluginCompatibilityCheck( '\\WooCommerce' );
 
@@ -130,6 +128,8 @@ final class Plugin extends ServiceRegistrar {
 		}
 
 		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->register_hooks();
+
 		parent::run();
 	}
 
@@ -138,13 +138,12 @@ final class Plugin extends ServiceRegistrar {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-12
-	 * @return void
 	 */
 	public function register_hooks() {
-		// Setup the plugin instance.
-		register_deactivation_hook( $this->plugin_file, [ Notice::class, 'maybe_display_notices' ] );
+		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
 
-		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
+		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
+		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
 	}
 
 	/**
