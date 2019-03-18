@@ -50,7 +50,7 @@ class SettingsValidator implements Validatable {
 	 */
 	public function is_valid(): bool {
 		return (
-			$this->import_preferences_match_permissions()
+			$this->store_owner_affirms_consent_to_market()
 			&& $this->has_valid_name()
 			&& $this->has_valid_phone()
 			&& $this->has_valid_store_name()
@@ -66,8 +66,8 @@ class SettingsValidator implements Validatable {
 	 * @since  2019-03-07
 	 * @return bool
 	 */
-	private function import_preferences_match_permissions() : bool {
-		return $this->settings->get_import_historical_data() === $this->settings->get_permission_confirmed();
+	private function store_owner_affirms_consent_to_market() : bool {
+		return $this->settings->get_permission_confirmed();
 	}
 
 	/**
@@ -111,7 +111,16 @@ class SettingsValidator implements Validatable {
 	 * @return bool
 	 */
 	private function has_valid_phone() {
-		return ! empty( filter_var( $this->settings->get_phone_number(), FILTER_SANITIZE_STRING ) );
+		$phone_number = $this->settings->get_phone_number();
+
+		if ( '+' === substr( $phone_number, 0, 1 ) ) {
+			$phone_number = substr( $phone_number, 1 );
+		}
+
+		preg_match( '/^[\d\-()]/', $phone_number, $matches );
+		preg_match( '/[^\d\-()]/', $phone_number, $invalid_matches );
+
+		return ! empty( $matches[0] ) && empty( $invalid_matches );
 	}
 
 	/**
