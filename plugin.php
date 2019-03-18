@@ -31,6 +31,3 @@ require_once $autoloader;
 
 $plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__ );
 $plugin->run();
-
-// Hook things!
-# \WebDevStudios\CCForWoo\Views\Admin\WooSettingsTab::hooks();

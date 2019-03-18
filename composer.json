@@ -16,7 +16,8 @@
 		}
 	},
 	"require-dev": {
-		"phpunit/phpunit": "^7"
+		"phpunit/phpunit": "^7",
+		"10up/wp_mock": "dev-master"
 	},
 	"require": {
 		"webdevstudios/oops-wp": "^0.1",

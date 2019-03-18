@@ -111,7 +111,6 @@ final class Plugin extends ServiceRegistrar {
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @param \WebDevStudios\CCForWoo\Settings\SettingsTab $settings An instance of the configuration for settings.
 	 * @package cc-woo
 	 */
 	public function __construct( string $plugin_file ) {

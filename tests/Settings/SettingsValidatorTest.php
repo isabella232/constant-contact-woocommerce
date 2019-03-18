@@ -19,7 +19,7 @@ class SettingsValidatorTest extends TestCase {
 	 *
 	 * @test
 	 */
-	public function settings_are_valid_if_import_historical_data_and_permission_confirmed_are_both_true() {
+	public function settings_are_valid_if_all_settings_pass_validation() {
 		$settings = new SettingsModel(
 			'Ilana',
 			'Glazer',
@@ -28,8 +28,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -42,7 +42,7 @@ class SettingsValidatorTest extends TestCase {
 	 *
 	 * @test
 	 */
-	public function settings_are_valid_if_import_historical_data_is_false() {
+	public function settings_are_invalid_if_store_owner_does_not_affirm_consent_to_market() {
 		$settings = new SettingsModel(
 			'Abbi',
 			'Jacobson',
@@ -51,13 +51,13 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'cleaner@solstice.com',
-			false,
-			false
+			'no',
+			'no'
 		);
 
 		$validator = new SettingsValidator( $settings );
 
-		$this->assertTrue( $validator->is_valid() );
+		$this->assertFalse( $validator->is_valid() );
 	}
 
 	/**
@@ -74,8 +74,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'cleaner@solstice.com',
-			true,
-			false
+			'yes',
+			'no'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -97,8 +97,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -120,8 +120,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -143,8 +143,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -166,8 +166,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -212,8 +212,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -233,8 +233,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -255,8 +255,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -276,8 +276,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -297,8 +297,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -318,8 +318,8 @@ class SettingsValidatorTest extends TestCase {
 			'$',
 			'us',
 			'ilanadealsdealsdeals.com',
-			true,
-			true
+			'yes',
+			'yes'
 		);
 
 		$validator = new SettingsValidator( $settings );
