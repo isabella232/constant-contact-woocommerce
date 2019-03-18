@@ -324,7 +324,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
 				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.', 'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => self::CUSTOMER_OPT_IN_DEFAULT_FIELD,
+				'id'    => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 			],
 			[
 				'type' => 'sectionend',
