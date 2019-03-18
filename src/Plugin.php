@@ -48,6 +48,20 @@ final class Plugin extends ServiceRegistrar {
 	];
 
 	/**
+	 * Setup the instance of this class.
+	 *
+	 * Prepare some things for later.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios.com>
+	 * @param string $plugin_file The plugin file path of the entry script.
+	 * @package cc-woo
+	 */
+	public function __construct( string $plugin_file ) {
+		$this->plugin_file = $plugin_file;
+	}
+
+	/**
 	 * Deactivate this plugin.
 	 *
 	 * @since 0.0.1
@@ -104,20 +118,6 @@ final class Plugin extends ServiceRegistrar {
 	}
 
 	/**
-	 * Setup the instance of this class.
-	 *
-	 * Prepare some things for later.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @package cc-woo
-	 */
-	public function __construct( string $plugin_file ) {
-		$this->plugin_file = $plugin_file;
-	}
-
-	/**
 	 * Run things once the plugin instance is ready.
 	 *
 	 * @since 0.0.1
@@ -141,7 +141,7 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function register_hooks() {
 		// Setup the plugin instance.
-		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
+		register_deactivation_hook( $this->plugin_file, [ Notice::class, 'maybe_display_notices' ] );
 
 		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
 	}
