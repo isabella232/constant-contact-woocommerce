@@ -11,6 +11,7 @@ namespace WebDevStudios\CCForWoo\View\Admin;
 
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
+use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
 use WebDevStudios\OopsWP\Utility\Hookable;
 use WC_Settings_Page;
 
@@ -70,13 +71,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since 2019-03-12
 	 */
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
-
-	/**
-	 * Customer opt-in default field.
-	 *
-	 * @since 2019-03-12
-	 */
-	const CUSTOMER_OPT_IN_DEFAULT_FIELD = 'cc_woo_customer_data_email_opt_in_default';
 
 	/**
 	 * Historical customer data import field.
@@ -347,7 +341,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.',
 					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => self::CUSTOMER_OPT_IN_DEFAULT_FIELD,
+				'id'    => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
@@ -365,7 +359,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		];
 
 		$can_import  = false;
-		$has_consent = 'no' !== get_option( self::CUSTOMER_OPT_IN_CONSENT_FIELD, 'no' );
+		$has_consent = 'no' !== get_option( NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION, 'no' );
 
 		if ( 'no' !== get_option( self::ALL_CUSTOMER_IMPORT_FIELD, 'no' ) ) {
 			$can_import = true;
