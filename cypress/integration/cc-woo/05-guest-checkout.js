@@ -1,6 +1,6 @@
 describe('As a customer visiting the checkout page', function(){
 	it( 'Should not have the opt-in default checked', function(){
-		cy.login(Cypress.env('cc_woo_url')).then(() => {
+		cy.adminLogin(Cypress.env('cc_woo_url')).then(() => {
 			cy.fixture('contact-settings').then((data) => {
 				let checkbox = '#' + data['Pre-select customer marketing sign-up at checkout'];
 				cy.get( checkbox ).uncheck()
@@ -22,7 +22,7 @@ describe('As a customer visiting the checkout page', function(){
 	})
 
 	it( 'Should have the opt-in default checked', function(){
-		cy.login(Cypress.env('cc_woo_url')).then(() => {
+		cy.adminLogin(Cypress.env('cc_woo_url')).then(() => {
 			cy.fixture('contact-settings').then((data) => {
 				let checkbox = '#' + data['Pre-select customer marketing sign-up at checkout'];
 				cy.get( checkbox ).check()

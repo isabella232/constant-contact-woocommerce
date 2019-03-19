@@ -1,4 +1,4 @@
-Cypress.Commands.add('login', (url) => {
+Cypress.Commands.add('adminLogin', (url) => {
 	cy.visit( url )
 	cy.wait(500)
 	cy.get('#user_login')
@@ -7,5 +7,17 @@ Cypress.Commands.add('login', (url) => {
 	cy.get('#user_pass')
 		.focus()
 		.type(Cypress.env('admin_pass'))
+	cy.get('#wp-submit').click()
+})
+
+Cypress.Commands.add('customerLogin', (url) => {
+	cy.visit( url )
+	cy.wait(500)
+	cy.get('#user_login')
+		.focus()
+		.type(Cypress.env('customer_user'))
+	cy.get('#user_pass')
+		.focus()
+		.type(Cypress.env('customer_pass'))
 	cy.get('#wp-submit').click()
 })

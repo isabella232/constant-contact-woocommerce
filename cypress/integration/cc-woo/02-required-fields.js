@@ -28,7 +28,7 @@ function test_field( name, required ) {
 	it('Sees a ' + ( required ? 'required' : '' ) + ' ' + name + ' field', function() {
 		cy.get('@contactSettings').then((data) => {
 			let element = '#' + data[name]
-			cy.login(Cypress.env('cc_woo_url'))
+			cy.adminLogin(Cypress.env('cc_woo_url'))
 			cy.get('body').should('contain', name)
 
 			if ( required ) {
