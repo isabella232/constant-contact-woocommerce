@@ -1,8 +1,6 @@
 {
 	"baseUrl": "http://lab.local/",
 	"env": {
-		"admin_user": "admin",
-		"admin_pass": "admin",
 		"plugins_url": "/wp-admin/plugins.php",
 		"woosettings_url": "/wp-admin/admin.php?page=wc-settings",
 		"cc_woo_url": "/wp-admin/admin.php?page=wc-settings&tab=cc_woo",
