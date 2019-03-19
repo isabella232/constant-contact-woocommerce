@@ -24,20 +24,30 @@
  * I should be presented with a required text field for Contact Email Address
  */
 
-function test_required( name, element ) {
-	it('Sees a required ' + name + ' field', function() {
-		cy.login(Cypress.env('cc_woo_url'))
-		cy.get('body').should('contain', name)
-		cy.get( element ).should('have.attr', 'required')
+function test_field( name, required ) {
+	it('Sees a ' + ( required ? 'required' : '' ) + ' ' + name + ' field', function() {
+		cy.get('@contactSettings').then((data) => {
+			let element = '#' + data[name]
+			cy.login(Cypress.env('cc_woo_url'))
+			cy.get('body').should('contain', name)
+
+			if ( required ) {
+				cy.get( element ).should('have.attr', 'required')
+			}
+		})
 	})
 }
 
+beforeEach(function(){
+	cy.fixture('contact-settings.json').as('contactSettings')
+})
+
 describe('As a Store Owner on the CC Woo Settings Page', function(){
-	test_required( 'First Name', '#store_information_first_name' )
-	test_required( 'Last Name', '#store_information_last_name' )
-	test_required( 'Phone Number', '#store_information_phone_number' )
-	test_required( 'Store Name', '#store_information_store_name' )
-	test_required( 'Country Code', '#store_information_country_code' )
-	test_required( 'Contact E-mail Address', '#store_information_contact_email' )
+	test_field( 'First Name', true )
+	test_field( 'Last Name', true )
+	test_field( 'Phone Number', true )
+	test_field( 'Store Name', true )
+	test_field( 'Contact E-mail Address', true )
+	test_field( 'Pre-select customer marketing sign-up at checkout', false )
 })
 

@@ -1,3 +1,6 @@
+beforeEach(function(){
+	cy.fixture('consumer-settings').as('consumerSettings')
+})
 describe('As a store owner on the CC Woo Settings page Historical Import section', function(){
 	/**
 	 * As a store owner
@@ -16,7 +19,9 @@ describe('As a store owner on the CC Woo Settings page Historical Import section
 	 */
 	it('Sees a drop-down indicating my preference to import historical customer data', function(){
 		cy.login(Cypress.env('historical_url'))
-		cy.get('#customer_marketing_allow_import').should('be.visible')
+		cy.get('@consumerSettings').then((data) => {
+			cy.get('#' + data['Import historical customer data']).should('be.visible')
+		})
 	})
 
 	/**
@@ -26,24 +31,8 @@ describe('As a store owner on the CC Woo Settings page Historical Import section
 	 */
 	it('Sees a a checkbox that verifies I have permission to e-mail customers if the historical drop down is “Yes”', function(){
 		cy.login(Cypress.env('historical_url'))
-		cy.get('#customer_marketing_allow_import').then(($select) => {
-			if ( 'yes' === $select.val() ) {
-				cy.get('#customer_marketing_opt_in_consent').should('be.visible')
-			} else {
-				$select.val('yes')
-				cy.get('button[name="save"]').click().then(() => {
-					cy.get('#customer_marketing_opt_in_consent').should('be.visible')
-				})
-			}
+		cy.get('@consumerSettings').then((data) => {
+			cy.get('#' + data['User information consent']).should('be.visible')
 		})
-	})
-
-	/**
-	 * As WordPress
-	 * If a store owner selects "no" for importing historical data
-	 * I should not display a checkbox to give them the option to say they have permission to email customers
-	 * And I should set the permissions value to false.
-	 */
-	it('Does not see a consent checkbox if the import option is "No"', function(){
 	})
 })
