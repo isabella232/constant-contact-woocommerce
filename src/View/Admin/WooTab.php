@@ -506,18 +506,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function requested_connect_to_cc() {
-		if ( empty( $_POST['cc_woo_action'] ) ) {
+		if ( ! $this->has_valid_nonce() ) {
 			return false;
 		}
 
-		if ( ! wp_verify_nonce( filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING ), $this->nonce_action ) ) {
-			return false;
-		}
-
+		// phpcs:disable -- Ignoring $_POST warnings.
 		return (
 			isset( $_POST['cc_woo_action'] )
 			&& 'connect' === filter_var( $_POST['cc_woo_action'], FILTER_SANITIZE_STRING )
 		);
+		// phpcs:enable
 	}
 
 	/**
@@ -693,5 +691,21 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Return whether we have a valid nonce or not.
+	 *
+	 * @since 2019-03-15
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function has_valid_nonce() : bool {
+		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
