@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Trait for classes that need to verify a single nonce.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Utility * @since 2019-03-20
@@ -8,6 +8,13 @@
 
 namespace WebDevStudios\CCForWoo\Utility;
 
+/**
+ * Trait NonceVerification
+ *
+ * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
+ * @package WebDevStudios\CCForWoo\Utility
+ * @since   2019-03-20
+ */
 trait NonceVerification {
 	/**
 	 * Nonce field name.
