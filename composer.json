@@ -9,7 +9,7 @@
 	},
 	"scripts": {
 		"test": [ "./vendor/bin/phpunit" ],
-		"generate-fixtures": [ "@php ./generate-cypress-fixtures.php" ]
+		"generate-fixtures": [ "@php ./tests/cypress/bin/generate-cypress-fixtures.php" ]
 	},
 	"autoload-dev": {
 		"psr-4": {

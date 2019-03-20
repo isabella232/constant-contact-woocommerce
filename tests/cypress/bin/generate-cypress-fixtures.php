@@ -19,8 +19,8 @@ function __( $s ) : string { return $s; }
 function get_option() : string { return 'yes'; }
 
 // Autoloading.
-require_once dirname( __FILE__ ) . '/vendor/autoload.php';
-require_once dirname( __FILE__ ) . '/../woocommerce/includes/admin/settings/class-wc-settings-page.php';
+require_once dirname( __FILE__ ) . '/../../../vendor/autoload.php';
+require_once dirname( __FILE__ ) . '/../../../../woocommerce/includes/admin/settings/class-wc-settings-page.php';
 
 use WebDevStudios\CCForWoo\Utility\Cypress\WooTabFixtures;
 
@@ -53,12 +53,12 @@ foreach ( $fixtures as $method => $file ) {
  * @return bool
  */
 function write_fixture_data( $file, $data ) : bool {
-	static $cypress_fixtures = '/cypress/fixtures';
+	static $cypress_fixtures = '/../fixtures';
 
 	$destination = dirname( __FILE__ ) . "{$cypress_fixtures}";
 
 	if ( ! is_writable( $destination ) ) {
-		throw new \Exception( "Could write to directory {$destination}!" );
+		throw new \Exception( "Could not write to directory {$destination}!" );
 	}
 
 	$destination_file = "{$destination}/{$file}";
