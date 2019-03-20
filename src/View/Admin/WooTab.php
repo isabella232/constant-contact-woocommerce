@@ -327,17 +327,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 					'size'     => 4,
 				],
 			],
-			/*
-			[
-				'title' => __( 'Country Code', 'cc-woo' ),
-				'id'    => 'store_information_country_code',
-				'type'  => 'text',
-				'custom_attributes' => [
-					'size' => 6,
-					'required' => 'required',
-				],
-			],
-			 */
 			[
 				'title'             => __( 'Country Code', 'cc-woo' ),
 				'id'                => self::COUNTRY_CODE_FIELD,
