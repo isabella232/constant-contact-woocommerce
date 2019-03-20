@@ -125,7 +125,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since 2019-03-20
 	 * @var string
 	 */
-	private $nonce_action = 'cc-woo-action';
+	private $nonce_action = 'cc-woo-connect-action';
 
 	/**
 	 * WooTab constructor.
