@@ -8,24 +8,16 @@ This plugin uses [Cypress.io](https://cypress.io/) for end-to-end testing.
 
 #### Configuration
 
-To set local environment variables, create a file named `./cypress.env.json`.
-These values append to, or overwrite, the values set in the `env` key
-in `cypress.json`. Sample:
+##### Base Configuration
 
-```json
-{
-  "admin_user": "myadminuser",
-  "some_var": "foo"
-}
-```
-
-The above will override `env.admin_user`, and create a new environment variable
-called `env.some_var`, with a value of `foo`.
+Before running Cypress, you'll need to copy `cypress.example.json` to `cypress.json`,
+and modify it for your environment.
 
 ##### Variables
 
 You will need to configure the following variables for your environment.
 
+- `baseUrl` This is the base URL of your local WordPress instance.
 - `admin_user` The WordPress admin user.
 - `admin_pass` Password for the admin user.
 - `customer_user` A WooCommerce customer account user.
