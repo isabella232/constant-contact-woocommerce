@@ -11,7 +11,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Checkout;
 
-use WebDevStudios\CCForWoo\Meta\NewsletterPreference;
+use WebDevStudios\CCForWoo\Utility\NonceVerification;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 /**
@@ -22,6 +22,8 @@ use WebDevStudios\OopsWP\Utility\Hookable;
  * @since   2019-03-13
  */
 class NewsletterPreferenceCheckbox implements Hookable {
+	use NonceVerification;
+
 	/**
 	 * The name of the option for the store's default preference state.
 	 *
@@ -31,12 +33,14 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	const STORE_NEWSLETTER_DEFAULT_OPTION = 'cc_woo_customer_data_email_opt_in_default';
 
 	/**
-	 * The checkbox's meta object.
+	 * The name of the meta field for the customer's preference.
 	 *
-	 * @var NewsletterPreference
+	 * This constant will be used both in usermeta (for users) and postmeta (for orders).
+	 *
+	 * @var string
 	 * @since 2019-03-18
 	 */
-	private $meta;
+	const CUSTOMER_PREFERENCE_META_FIELD = 'cc_woo_customer_agrees_to_marketing';
 
 	/**
 	 * NewsletterPreferenceCheckbox constructor.
@@ -45,17 +49,21 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @since  2019-03-18
 	 */
 	public function __construct() {
-		$this->meta = new NewsletterPreference();
+		$this->nonce_name   = 'cc_woo_customer_newsletter_preference';
+		$this->nonce_action = 'cc-woo-customer-newsletter-preference-action';
 	}
 
 	/**
 	 * Register actions and filters with WordPress.
 	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since 2019-03-13
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_after_checkout_billing_form', [ $this, 'add_field_to_billing_form' ] );
-		$this->meta->register_hooks();
+		add_action( 'woocommerce_checkout_update_user_meta', [ $this, 'save_user_preference' ] );
+		add_action( 'woocommerce_created_customer', [ $this, 'save_user_preference' ] );
+		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'save_user_preference_to_order' ] );
 	}
 
 	/**
@@ -65,10 +73,15 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @since  2019-03-13
 	 */
 	public function add_field_to_billing_form() {
+		wp_nonce_field( $this->nonce_action, $this->nonce_name );
+
 		woocommerce_form_field( 'customer_newsletter_opt_in', [
-			'type'  => 'checkbox',
-			'class' => [ 'input-checkbox' ],
-			'label' => __( 'I agree to receive marketing e-mails', 'cc-woo' ),
+			'custom_attributes' => [
+				'name' => 'cc_woo_customer_newsletter_preference',
+			],
+			'type'              => 'checkbox',
+			'class'             => [ 'input-checkbox' ],
+			'label'             => __( 'I agree to receive marketing e-mails', 'cc-woo' ),
 		], $this->get_default_checked_state() );
 	}
 
@@ -91,7 +104,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @return bool
 	 */
 	private function get_user_default_checked_state() : bool {
-		$user_preference = get_user_meta( get_current_user_id(), NewsletterPreference::CUSTOMER_PREFERENCE_META_FIELD, true );
+		$user_preference = get_user_meta( get_current_user_id(), self::CUSTOMER_PREFERENCE_META_FIELD, true );
 
 		return ! empty( $user_preference ) ? 'yes' === $user_preference : $this->get_store_default_checked_state();
 	}
@@ -105,5 +118,66 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 */
 	private function get_store_default_checked_state() : bool {
 		return 'yes' === get_option( self::STORE_NEWSLETTER_DEFAULT_OPTION );
+	}
+
+	/**
+	 * Save the user's newsletter preferences to meta.
+	 *
+	 * @param int $user_id ID of the user.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-13
+	 * @return void
+	 */
+	public function save_user_preference( $user_id ) {
+		if ( ! $user_id ) {
+			return;
+		}
+
+		$preference = $this->get_submitted_customer_preference();
+
+		if ( empty( $preference ) ) {
+			return;
+		}
+
+		update_user_meta( $user_id, self::CUSTOMER_PREFERENCE_META_FIELD, $preference );
+	}
+
+	/**
+	 * Save the user preference to the order meta.
+	 *
+	 * @param int $order_id The order ID.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 * @return void
+	 */
+	public function save_user_preference_to_order( $order_id ) {
+		$preference = $this->get_submitted_customer_preference();
+
+		if ( empty( $preference ) ) {
+			return;
+		}
+
+		add_post_meta( $order_id, self::CUSTOMER_PREFERENCE_META_FIELD, $preference, true );
+	}
+
+	/**
+	 * Get the submitted customer newsletter preference.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 * @return string
+	 */
+	private function get_submitted_customer_preference() {
+		if ( ! $this->has_valid_nonce() ) {
+			return '';
+		}
+
+		// @codingStandardsIgnoreStart - Nonce verification in guard clause.
+		return isset( $_POST['customer_newsletter_opt_in'] ) && 1 === filter_var( $_POST['customer_newsletter_opt_in'], FILTER_VALIDATE_INT )
+			? 'yes'
+			: 'no';
+		// @codingStandardsIgnoreEnd
 	}
 }
