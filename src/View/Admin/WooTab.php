@@ -111,6 +111,21 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private $errors = [];
 
+	/**
+	 * Nonce field name.
+	 *
+	 * @since 2019-03-20
+	 * @var string
+	 */
+	private $nonce_name = '_cc_woo_nonce';
+
+	/**
+	 * Nonce action name.
+	 *
+	 * @since 2019-03-20
+	 * @var string
+	 */
+	private $nonce_action = 'cc-woo-connect-action';
 
 	/**
 	 * WooTab constructor.
@@ -454,6 +469,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$message   = $connected
 			? __( 'Disconnect from Constant Contact', 'cc-woo' )
 			: __( 'Connect with Constant Contact', 'cc-woo' );
+
+		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 		?>
 		<button class="button button-primary" type="submit" name="cc_woo_action" value="<?php echo esc_attr( $value ); ?>">
 			<?php echo esc_html( $message ); ?>
@@ -489,11 +506,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function requested_connect_to_cc() {
-		// @TODO Check nonce verification.
+		if ( ! $this->has_valid_nonce() ) {
+			return false;
+		}
+
+		// phpcs:disable -- Ignoring $_POST warnings.
 		return (
 			isset( $_POST['cc_woo_action'] )
 			&& 'connect' === filter_var( $_POST['cc_woo_action'], FILTER_SANITIZE_STRING )
 		);
+		// phpcs:enable
 	}
 
 	/**
@@ -669,5 +691,22 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Return whether we have a valid nonce or not.
+	 *
+	 * @since 2019-03-15
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function has_valid_nonce() : bool {
+		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
+
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
