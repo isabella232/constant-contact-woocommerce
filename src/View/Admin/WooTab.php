@@ -702,6 +702,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private function has_valid_nonce() : bool {
 		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
+
 		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
 			return false;
 		}
