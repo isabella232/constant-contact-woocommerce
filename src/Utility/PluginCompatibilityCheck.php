@@ -58,12 +58,14 @@ class PluginCompatibilityCheck {
 	/**
 	 * Check whether WooCommerce is compatible
 	 *
-	 * @since 0.0.1
+	 * @since  0.0.1
 	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param object $instance An instance of the WooCommerce class.
+	 *
+	 * @param \WooCommerce $woocommerce An instance of the WooCommerce class.
+	 *
 	 * @return bool
 	 */
-	public function is_compatible( $instance ) : bool {
-		return 0 >= version_compare( self::MINIMUM_WOO_VERSION, $instance->version );
+	public function is_compatible( \WooCommerce $woocommerce ) : bool {
+		return 0 >= version_compare( self::MINIMUM_WOO_VERSION, $woocommerce->version );
 	}
 }
