@@ -3,5 +3,5 @@
 .nvimrc
 cypress.env.json
 cypress.json
-/cypress/screenshots/*
-/cypress/videos/*
+/tests/cypress/screenshots/*
+/tests/cypress/videos/*
