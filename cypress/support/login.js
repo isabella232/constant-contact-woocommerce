@@ -11,7 +11,7 @@ Cypress.Commands.add('adminLogin', (url) => {
 })
 
 Cypress.Commands.add('customerLogin', (url) => {
-	cy.visit( url )
+	cy.visit( '/wp-login.php?redirect_to=' + encodeURI( url ) )
 	cy.wait(500)
 	cy.get('#user_login')
 		.focus()
