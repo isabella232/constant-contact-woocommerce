@@ -12,6 +12,7 @@ namespace WebDevStudios\CCForWoo\View\Admin;
 use WebDevStudios\CCForWoo\Meta\PluginOption;
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
+use WebDevStudios\CCForWoo\Utility\NonceVerification;
 use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
 use WebDevStudios\OopsWP\Utility\Hookable;
 use WC_Settings_Page;
@@ -24,6 +25,8 @@ use WC_Settings_Page;
  * @since   2019-03-08
  */
 class WooTab extends WC_Settings_Page implements Hookable {
+	use NonceVerification;
+
 	/**
 	 * Store owner first name field.
 	 *
@@ -112,29 +115,15 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $errors = [];
 
 	/**
-	 * Nonce field name.
-	 *
-	 * @since 2019-03-20
-	 * @var string
-	 */
-	private $nonce_name = '_cc_woo_nonce';
-
-	/**
-	 * Nonce action name.
-	 *
-	 * @since 2019-03-20
-	 * @var string
-	 */
-	private $nonce_action = 'cc-woo-connect-action';
-
-	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function __construct() {
-		$this->label = __( 'Constant Contact', 'cc-woo' );
+		$this->label        = __( 'Constant Contact', 'cc-woo' );
+		$this->nonce_name   = '_cc_woo_nonce';
+		$this->nonce_action = 'cc-woo-connect-action';
 	}
 
 	/**
@@ -691,22 +680,5 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
-	}
-
-	/**
-	 * Return whether we have a valid nonce or not.
-	 *
-	 * @since 2019-03-15
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return bool
-	 */
-	private function has_valid_nonce() : bool {
-		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
-
-		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
-			return false;
-		}
-
-		return true;
 	}
 }
