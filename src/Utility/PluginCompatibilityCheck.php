@@ -31,7 +31,7 @@ class PluginCompatibilityCheck {
 	 * @since 0.0.1
 	 * @var string
 	 */
-	protected $classname = '';
+	private $classname = '';
 
 	/**
 	 * Construct our compatibility checker with the main plugin class.
