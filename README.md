@@ -6,6 +6,8 @@
 
 This plugin uses [Cypress.io](https://cypress.io/) for end-to-end testing.
 
+Cypress's files are located in `tests/cypress/`.
+
 #### Configuration
 
 ##### Base Configuration
