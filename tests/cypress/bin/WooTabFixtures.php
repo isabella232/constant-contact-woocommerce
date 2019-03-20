@@ -9,8 +9,6 @@
  * @package cc-woo
  */
 
-namespace WebDevStudios\CCForWoo\Utility\Cypress;
-
 use WebDevStudios\CCForWoo\View\Admin\WooTab;
 
 /**

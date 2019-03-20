@@ -22,7 +22,7 @@ function get_option() : string { return 'yes'; }
 require_once dirname( __FILE__ ) . '/../../../vendor/autoload.php';
 require_once dirname( __FILE__ ) . '/../../../../woocommerce/includes/admin/settings/class-wc-settings-page.php';
 
-use WebDevStudios\CCForWoo\Utility\Cypress\WooTabFixtures;
+require_once dirname( __FILE__ ) . '/WooTabFixtures.php';
 
 $fixtures = [
 	'get_store_information_settings' => 'contact-settings.json',
