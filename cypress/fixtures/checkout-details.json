@@ -1,0 +1,13 @@
+{
+	"text_fields": {
+		"billing_first_name": "Abby",
+		"billing_last_name": "Abrams",
+		"billing_address_1": "620 6th Avenue",
+		"billing_city": "New York",
+		"billing_postcode": "10011",
+		"billing_phone": "2122553550"
+	},
+	"select_fields": {
+		"billing_state": "NY"
+	}
+}
