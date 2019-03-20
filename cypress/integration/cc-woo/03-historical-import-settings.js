@@ -5,17 +5,6 @@ describe('As a store owner on the CC Woo Settings page Historical Import section
 	/**
 	 * As a store owner
 	 * When I visit the settings page
-	 * I should see a checkbox to opt-in users to email marketing at checkout
-	 * /
-	it('Sees a checkbox to opt-in users to email marketing at checkout', function(){
-		cy.adminLogin(Cypress.env('historical_url'))
-		cy.get('#customer_marketing_email_opt_in_default').should('be.visible')
-	})
-	//*/
-
-	/**
-	 * As a store owner
-	 * When I visit the settings page
 	 * I should see a drop-down indicating my preference to import historical customer data
 	 */
 	it('Sees a drop-down indicating my preference to import historical customer data', function(){
