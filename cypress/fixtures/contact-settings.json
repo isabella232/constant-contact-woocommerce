@@ -1,0 +1,10 @@
+{
+    "First Name": "cc_woo_store_information_first_name",
+    "Last Name": "cc_woo_store_information_last_name",
+    "Phone Number": "cc_woo_store_information_phone_number",
+    "Store Name": "cc_woo_store_information_store_name",
+    "Contact E-mail Address": "cc_woo_store_information_contact_email",
+    "Currency": "cc_woo_store_information_currency",
+    "Country Code": "cc_woo_store_information_country_code",
+    "Pre-select customer marketing sign-up at checkout": "cc_woo_customer_data_email_opt_in_default"
+}
