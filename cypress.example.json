@@ -1,14 +1,19 @@
 {
 	"baseUrl": "",
+	"fixturesFolder": "tests/cypress/fixtures",
+	"integrationFolder": "tests/cypress/integration",
+	"pluginsFile": "tests/cypress/plugins",
+	"supportFile": "tests/cypress/support",
+	"screenshotsFolder": "tests/cypress/screenshots",
+	"videosFolder": "tests/cypress/videos",
 	"env": {
 		"plugins_url": "/wp-admin/plugins.php",
 		"woosettings_url": "/wp-admin/admin.php?page=wc-settings",
 		"cc_woo_url": "/wp-admin/admin.php?page=wc-settings&tab=cc_woo",
 		"historical_url": "/wp-admin/admin.php?page=wc-settings&tab=cc_woo&section=customer_data_import",
-		"admin_user": "admin",
-		"admin_pass": "admin",
+		"admin_user": "",
+		"admin_pass": "",
 		"test_product_url": "",
-		"customer_user": "ccwooser",
-		"customer_pass": "testing123"
+		"customer_user": "",
+		"customer_pass": ""
 	}
-}
