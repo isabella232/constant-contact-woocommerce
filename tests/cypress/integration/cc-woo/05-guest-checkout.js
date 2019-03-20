@@ -15,8 +15,8 @@ describe('As a customer visiting the checkout page', function(){
 	it('Should checkout with a product and see that the checkbox for opt-in is not checked', function() {
 		cy.visit(Cypress.env('test_product_url')).then(() => {
 			cy.get('button[name="add-to-cart"]').click()
-			cy.get('a[href*="/cart/"]').click()
-			cy.get('a[href*="/checkout/"]').click()
+			cy.get('a[href*="/cart/"]:first').click()
+			cy.get('a[href*="/checkout/"]:first').click()
 			cy.get('#customer_newsletter_opt_in').should('not.have.attr', 'checked')
 		})
 	})
@@ -37,8 +37,8 @@ describe('As a customer visiting the checkout page', function(){
 	it('Should checkout with a product and see that the checkbox for opt-in is checked', function() {
 		cy.visit(Cypress.env('test_product_url')).then(() => {
 			cy.get('button[name="add-to-cart"]').click()
-			cy.get('a[href*="/cart/"]').click()
-			cy.get('a[href*="/checkout/"]').click()
+			cy.get('a[href*="/cart/"]:first').click()
+			cy.get('a[href*="/checkout/"]:first').click()
 			cy.get('#customer_newsletter_opt_in').should('have.attr', 'checked')
 		})
 	})

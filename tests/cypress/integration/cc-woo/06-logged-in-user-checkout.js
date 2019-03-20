@@ -83,8 +83,8 @@ function run_test_suite() {
  */
 function do_customer_checkout( opt_in_checked ) {
 	cy.get('button[name="add-to-cart"]').click()
-	cy.get('a[href*="/cart/"]').click()
-	cy.get('a[href*="/checkout/"]').click()
+	cy.get('a[href*="/cart/"]:first').click()
+	cy.get('a[href*="/checkout/"]:first').click()
 	fill_out_checkout_form()
 	cy.get('#customer_newsletter_opt_in')[ opt_in_checked ? 'check' : 'uncheck' ]()
 	cy.get('#payment_method_cod').check({"force": true})
@@ -103,8 +103,8 @@ function do_customer_checkout( opt_in_checked ) {
  */
 function verify_opt_in_check_state( opt_in_checked ) {
 	cy.get('button[name="add-to-cart"]').click()
-	cy.get('a[href*="/cart/"]').click()
-	cy.get('a[href*="/checkout/"]').click()
+	cy.get('a[href*="/cart/"]:first').click()
+	cy.get('a[href*="/checkout/"]:first').click()
 	cy.get('#customer_newsletter_opt_in').should( opt_in_checked ? 'have.attr' : 'not.have.attr', 'checked')
 }
 
