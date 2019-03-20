@@ -8,6 +8,14 @@ This plugin uses [Cypress.io](https://cypress.io/) for end-to-end testing.
 
 Cypress's files are located in `tests/cypress/`.
 
+#### Installing Cypress
+
+Use `node`'s package manager `npm` to install Cypress and it's dependencies:
+
+```sh
+npm install
+```
+
 #### Configuration
 
 ##### Base Configuration
@@ -42,6 +50,5 @@ composer run-script generate-fixtures
 In your terminal:
 
 ```sh
-npm i
 $(npm bin)/cypress open
 ```
