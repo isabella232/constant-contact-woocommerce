@@ -2,3 +2,4 @@
 /node_modules/*
 .nvimrc
 cypress.env.json
+cypress.json

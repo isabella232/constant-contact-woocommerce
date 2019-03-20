@@ -1,9 +1,0 @@
-{
-	"baseUrl": "http://lab.local/",
-	"env": {
-		"plugins_url": "/wp-admin/plugins.php",
-		"woosettings_url": "/wp-admin/admin.php?page=wc-settings",
-		"cc_woo_url": "/wp-admin/admin.php?page=wc-settings&tab=cc_woo",
-		"historical_url": "/wp-admin/admin.php?page=wc-settings&tab=cc_woo&section=customer_data_import"
-	}
-}
