@@ -11,14 +11,12 @@
 
 namespace WebDevStudios\CCForWoo\Utility;
 
-use \WebDevStudios\CCForWoo\Utility\PluginCompatibility;
-
 /**
  * Tests if WooCommerce is available and compatible.
  *
  * @since 0.0.1
  */
-class PluginCompatibilityCheck extends PluginCompatibility {
+class PluginCompatibilityCheck {
 	/**
 	 * The minimum WooCommerce version.
 	 *
@@ -26,6 +24,25 @@ class PluginCompatibilityCheck extends PluginCompatibility {
 	 * @var string
 	 */
 	const MINIMUM_WOO_VERSION = '3.5.4';
+
+	/**
+	 * The classname we'll be using for compatibility testing.
+	 *
+	 * @since 0.0.1
+	 * @var string
+	 */
+	protected $classname = '';
+
+	/**
+	 * Construct our compatibility checker with the main plugin class.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @param string $classname The classname to use for testing.
+	 */
+	public function __construct( string $classname ) {
+		$this->classname = $classname;
+	}
 
 	/**
 	 * Check whether WooCommerce is available.
