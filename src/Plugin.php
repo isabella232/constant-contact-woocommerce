@@ -9,11 +9,12 @@
 
 namespace WebDevStudios\CCForWoo;
 
-use WebDevStudios\CCForWoo\View\ViewRegistrar;
+use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
 use WebDevStudios\OopsWP\Structure\ServiceRegistrar;
+use WebDevStudios\CCForWoo\View\ViewRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
-use WebDevStudios\CCForWoo\Utility\PluginCompatibilityCheck;
+use WebDevStudios\CCForWoo\Meta\PluginOption;
 
 /**
  * "Core" plugin class.
@@ -48,6 +49,20 @@ final class Plugin extends ServiceRegistrar {
 	];
 
 	/**
+	 * Setup the instance of this class.
+	 *
+	 * Prepare some things for later.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios.com>
+	 * @param string $plugin_file The plugin file path of the entry script.
+	 * @package cc-woo
+	 */
+	public function __construct( string $plugin_file ) {
+		$this->plugin_file = $plugin_file;
+	}
+
+	/**
 	 * Deactivate this plugin.
 	 *
 	 * @since 0.0.1
@@ -64,12 +79,10 @@ final class Plugin extends ServiceRegistrar {
 
 		deactivate_plugins( $this->plugin_file );
 
+		$this->do_deactivation_process();
+
 		new Notice(
-			new NoticeMessage(
-				$reason,
-				'error',
-				true
-			)
+			new NoticeMessage( $reason, 'error', true )
 		);
 
 		Notice::set_notices();
@@ -82,7 +95,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @author Zach Owen <zach@webdevstudios.com>
 	 * @throws \Exception When WooCommerce is not found or compatible.
 	 */
-	public function maybe_deactivate() {
+	public function check_for_required_dependencies() {
 		try {
 			$compatibility_checker = new PluginCompatibilityCheck( '\\WooCommerce' );
 
@@ -104,20 +117,6 @@ final class Plugin extends ServiceRegistrar {
 	}
 
 	/**
-	 * Setup the instance of this class.
-	 *
-	 * Prepare some things for later.
-	 *
-	 * @since 0.0.1
-	 * @author Zach Owen <zach@webdevstudios.com>
-	 * @param string $plugin_file The plugin file path of the entry script.
-	 * @package cc-woo
-	 */
-	public function __construct( string $plugin_file ) {
-		$this->plugin_file = $plugin_file;
-	}
-
-	/**
 	 * Run things once the plugin instance is ready.
 	 *
 	 * @since 0.0.1
@@ -129,6 +128,8 @@ final class Plugin extends ServiceRegistrar {
 		}
 
 		$this->is_active = is_plugin_active( plugin_basename( $this->plugin_file ) );
+		$this->register_hooks();
+
 		parent::run();
 	}
 
@@ -137,13 +138,12 @@ final class Plugin extends ServiceRegistrar {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-12
-	 * @return void
 	 */
 	public function register_hooks() {
-		// Setup the plugin instance.
-		register_deactivation_hook( __FILE__, [ Notice::class, 'maybe_display_notices' ] );
+		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
 
-		add_action( 'plugins_loaded', [ $this, 'maybe_deactivate' ] );
+		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
+		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
 	}
 
 	/**
@@ -166,5 +166,52 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function get_plugin_file() : string {
 		return $this->plugin_file;
+	}
+
+	/**
+	 * Activate WooCommerce along with Constant Contact + WooCommerce if it's present and not already active.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	private function maybe_activate_woocommerce() {
+		$woocommerce = 'woocommerce/woocommerce.php';
+
+		if ( ! is_plugin_active( $woocommerce ) && in_array( $woocommerce, array_keys( get_plugins() ), true ) ) {
+			activate_plugin( $woocommerce );
+		}
+	}
+
+	/**
+	 * Callback for register_activation_hook.
+	 *
+	 * Performs the plugin's activation routines.
+	 *
+	 * @see register_activation_hook()
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 */
+	public function do_activation_process() {
+		$this->maybe_activate_woocommerce();
+
+		flush_rewrite_rules();
+	}
+
+	/**
+	 * Callback for register_deactivation_hook.
+	 *
+	 * Performs the plugin's deactivation routines, including notifying Constant Contact of disconnection.
+	 *
+	 * @see register_deactivation_hook()
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-18
+	 * @return void
+	 */
+	public function do_deactivation_process() {
+		if ( ! get_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY ) ) {
+			return;
+		}
+
+		delete_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY );
 	}
 }

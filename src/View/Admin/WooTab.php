@@ -9,6 +9,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Admin;
 
+use WebDevStudios\CCForWoo\Meta\PluginOption;
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
 use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
@@ -110,6 +111,21 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private $errors = [];
 
+	/**
+	 * Nonce field name.
+	 *
+	 * @since 2019-03-20
+	 * @var string
+	 */
+	private $nonce_name = '_cc_woo_nonce';
+
+	/**
+	 * Nonce action name.
+	 *
+	 * @since 2019-03-20
+	 * @var string
+	 */
+	private $nonce_action = 'cc-woo-connect-action';
 
 	/**
 	 * WooTab constructor.
@@ -128,19 +144,20 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function register_hooks() {
+		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_redirect_to_cc' ] );
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
 		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD,
 			[ $this, 'sanitize_phone_number' ] );
-		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connect_button' ] );
+		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connection_button' ] );
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
 		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
 		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'save' ] );
 		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'update_setup_option' ] );
-		add_action( 'woocommerce_admin_field_cc_connect_button', [ $this, 'add_cc_connect_button' ] );
+		add_action( 'woocommerce_admin_field_cc_connection_button', [ $this, 'add_cc_connection_button' ] );
 		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
@@ -363,7 +380,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
 					'cc-woo' ),
 				'type'  => 'checkbox',
-				'id'    => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
+				'id'    => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
@@ -428,7 +445,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	}
 
 	/**
-	 * Displays the Connect with Constant Contact button if we're good to go.
+	 * Displays the Constant Contact connection button if we're good to go.
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
@@ -437,30 +454,92 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @return array
 	 */
-	public function maybe_add_connect_button( $settings ) {
+	public function maybe_add_connection_button( $settings ) {
 		if ( ! $this->meets_connect_requirements() ) {
 			return $settings;
 		}
 
 		$settings[] = [
-			'type' => 'cc_connect_button',
+			'type' => 'cc_connection_button',
 		];
 
 		return $settings;
 	}
 
 	/**
-	 * Add the Connect with Constant Contact button when displaying the form.
+	 * Add the Constant Contact connection button when displaying the form.
+	 *
+	 * Will display as a "Disconnect" button if the connection has already been established.
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
-	public function add_cc_connect_button() {
+	public function add_cc_connection_button() {
+		$connected = get_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY );
+		$value     = $connected ? 'disconnect' : 'connect';
+		$message   = $connected
+			? __( 'Disconnect from Constant Contact', 'cc-woo' )
+			: __( 'Connect with Constant Contact', 'cc-woo' );
+
+		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 		?>
-		<button class="button button-primary" type="submit" name="cc_woo_action" value="connect">
-			Connect with Constant Contact
+		<button class="button button-primary" type="submit" name="cc_woo_action" value="<?php echo esc_attr( $value ); ?>">
+			<?php echo esc_html( $message ); ?>
 		</button>
 		<?php
+	}
+
+	/**
+	 * Maybe redirects to Constant Contact to connect accounts.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-19
+	 * @return void
+	 */
+	public function maybe_redirect_to_cc() {
+		if ( ! $this->requested_connect_to_cc() ) {
+			return;
+		}
+
+		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_redirect_to_cc' ] );
+
+		$url = wp_parse_url( get_home_url() );
+
+		wp_safe_redirect( 'https://shoppingcart.constantcontact.com/auth/woocommerce/WhoDis?storeDomain="' . $url['host'] . '"' );
+		exit;
+	}
+
+	/**
+	 * Check whether a connection request to CC has been triggered.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-19
+	 * @return bool
+	 */
+	private function requested_connect_to_cc() {
+		if ( ! $this->has_valid_nonce() ) {
+			return false;
+		}
+
+		// phpcs:disable -- Ignoring $_POST warnings.
+		return (
+			isset( $_POST['cc_woo_action'] )
+			&& 'connect' === filter_var( $_POST['cc_woo_action'], FILTER_SANITIZE_STRING )
+		);
+		// phpcs:enable
+	}
+
+	/**
+	 * Add the Constant Contact host to the list of allowed hosts.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-19
+	 * @return array
+	 */
+	public function allow_redirect_to_cc() {
+		$hosts[] = 'shoppingcart.constantcontact.com';
+
+		return $hosts;
 	}
 
 	/**
@@ -623,5 +702,22 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Return whether we have a valid nonce or not.
+	 *
+	 * @since 2019-03-15
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function has_valid_nonce() : bool {
+		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
+
+		if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, $this->nonce_action ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }
