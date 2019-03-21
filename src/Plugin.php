@@ -15,6 +15,7 @@ use WebDevStudios\CCForWoo\View\ViewRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
 use WebDevStudios\CCForWoo\Meta\PluginOption;
+use WebDevStudios\CCForWoo\Api\KeyManager;
 
 /**
  * "Core" plugin class.
@@ -141,6 +142,7 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
+		add_action( 'admin_init', [ new KeyManager(), 'register_hooks' ] );
 
 		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
 		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
