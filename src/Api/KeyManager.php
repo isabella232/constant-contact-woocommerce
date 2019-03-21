@@ -25,7 +25,9 @@ class KeyManager extends Service {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function register_hooks() {
-		add_filter( 'query', [ $this, 'maybe_revoke_api_key' ] );
+		add_action( 'admin_init', function() {
+			add_filter( 'query', [ $this, 'maybe_revoke_api_key' ] );
+		} );
 	}
 
 	/**

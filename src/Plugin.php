@@ -47,6 +47,7 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	protected $services = [
 		ViewRegistrar::class,
+		KeyManager::class,
 	];
 
 	/**
@@ -142,7 +143,6 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
-		add_action( 'admin_init', [ new KeyManager(), 'register_hooks' ] );
 
 		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
 		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
