@@ -346,7 +346,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function render_cta_button() {
 		?>
-		<a class="button" href="https://constantcontact.com"><?php esc_html_e( 'Constant Contact CTA', 'cc-woo' ); ?></a>
+		<a class="button" href="https://app.constantcontact.com/pages/ecomm/dashboard/woocommerce"><?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?></a>
 		<?php
 	}
 
