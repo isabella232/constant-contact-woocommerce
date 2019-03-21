@@ -40,8 +40,9 @@ trait NonceVerification {
 	 * @return bool
 	 */
 	protected function has_valid_nonce() : bool {
-		$nonce = filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING );
-
-		return ! empty( $nonce ) && wp_verify_nonce( $nonce, $this->nonce_action );
+		return wp_verify_nonce(
+			filter_input( INPUT_POST, $this->nonce_name, FILTER_SANITIZE_STRING ),
+			$this->nonce_action
+		);
 	}
 }
