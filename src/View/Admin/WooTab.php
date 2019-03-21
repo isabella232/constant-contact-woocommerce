@@ -308,7 +308,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_connection_attempted_options() {
 		return [
 			[
-				'title' => __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ),
+				'title' => '',
+				'desc'  => '<h2 style="color:red;">' . __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ) . '</h2>',
 				'type'  => 'title',
 				'id'    => 'cc_woo_connection_attempted_heading',
 			],
@@ -347,7 +348,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function render_cta_button() {
 		?>
-		<a class="button" href="https://app.constantcontact.com/pages/ecomm/dashboard/woocommerce"><?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?></a>
+		<a class="button button-primary" href="https://app.constantcontact.com/pages/ecomm/dashboard/woocommerce"><?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?></a>
 		<?php
 	}
 
