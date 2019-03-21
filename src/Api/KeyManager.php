@@ -64,11 +64,11 @@ class KeyManager implements Hookable {
 	 * @return bool
 	 */
 	private function is_cc_api_revocation_query( string $query ) : bool {
-		if ( false === stripos( $query, 'DELETE' ) ) {
+		if( ! $this->is_delete_query( $query ) ) {
 			return false;
 		}
 
-		if ( false === stripos( $query, 'woocommerce_api_keys' ) ) {
+		if ( ! $this->is_woo_commerce_api_key_query( $query ) ) {
 			return false;
 		}
 
@@ -105,5 +105,29 @@ AND
 SQL;
 
 		return ! empty( $GLOBALS['wpdb']->get_col( $GLOBALS['wpdb']->prepare( $query, $user_id ) ) );
+	}
+
+	/**
+	 * Check if the query is a DELETE query.
+	 *
+	 * @since 2019-03-21
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @param string $query The query to test.
+	 * @return bool
+	 */
+	private function is_delete_query( string $query ) {
+		return false !== stripos( $query, 'DELETE' );
+	}
+
+	/**
+	 * Check if the query is hitting Woo's API key table.
+	 *
+	 * @since 2019-03-21
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @param string $query The query to test.
+	 * @return bool
+	 */
+	private function is_woo_commerce_api_key_query( $query ) {
+		return false !== stripos( $query, 'woocommerce_api_keys' );
 	}
 }
