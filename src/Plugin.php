@@ -14,7 +14,7 @@ use WebDevStudios\OopsWP\Structure\ServiceRegistrar;
 use WebDevStudios\CCForWoo\View\ViewRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
-use WebDevStudios\CCForWoo\Meta\PluginOption;
+use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 
 /**
  * "Core" plugin class.
@@ -208,10 +208,10 @@ final class Plugin extends ServiceRegistrar {
 	 * @return void
 	 */
 	public function do_deactivation_process() {
-		if ( ! get_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY ) ) {
+		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
 		}
 
-		delete_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY );
+		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
 	}
 }

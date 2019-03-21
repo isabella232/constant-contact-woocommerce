@@ -9,7 +9,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Admin;
 
-use WebDevStudios\CCForWoo\Meta\PluginOption;
+use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Settings\SettingsModel;
 use WebDevStudios\CCForWoo\Settings\SettingsValidator;
 use WebDevStudios\CCForWoo\Utility\NonceVerification;
@@ -115,6 +115,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $errors = [];
 
 	/**
+	 * Instance of the ConnectionStatus object.
+	 *
+	 * @var ConnectionStatus
+	 * @since 2019-03-21
+	 */
+	private $connection;
+
+	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -124,6 +132,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$this->label        = __( 'Constant Contact', 'cc-woo' );
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
+		$this->connection   = new ConnectionStatus();
 	}
 
 	/**
@@ -133,25 +142,33 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function register_hooks() {
-		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_redirect_to_cc' ] );
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
+		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
+
+		// Output settings sections.
+		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
+
+		// CC API interactions.
+		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_redirect_to_cc' ] );
+		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_update_connection_status' ] );
+
+		// REST API.
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
 		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
-		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD,
-			[ $this, 'sanitize_phone_number' ] );
-		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connection_button' ] );
-		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 
-		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
-		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
-		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'save' ] );
-		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'update_setup_option' ] );
-		add_action( 'woocommerce_admin_field_cc_connection_button', [ $this, 'add_cc_connection_button' ] );
-		add_action( 'woocommerce_admin_field_cc_has_setup', [ $this, 'add_cc_has_setup' ] );
+		// Form.
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
-		add_filter( 'pre_update_option_' . self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
-			[ $this, 'maybe_prevent_opt_in_consent' ] );
+		add_filter( 'pre_update_option_' . self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, [ $this, 'maybe_prevent_opt_in_consent' ] );
+		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD, [ $this, 'sanitize_phone_number' ] );
+		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connection_button' ] );
+		add_action( 'woocommerce_admin_field_cc_connection_button', [ $this, 'add_cc_connection_button' ] );
+		add_action( 'woocommerce_admin_field_cc_cta_button', [ $this, 'render_cta_button' ] );
+
+		// Save actions.
+		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
+		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'save' ] );
+		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'update_setup_option' ] );
 	}
 
 	/**
@@ -159,7 +176,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
-	 * @return array|mixed|void
+	 * @return array
 	 */
 	public function get_sections() {
 		$sections = [
@@ -178,6 +195,42 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
+		if ( ! $this->connection->connection_was_attempted() ) {
+			return $this->get_filtered_settings( $this->get_default_settings_options() );
+		}
+
+		if ( ! $this->connection->is_connected() ) {
+			return $this->get_filtered_settings(
+				array_merge( $this->get_connection_attempted_options(), $this->get_default_settings_options() )
+			);
+		}
+
+		$GLOBALS['hide_save_button'] = true;
+
+		return $this->get_filtered_settings( $this->get_connection_established_options() );
+	}
+
+	/**
+	 * Run the settings for the current connection status through the WooCommerce settings filter.
+	 *
+	 * @param array $settings Settings options.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 * @return array
+	 */
+	private function get_filtered_settings( array $settings ) {
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] );
+	}
+
+	/**
+	 * Get the default view for our settings page.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 * @return array
+	 */
+	private function get_default_settings_options() {
 		$settings = [];
 
 		switch ( $GLOBALS['current_section'] ) {
@@ -194,7 +247,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$settings = $this->process_errors( $settings );
 		$settings = $this->adjust_styles( $settings );
 
-		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] );
+		return $settings;
 	}
 
 	/**
@@ -242,6 +295,59 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		return $settings;
+	}
+
+	/**
+	 * Get the section options for an attempted connection that failed.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 * @return array
+	 */
+	private function get_connection_attempted_options() {
+		return [
+			[
+				'title' => __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ),
+				'type'  => 'title',
+				'id'    => 'cc_woo_connection_attempted_heading',
+			],
+		];
+	}
+
+	/**
+	 * Get the settings for the main section if already connected to Constant Contact.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 * @return array
+	 */
+	private function get_connection_established_options() {
+		return [
+			[
+				'title' => __( 'Congratulations! Your store is connected to Constant Contact.', 'cc-woo' ),
+				'type'  => 'title',
+				'id'    => 'cc_woo_connection_established_heading',
+			],
+			[
+				'type' => 'cc_cta_button',
+			],
+			[
+				'type' => 'sectionend',
+				'id'   => 'cc_woo_store_information_settings',
+			],
+		];
+	}
+
+	/**
+	 * Render the call-to-action button in the admin.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 */
+	public function render_cta_button() {
+		?>
+		<a class="button" href="https://constantcontact.com"><?php esc_html_e( 'Constant Contact CTA', 'cc-woo' ); ?></a>
+		<?php
 	}
 
 	/**
@@ -423,7 +529,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	}
 
 	/**
-	 * Displays the Constant Contact connection button if we're good to go.
+	 * Displays the Constant Contact connection button when the form is validated and a connection is not already established.
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
@@ -433,7 +539,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function maybe_add_connection_button( $settings ) {
-		if ( ! $this->meets_connect_requirements() ) {
+		if ( ! $this->meets_connect_requirements() || $this->connection->is_connected() ) {
 			return $settings;
 		}
 
@@ -453,7 +559,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function add_cc_connection_button() {
-		$connected = get_option( PluginOption::CC_CONNECTION_ESTABLISHED_KEY );
+		$connected = get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
 		$value     = $connected ? 'disconnect' : 'connect';
 		$message   = $connected
 			? __( 'Disconnect from Constant Contact', 'cc-woo' )
@@ -543,6 +649,23 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$validator = new SettingsValidator( $model );
 
 		return $validator->is_valid();
+	}
+
+	/**
+	 * Listen for GET request that establishes connection.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-21
+	 */
+	public function maybe_update_connection_status() {
+		$success = filter_input( INPUT_GET, 'success', FILTER_SANITIZE_NUMBER_INT );
+		$user_id = filter_input( INPUT_GET, 'user_id', FILTER_SANITIZE_NUMBER_INT );
+
+		if ( is_null( $success ) || is_null( $user_id ) ) {
+			return;
+		}
+
+		$this->connection->set_connection( $success );
 	}
 
 	/**
