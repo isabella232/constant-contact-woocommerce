@@ -150,7 +150,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		// CC API interactions.
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_redirect_to_cc' ] );
-		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_update_connection_status' ] );
+		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_update_connection_status' ], 1 );
 
 		// REST API.
 		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
@@ -179,10 +179,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [
-			''                     => __( 'Store Information', 'cc-woo' ),
-			'customer_data_import' => __( 'Historical Customer Data Import', 'cc-woo' ),
-		];
+		$sections = [ ''                     => __( 'Store Information', 'cc-woo' ) ];
+
+		if ( ! $this->connection->is_connected() ) {
+			$sections['customer_data_import'] = __( 'Historical Customer Data Import', 'cc-woo' );
+		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
 	}
@@ -543,11 +544,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return $settings;
 		}
 
-		$settings[] = [
-			'type' => 'cc_connection_button',
-		];
-
-		return $settings;
+		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings ) ;
 	}
 
 	/**
@@ -567,9 +564,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 		?>
+		<div style="padding: 1rem 0;">
 		<button class="button button-primary" type="submit" name="cc_woo_action" value="<?php echo esc_attr( $value ); ?>">
 			<?php echo esc_html( $message ); ?>
 		</button>
+		</div>
 		<?php
 	}
 
