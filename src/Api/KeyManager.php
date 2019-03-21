@@ -8,7 +8,7 @@
 
 namespace WebDevStudios\CCForWoo\Api;
 
-use WebDevStudios\OopsWP\Utility\Hookable;
+use WebDevStudios\OopsWP\Structure\Service;
 
 /**
  * KeyManager class
@@ -17,7 +17,7 @@ use WebDevStudios\OopsWP\Utility\Hookable;
  * @since 2019-03-21
  * @author Zach Owen <zach@webdevstudios>
  */
-class KeyManager implements Hookable {
+class KeyManager extends Service {
 	/**
 	 * Register hooks with WordPress
 	 *
