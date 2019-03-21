@@ -46,6 +46,7 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	protected $services = [
 		ViewRegistrar::class,
+		KeyManager::class,
 	];
 
 	/**
