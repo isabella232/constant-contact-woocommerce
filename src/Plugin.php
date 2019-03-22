@@ -15,6 +15,7 @@ use WebDevStudios\CCForWoo\View\ViewRegistrar;
 use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
 use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
+use WebDevStudios\CCForWoo\Api\KeyManager;
 
 /**
  * "Core" plugin class.
