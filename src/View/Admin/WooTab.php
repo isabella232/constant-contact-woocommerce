@@ -309,7 +309,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		return [
 			[
 				'title' => '',
-				'desc'  => '<h2 style="color:red;">' . __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ) . '</h2>',
+				'desc'  => '<h2 style="color:red;margin-top:0;">' . __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ) . '</h2>',
 				'type'  => 'title',
 				'id'    => 'cc_woo_connection_attempted_heading',
 			],
