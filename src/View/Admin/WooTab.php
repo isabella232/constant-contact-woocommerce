@@ -665,7 +665,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return;
 		}
 
-		$this->connection->set_connection( $success );
+		$this->connection->set_connection( $success, $user_id );
 	}
 
 	/**
