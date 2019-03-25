@@ -9,7 +9,11 @@
 	},
 	"scripts": {
 		"test": [ "./vendor/bin/phpunit" ],
-		"generate-fixtures": [ "@php ./tests/cypress/bin/generate-cypress-fixtures.php" ]
+		"generate-fixtures": [ "@php ./tests/cypress/bin/generate-cypress-fixtures.php" ],
+		"dist": [
+			"@composer archive --format=zip --file constant-contact-woocommerce",
+			"mv constant-contact-woocommerce.zip $HOME/Desktop"
+		]
 	},
 	"autoload-dev": {
 		"psr-4": {
