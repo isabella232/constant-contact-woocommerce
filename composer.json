@@ -11,6 +11,8 @@
 		"test": [ "./vendor/bin/phpunit" ],
 		"generate-fixtures": [ "@php ./tests/cypress/bin/generate-cypress-fixtures.php" ],
 		"dist": [
+			"rm -rf ./vendor",
+			"@composer install --no-dev -a",
 			"@composer archive --format=zip --file constant-contact-woocommerce",
 			"mv constant-contact-woocommerce.zip $HOME/Desktop"
 		]
