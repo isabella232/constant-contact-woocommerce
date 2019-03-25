@@ -23,5 +23,15 @@
 	"require": {
 		"webdevstudios/oops-wp": "^0.1",
 		"composer/installers": "^1.6"
+	},
+	"archive": {
+		"exclude": [
+			"!vendor/*",
+			"node_modules",
+			"tests",
+			"cypress.*",
+			"phpunit.xml",
+			"README.md"
+		]
 	}
 }
