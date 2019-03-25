@@ -23,6 +23,11 @@ class ConnectionStatus {
 	const CC_CONNECTION_ESTABLISHED_KEY = 'cc_woo_import_connection_established';
 
 	/**
+	 * Meta key for the User ID of the successful connection.
+	 */
+	const CC_CONNECTION_USER_ID = 'cc_woo_api_user_id';
+
+	/**
 	 * Value to check whether the store has attempted a connection with CC.
 	 *
 	 * @var bool
@@ -70,13 +75,15 @@ class ConnectionStatus {
 	 * Set the connection status.
 	 *
 	 * @param int $connected Connected state.
+	 * @param int $user_id   Constant Contact User ID for the connection.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
 	 */
-	public function set_connection( int $connected ) {
+	public function set_connection( int $connected, int $user_id ) {
 		$this->connected = $connected;
 
 		update_option( self::CC_CONNECTION_ESTABLISHED_KEY, $connected );
+		update_option( self::CC_CONNECTION_USER_ID, $user_id );
 	}
 }
