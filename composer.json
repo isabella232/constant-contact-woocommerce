@@ -36,7 +36,8 @@
 			"tests",
 			"cypress.*",
 			"phpunit.xml",
-			"README.md"
+			"README.md",
+			"tags"
 		]
 	}
 }
