@@ -8,7 +8,7 @@
  *
  * @wordpress-plugin
  * Plugin Name: Constant Contact + WooCommerce
- * Description: Integrate Constant Contact with WooCommerce.
+ * Description: Add products to your emails and sync your contacts.
  * Plugin URI: https://github.com/WebDevStudios/constant-contact-woocommerce
  * Version: 1.0.0
  * Author: WebDevStudios
