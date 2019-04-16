@@ -16,6 +16,7 @@ use WebDevStudios\CCForWoo\View\Admin\Notice;
 use WebDevStudios\CCForWoo\View\Admin\NoticeMessage;
 use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
+use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 
 /**
  * "Core" plugin class.
@@ -48,6 +49,7 @@ final class Plugin extends ServiceRegistrar {
 	protected $services = [
 		ViewRegistrar::class,
 		KeyManager::class,
+		MenuItem::class,
 	];
 
 	/**
