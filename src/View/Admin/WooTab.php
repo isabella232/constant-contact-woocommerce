@@ -187,7 +187,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [ ''                     => __( 'Store Information', 'cc-woo' ) ];
+		$sections = [ '' => __( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
 			$sections[ $this->historical_data_section ] = __( 'Historical Customer Data Import', 'cc-woo' );
@@ -553,7 +553,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return $settings;
 		}
 
-		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings ) ;
+		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings );
 	}
 
 	/**
@@ -664,6 +664,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 * @return void
 	 */
 	public function maybe_update_connection_status() {
 		$success = filter_input( INPUT_GET, 'success', FILTER_SANITIZE_NUMBER_INT );
