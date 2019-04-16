@@ -813,4 +813,24 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
 	}
+
+	/**
+	 * Save settings.
+	 *
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 2019-04-16
+	 * @return void
+	 */
+	public function save() {
+		global $current_section;
+
+		parent::save();
+
+		if ( ! empty( $current_section ) ) {
+			return;
+		}
+
+		wp_safe_redirect( add_query_arg( 'section', $this->historical_data_section ) );
+		exit;
+	}
 }
