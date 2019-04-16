@@ -587,9 +587,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		add_filter( 'allowed_redirect_hosts', [ $this, 'allow_redirect_to_cc' ] );
 
-		$url = wp_parse_url( get_home_url() );
-
-		wp_safe_redirect( 'https://shoppingcart.constantcontact.com/auth/woocommerce/WhoDis?storeDomain="' . $url['host'] . '"' );
+		wp_safe_redirect( 'https://shoppingcart.constantcontact.com/auth/woocommerce/WhoDis?storeDomain="' . get_home_url( null, '' ) . '"' );
 		exit;
 	}
 
