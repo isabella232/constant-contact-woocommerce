@@ -123,6 +123,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
+	 * The identifier for the Historical Customer Data Import section.
+	 *
+	 * @since 2019-04-16
+	 * @var string
+	 */
+	private $historical_data_section = 'customer_data_import';
+
+	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -182,7 +190,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$sections = [ ''                     => __( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections['customer_data_import'] = __( 'Historical Customer Data Import', 'cc-woo' );
+			$sections[ $this->historical_data_section ] = __( 'Historical Customer Data Import', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -240,7 +248,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				$settings = $this->get_store_information_settings();
 				break;
 
-			case 'customer_data_import':
+			case $this->historical_data_section:
 				$settings = $this->get_customer_data_settings();
 				break;
 		}
