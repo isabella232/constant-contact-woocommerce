@@ -123,6 +123,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
+	 * Is the current request a REST API request?
+	 *
+	 * @since 2019-04-16
+	 * @var bool
+	 */
+	private $is_rest = false;
+
+	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -133,6 +141,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
 		$this->connection   = new ConnectionStatus();
+		$this->is_rest      = defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
@@ -196,7 +205,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
-		if ( ! $this->connection->connection_was_attempted() ) {
+		if ( ! $this->connection->connection_was_attempted() || $this->is_rest ) {
 			return $this->get_filtered_settings( $this->get_default_settings_options() );
 		}
 
@@ -233,6 +242,13 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private function get_default_settings_options() {
 		$settings = [];
+
+		if ( $this->is_rest ) {
+			return array_merge(
+				$this->get_store_information_settings(),
+				$this->get_customer_data_settings()
+			);
+		}
 
 		switch ( $GLOBALS['current_section'] ) {
 			case '':
