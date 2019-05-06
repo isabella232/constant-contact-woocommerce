@@ -123,6 +123,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
+	 * The identifier for the Historical Customer Data Import section.
+	 *
+	 * @since 2019-04-16
+	 * @var string
+	 */
+	private $historical_data_section = 'customer_data_import';
+
+	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -179,10 +187,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [ ''                     => __( 'Store Information', 'cc-woo' ) ];
+		$sections = [ '' => __( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections['customer_data_import'] = __( 'Historical Customer Data Import', 'cc-woo' );
+			$sections[ $this->historical_data_section ] = __( 'Historical Customer Data Import', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -240,7 +248,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				$settings = $this->get_store_information_settings();
 				break;
 
-			case 'customer_data_import':
+			case $this->historical_data_section:
 				$settings = $this->get_customer_data_settings();
 				break;
 		}
@@ -545,7 +553,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return $settings;
 		}
 
-		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings ) ;
+		return array_merge( [ $this->get_connection_button() ], $settings );
 	}
 
 	/**
@@ -656,6 +664,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 * @return void
 	 */
 	public function maybe_update_connection_status() {
 		$success = filter_input( INPUT_GET, 'success', FILTER_SANITIZE_NUMBER_INT );
@@ -803,5 +812,50 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Save settings.
+	 *
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 2019-04-16
+	 * @return void
+	 */
+	public function save() {
+		parent::save();
+
+		if ( ! $this->has_active_settings_section() ) {
+			return;
+		}
+
+		wp_safe_redirect( add_query_arg( 'section', $this->historical_data_section ) );
+		exit;
+	}
+
+	/**
+	 * Gets the Connect Button for the settings fields.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return array
+	 */
+	private function get_connection_button() : array {
+		return [
+			'type' => 'cc_connection_button',
+		];
+	}
+
+	/**
+	 * Check whether there is an active section on the Woo settings page.
+	 *
+	 * When a user clicks a subsection (in this case the Historical data tab),
+	 * Woo sets a global `$current_section` variable to know which tab to select.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function has_active_settings_section() : bool {
+		return ! empty( $GLOBALS['current_section'] );
 	}
 }
