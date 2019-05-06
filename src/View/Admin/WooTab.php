@@ -553,7 +553,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return $settings;
 		}
 
-		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings );
+		return array_merge( [ $this->get_connection_button() ], $settings );
 	}
 
 	/**
@@ -832,5 +832,18 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		wp_safe_redirect( add_query_arg( 'section', $this->historical_data_section ) );
 		exit;
+	}
+
+	/**
+	 * Gets the Connect Button for the settings fields.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return array
+	 */
+	private function get_connection_button() : array {
+		return [
+			'type' => 'cc_connection_button',
+		];
 	}
 }
