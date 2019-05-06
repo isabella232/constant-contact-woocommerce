@@ -822,11 +822,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return void
 	 */
 	public function save() {
-		global $current_section;
-
 		parent::save();
 
-		if ( ! empty( $current_section ) ) {
+		if ( ! $this->has_active_settings_section() ) {
 			return;
 		}
 
@@ -845,5 +843,19 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		return [
 			'type' => 'cc_connection_button',
 		];
+	}
+
+	/**
+	 * Check whether there is an active section on the Woo settings page.
+	 *
+	 * When a user clicks a subsection (in this case the Historical data tab),
+	 * Woo sets a global `$current_section` variable to know which tab to select.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return bool
+	 */
+	private function has_active_settings_section() : bool {
+		return ! empty( $GLOBALS['current_section'] );
 	}
 }
