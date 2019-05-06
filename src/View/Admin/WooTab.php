@@ -205,7 +205,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
-		if ( ! $this->connection->connection_was_attempted() || $this->is_rest ) {
+		if ( $this->is_rest ) {
+			$settings = $this->get_rest_settings_options();
+
+			if ( ! $this->connection->is_connected() ) {
+				$settings = array_merge( $settings, $this->get_connection_attempted_options() );
+			}
+
+			return $this->get_filtered_settings( $settings );
+		}
+
+		if ( ! $this->connection->connection_was_attempted() ) {
 			return $this->get_filtered_settings( $this->get_default_settings_options() );
 		}
 
@@ -242,13 +252,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private function get_default_settings_options() {
 		$settings = [];
-
-		if ( $this->is_rest ) {
-			return array_merge(
-				$this->get_store_information_settings(),
-				$this->get_customer_data_settings()
-			);
-		}
 
 		switch ( $GLOBALS['current_section'] ) {
 			case '':
@@ -819,5 +822,19 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Return the options for REST requests.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return array
+	 */
+	private function get_rest_settings_options() : array {
+		return array_merge(
+			$this->get_store_information_settings(),
+			$this->get_customer_data_settings()
+		);
 	}
 }
