@@ -435,10 +435,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title' => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
-				'desc'  => __( 'Customers will see an option to opt-in to email marketing at checkout. Checking this box will select that option by default.', 'cc-woo' ),
-				'type'  => 'checkbox',
-				'id'    => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
+				'title'   => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
+				'desc'    => __( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you want this box checked by default?', 'cc-woo' ),
+				'type'    => 'select',
+				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
+				'default' => 'no',
+				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
+				'options' => [
+					'no'  => 'No',
+					'yes' => 'Yes',
+				],
 			],
 			[
 				'type' => 'sectionend',
@@ -460,6 +466,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title' => __( 'Historical Customer Data Import', 'cc-woo' ),
 				'id'    => 'cc_woo_customer_data_settings',
 				'type'  => 'title',
+			],
+			[
+				'title' => '',
+				'type' => 'title',
+				'description' => 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.
+
+Do you have permission to send to the contacts you wish to import?
+Yes No
+
+See more on Constant Contact’s anti-spam policy.',
 			],
 			[
 				'title' => __( 'User information consent', 'cc-woo' ),
