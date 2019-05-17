@@ -169,6 +169,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		add_filter( 'woocommerce_settings_start', [ $this, 'validate_option_values' ], 10, 3 );
 		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'save' ] );
 		add_action( "woocommerce_settings_save_{$this->id}", [ $this, 'update_setup_option' ] );
+
+		// Custom field for labels.
+		add_action( 'woocommerce_admin_field_cc_woo_anti_spam_notice', [ $this, 'display_anti_spam_notice' ] );
 	}
 
 	/**
@@ -469,20 +472,24 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 			[
 				'title' => '',
-				'type' => 'title',
-				'description' => 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.
-
-Do you have permission to send to the contacts you wish to import?
-Yes No
-
-See more on Constant Contact’s anti-spam policy.',
+				'type'  => 'title',
+				'desc'  => __( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
 			],
 			[
-				'title' => __( 'User information consent', 'cc-woo' ),
-				'desc'  => __( 'By checking this box, you are stating that you have your customers\' permission to email them.',
-					'cc-woo' ),
-				'type'  => 'checkbox',
-				'id'    => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+				'title'   => __( 'User information consent', 'cc-woo' ),
+				'desc'    => __( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
+				'type'    => 'select',
+				'id'      => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+				'default' => 'no',
+				'options' => [
+					'no'  => 'No',
+					'yes' => 'Yes',
+				],
+			],
+			[
+				'title' => '',
+				'type'  => 'cc_woo_anti_spam_notice',
+				'id'    => 'anti-spam-notice',
 			],
 			[
 				'title'   => __( 'Import historical customer data', 'cc-woo' ),
@@ -819,5 +826,27 @@ See more on Constant Contact’s anti-spam policy.',
 	 */
 	public function get_woo_country() : string {
 		return wc_get_base_location()['country'] ?? '';
+	}
+
+	/**
+	 * Display a link to the anti-spam policy.
+	 *
+	 * @since 2019-05-17
+	 * @author Zach Owen <zach@webdevstudios>
+	 */
+	public function display_anti_spam_notice() {
+?>
+<tr>
+	<td colspan="2">
+		<?php
+		echo sprintf(
+			// phpcs:ignore -- output is escaped properly with esc_url.
+			__( 'See more on Constant Contact\'s <a href="%s" target="_blank">anti-spam policy</a>.', 'cc-woo' ),
+			esc_url( 'https://www.constantcontact.com/legal/anti-spam' )
+		);
+		?>
+	</td>
+</tr>
+<?php
 	}
 }
