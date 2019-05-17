@@ -159,7 +159,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		// Form.
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
-		add_filter( 'pre_update_option_' . self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, [ $this, 'maybe_prevent_opt_in_consent' ] );
+		add_filter( 'pre_update_option_' . self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, [ $this, 'maybe_prevent_importing' ] );
 		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD, [ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connection_button' ] );
 		add_action( 'woocommerce_admin_field_cc_connection_button', [ $this, 'add_cc_connection_button' ] );
@@ -527,19 +527,19 @@ See more on Constant Contact’s anti-spam policy.',
 	}
 
 	/**
-	 * Prevent the opt-in consent from being set if importing is not enabled.
+	 * Prevent importing if opt-in consent is not "Yes".
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
 	 *
-	 * @param mixed $value The value being set for the opt-in option.
+	 * @param mixed $value The value being set for the import option.
 	 *
 	 * @return string
 	 */
-	public function maybe_prevent_opt_in_consent( $value ) {
-		$allow_import = get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD );
+	public function maybe_prevent_importing( $value ) {
+		$opt_in_consent = get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
 
-		if ( 'no' === $allow_import ) {
+		if ( 'no' === $opt_in_consent ) {
 			return 'no';
 		}
 
