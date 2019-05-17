@@ -182,7 +182,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [ ''                     => __( 'Store Information', 'cc-woo' ) ];
+		$sections = [ '' => __( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
 			$sections['customer_data_import'] = __( 'Historical Customer Data Import', 'cc-woo' );
@@ -443,7 +443,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'type'    => 'select',
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 				'default' => 'no',
-				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'options' => [
 					'no'  => 'No',
 					'yes' => 'Yes',
@@ -497,7 +496,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 					'cc-woo' ),
 				'type'    => 'select',
 				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
-				'css'     => 'width:100px;display:block;margin-bottom:0.5rem;',
 				'default' => 'no',
 				'options' => [
 					'no'  => 'No',
@@ -568,7 +566,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return $settings;
 		}
 
-		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings ) ;
+		return array_merge( [ [ 'type' => 'cc_connection_button' ] ], $settings );
 	}
 
 	/**
@@ -679,6 +677,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 * @return void
 	 */
 	public function maybe_update_connection_status() {
 		$success = filter_input( INPUT_GET, 'success', FILTER_SANITIZE_NUMBER_INT );
@@ -764,6 +763,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		foreach ( $settings as $key => &$field ) {
+			if ( empty( $field['id'] ) ) {
+				continue;
+			}
+
 			if ( ! isset( $this->errors[ $field['id'] ] ) ) {
 				continue;
 			}
