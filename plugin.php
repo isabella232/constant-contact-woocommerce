@@ -3,7 +3,7 @@
  * Constant Contact + WooCommerce
  *
  * @since 2019-02-15
- * @author WebDevStudios <https://www.webdevstudios.com/>
+ * @author Constant Contact <https://www.constantcontact.com/>
  * @package cc-woo
  *
  * @wordpress-plugin
@@ -11,8 +11,8 @@
  * Description: Add products to your emails and sync your contacts.
  * Plugin URI: https://github.com/WebDevStudios/constant-contact-woocommerce
  * Version: 1.0.0
- * Author: WebDevStudios
- * Author URI: https://www.webdevstudios.com/
+ * Author: Constant Contact
+ * Author URI: https://www.constantcontact.com/
  * Text Domain: cc-woo
  * License: GPL-3.0+
  * License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
