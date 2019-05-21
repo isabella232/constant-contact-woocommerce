@@ -123,7 +123,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
-	 * The identifier for the Historical Customer Data Import section.
+	 * The identifier for the Importing Existing Customers section.
 	 *
 	 * @since 2019-04-16
 	 * @var string
@@ -193,7 +193,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$sections = [ '' => __( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections[ $this->historical_data_section ] = __( 'Historical Customer Data Import', 'cc-woo' );
+			$sections[ $this->historical_data_section ] = __( 'Importing Existing Customers', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -446,14 +446,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'   => __( 'Pre-select customer marketing sign-up at checkout', 'cc-woo' ),
-				'desc'    => __( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you want this box checked by default?', 'cc-woo' ),
+				'title'   => __( 'Store Details', 'cc-woo' ),
+				'desc'    => __( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you this box checked by default?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 				'default' => 'no',
 				'options' => [
-					'no'  => 'No',
-					'yes' => 'Yes',
+					'no'  => 'No - do not check this box by default',
+					'yes' => 'Yes - check this box by default',
 				],
 			],
 			[
@@ -473,7 +473,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_customer_data_settings() {
 		$settings = [
 			[
-				'title' => __( 'Historical Customer Data Import', 'cc-woo' ),
+				'title' => __( 'Importing Existing Customers', 'cc-woo' ),
 				'id'    => 'cc_woo_customer_data_settings',
 				'type'  => 'title',
 			],
@@ -777,11 +777,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				continue;
 			}
 
-			if ( ! isset( $field['desc'] ) ) {
-				$field['desc'] = '';
-			}
-
-			$field['desc'] .= $this->errors[ $field['id'] ];
+			$field['desc'] = ( ! empty( $field['desc'] ) ? $field['desc'] . '<br/>' : '' ) . $this->errors[ $field['id'] ];
 		}
 
 		return $settings;
