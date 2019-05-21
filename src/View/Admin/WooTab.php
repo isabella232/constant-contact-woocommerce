@@ -377,7 +377,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			[
 				'title' => __( 'Store Information', 'cc-woo' ),
 				'type'  => 'title',
-				'desc'  => 'All fields are required.',
+				'desc'  => __( 'All fields are required.', 'cc-woo' ),
 				'id'    => 'cc_woo_store_information_settings',
 			],
 			[
@@ -452,8 +452,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 				'default' => 'no',
 				'options' => [
-					'no'  => 'No - do not check this box by default',
-					'yes' => 'Yes - check this box by default',
+					'no'  => __( 'No - do not check this box by default', 'cc-woo' ),
+					'yes' => __( 'Yes - check this box by default', 'cc-woo' ),
 				],
 			],
 			[
@@ -489,8 +489,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'      => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
 				'default' => 'no',
 				'options' => [
-					'no'  => 'No',
-					'yes' => 'Yes',
+					'no'  => __( 'No', 'cc-woo' ),
+					'yes' => __( 'Yes', 'cc-woo' ),
 				],
 			],
 			[
@@ -506,8 +506,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
 				'default' => 'no',
 				'options' => [
-					'no'  => 'No',
-					'yes' => 'Yes',
+					'no'  => __( 'No', 'cc-woo' ),
+					'yes' => __( 'Yes', 'cc-woo' ),
 				],
 			],
 		];
@@ -516,7 +516,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			$settings[] = [
 				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
-				'title' => 'Import Customer Data',
+				'title' => __( 'Import Customer Data', 'cc-woo' ),
 			];
 		}
 
