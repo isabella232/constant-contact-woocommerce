@@ -44,17 +44,18 @@ class ViewRegistrar extends Service {
 	 * @since 1.0.0
 	 */
 	public function register_hooks() {
-		add_action( 'woocommerce_get_settings_pages', [ $this, 'register_settings' ] );
+		add_filter( 'woocommerce_get_settings_pages', [ $this, 'register_settings' ] );
 		add_action( 'init', [ $this, 'register_forms' ] );
 	}
 
 	/**
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-12
-	 * @return void
+	 * @return array
 	 */
-	public function register_settings() {
+	public function register_settings( $woo_settings_pages ) {
 		array_walk( $this->settings, [ $this, 'register_object' ] );
+		return $woo_settings_pages;
 	}
 
 	/**

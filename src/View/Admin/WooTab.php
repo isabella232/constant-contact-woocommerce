@@ -123,6 +123,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
+	 * Is the current request a REST API request?
+	 *
+	 * @since 2019-04-16
+	 * @var bool
+	 */
+	private $is_rest = false;
+
+	/**
 	 * The identifier for the Historical Customer Data Import section.
 	 *
 	 * @since 2019-04-16
@@ -141,6 +149,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
 		$this->connection   = new ConnectionStatus();
+		$this->is_rest      = defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
@@ -204,6 +213,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
+		if ( $this->is_rest ) {
+			$settings = $this->get_rest_settings_options();
+
+			if ( ! $this->connection->is_connected() ) {
+				$settings = array_merge( $settings, $this->get_connection_attempted_options() );
+			}
+
+			return $this->get_filtered_settings( $settings );
+		}
+
 		if ( ! $this->connection->connection_was_attempted() ) {
 			return $this->get_filtered_settings( $this->get_default_settings_options() );
 		}
@@ -833,6 +852,20 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		wp_safe_redirect( add_query_arg( 'section', $this->historical_data_section ) );
 		exit;
+	}
+
+	/**
+	 * Return the options for REST requests.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return array
+	 */
+	private function get_rest_settings_options() : array {
+		return array_merge(
+			$this->get_store_information_settings(),
+			$this->get_customer_data_settings()
+		);
 	}
 
 	/**
