@@ -136,7 +136,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since 2019-04-16
 	 * @var string
 	 */
-	private $import_existing_customer_sectiong = 'customer_data_import';
+	private $import_existing_customer_section = 'customer_data_import';
 
 	/**
 	 * WooTab constructor.
@@ -202,7 +202,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$sections = [ '' => esc_html__( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections[ $this->import_existing_customer_sectiong ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
+			$sections[ $this->import_existing_customer_section ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -270,7 +270,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				$settings = $this->get_store_information_settings();
 				break;
 
-			case $this->import_existing_customer_sectiong:
+			case $this->import_existing_customer_section:
 				$settings = $this->get_customer_data_settings();
 				break;
 		}
@@ -894,7 +894,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return;
 		}
 
-		wp_safe_redirect( add_query_arg( 'section', $this->import_existing_customer_sectiong ) );
+		wp_safe_redirect( add_query_arg( 'section', $this->import_existing_customer_section ) );
 		exit;
 	}
 
