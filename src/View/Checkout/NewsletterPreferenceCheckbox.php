@@ -81,7 +81,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 			],
 			'type'              => 'checkbox',
 			'class'             => [ 'input-checkbox' ],
-			'label'             => __( 'Sign me up to receive marketing emails', 'cc-woo' ),
+			'label'             => esc_html__( 'Sign me up to receive marketing emails', 'cc-woo' ),
 		], $this->get_default_checked_state() );
 	}
 
