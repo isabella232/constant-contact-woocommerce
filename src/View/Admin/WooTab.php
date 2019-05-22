@@ -123,12 +123,20 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
+	 * Is the current request a REST API request?
+	 *
+	 * @since 2019-04-16
+	 * @var bool
+	 */
+	private $is_rest = false;
+
+	/**
 	 * The identifier for the Importing Existing Customers section.
 	 *
 	 * @since 2019-04-16
 	 * @var string
 	 */
-	private $historical_data_section = 'customer_data_import';
+	private $import_existing_customer_sectiong = 'customer_data_import';
 
 	/**
 	 * WooTab constructor.
@@ -141,6 +149,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
 		$this->connection   = new ConnectionStatus();
+		$this->is_rest      = defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
@@ -193,7 +202,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$sections = [ '' => esc_html__( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections[ $this->historical_data_section ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
+			$sections[ $this->import_existing_customer_sectiong ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -207,6 +216,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
+		if ( $this->is_rest ) {
+			$settings = $this->get_rest_settings_options();
+
+			if ( ! $this->connection->is_connected() ) {
+				$settings = array_merge( $settings, $this->get_connection_attempted_options() );
+			}
+
+			return $this->get_filtered_settings( $settings );
+		}
+
 		if ( ! $this->connection->connection_was_attempted() ) {
 			return $this->get_filtered_settings( $this->get_default_settings_options() );
 		}
@@ -251,7 +270,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				$settings = $this->get_store_information_settings();
 				break;
 
-			case $this->historical_data_section:
+			case $this->import_existing_customer_sectiong:
 				$settings = $this->get_customer_data_settings();
 				break;
 		}
@@ -359,7 +378,12 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	public function render_cta_button() {
 		?>
-		<a class="button button-primary" href="https://app.constantcontact.com/pages/ecomm/dashboard/woocommerce"><?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?></a>
+		<a
+			class="button button-primary"
+			href="https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce"
+		>
+			<?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?>
+		</a>
 		<?php
 	}
 
@@ -870,8 +894,22 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return;
 		}
 
-		wp_safe_redirect( add_query_arg( 'section', $this->historical_data_section ) );
+		wp_safe_redirect( add_query_arg( 'section', $this->import_existing_customer_sectiong ) );
 		exit;
+	}
+
+	/**
+	 * Return the options for REST requests.
+	 *
+	 * @since 2019-05-06
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return array
+	 */
+	private function get_rest_settings_options() : array {
+		return array_merge(
+			$this->get_store_information_settings(),
+			$this->get_customer_data_settings()
+		);
 	}
 
 	/**
