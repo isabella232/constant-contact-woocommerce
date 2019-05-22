@@ -28,6 +28,8 @@ class KeyManager extends Service {
 		add_action( 'admin_init', function() {
 			add_filter( 'query', [ $this, 'maybe_revoke_api_key' ] );
 		} );
+
+		add_action( 'cc_woo_key_revoked', [ $this, 'disconnect_cc_woo' ] );
 	}
 
 	/**
@@ -131,5 +133,15 @@ SQL;
 	 */
 	private function is_woo_commerce_api_key_query( $query ) {
 		return false !== stripos( $query, 'woocommerce_api_keys' );
+	}
+
+	/**
+	 * Alert CTCT that the API key has been revoked.
+	 *
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 2019-05-22
+	 */
+	public function disconnect_cc_woo() {
+		do_action( 'cc_woo_disconnect', __( 'REST API Key Revoked.', 'cc-woo' ) );
 	}
 }
