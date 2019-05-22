@@ -25,10 +25,11 @@ class MenuItem extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'admin_menu', [ $this, 'add_cc_woo_admin_submenu' ], 100 );
+		add_action( 'admin_menu', [ $this, 'add_cc_woo_admin_menu' ], 100 );
 	}
 
 	/**
-	 * Add the CC Woo Menu Item.
+	 * Add the CC Woo Submenu Item.
 	 *
 	 * @since 0.0.1
 	 * @author Zach Owen <zach@webdevstudios>
@@ -41,6 +42,24 @@ class MenuItem extends Service {
 			'manage_woocommerce',
 			'cc-woo-settings',
 			[ $this, 'redirect_to_cc_woo' ]
+		);
+	}
+
+	/**
+	 * Add the CC Woo Menu Item.
+	 *
+	 * @since 0.0.1
+	 * @author Zach Owen <zach@webdevstudios>
+	 */
+	public function add_cc_woo_admin_menu() {
+		add_menu_page(
+			__( 'Constant Contact', 'ccwoo' ),
+			__( 'Constant Contact', 'ccwoo' ),
+			'manage_woocommerce',
+			'cc-woo-settings',
+			[ $this, 'redirect_to_cc_woo' ],
+			'dashicons-email',
+			56
 		);
 	}
 
