@@ -79,6 +79,8 @@ final class Plugin extends ServiceRegistrar {
 			throw new \Exception( $reason );
 		}
 
+		do_action( 'cc_woo_disconnect', __( 'Plugin deactivated.', 'cc-woo' ) );
+
 		deactivate_plugins( $this->plugin_file );
 
 		$this->do_deactivation_process();
