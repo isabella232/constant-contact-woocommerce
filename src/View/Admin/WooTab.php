@@ -137,7 +137,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @author Zach Owen <zach@webdevstudios>
 	 */
 	public function __construct() {
-		$this->label        = __( 'Constant Contact', 'cc-woo' );
+		$this->label        = esc_html__( 'Constant Contact', 'cc-woo' );
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
 		$this->connection   = new ConnectionStatus();
@@ -190,10 +190,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [ '' => __( 'Store Information', 'cc-woo' ) ];
+		$sections = [ '' => esc_html__( 'Store Information', 'cc-woo' ) ];
 
 		if ( ! $this->connection->is_connected() ) {
-			$sections[ $this->historical_data_section ] = __( 'Importing Existing Customers', 'cc-woo' );
+			$sections[ $this->historical_data_section ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
 		}
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -275,8 +275,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function add_rest_group( $groups ) {
 		$groups[] = [
 			'id'          => 'cc_woo',
-			'label'       => __( 'Constant Contact WooCommerce', 'cc-woo' ),
-			'description' => __( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
+			'label'       => esc_html__( 'Constant Contact WooCommerce', 'cc-woo' ),
+			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
 				'cc-woo' ),
 		];
 
@@ -320,7 +320,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		return [
 			[
 				'title' => '',
-				'desc'  => '<h2 style="color:red;margin-top:0;">' . __( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ) . '</h2>',
+				'desc'  => '<h2 style="color:red;margin-top:0;">' . esc_html__( 'There was a problem connecting your store to Constant Contact. Please try again.', 'cc-woo' ) . '</h2>',
 				'type'  => 'title',
 				'id'    => 'cc_woo_connection_attempted_heading',
 			],
@@ -337,7 +337,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_connection_established_options() {
 		return [
 			[
-				'title' => __( 'Congratulations! Your store is connected to Constant Contact.', 'cc-woo' ),
+				'title' => esc_html__( 'Congratulations! Your store is connected to Constant Contact.', 'cc-woo' ),
 				'type'  => 'title',
 				'id'    => 'cc_woo_connection_established_heading',
 			],
@@ -371,17 +371,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_store_information_settings() {
-		$readonly_from_general_settings = __( 'This field is read from your General settings.', 'cc-woo' );
+		$readonly_from_general_settings = esc_html__( 'This field is read from your General settings.', 'cc-woo' );
 
 		return [
 			[
-				'title' => __( 'Store Information', 'cc-woo' ),
+				'title' => esc_html__( 'Store Information', 'cc-woo' ),
 				'type'  => 'title',
-				'desc'  => __( 'All fields are required.', 'cc-woo' ),
+				'desc'  => esc_html__( 'All fields are required.', 'cc-woo' ),
 				'id'    => 'cc_woo_store_information_settings',
 			],
 			[
-				'title'             => __( 'First Name', 'cc-woo' ),
+				'title'             => esc_html__( 'First Name', 'cc-woo' ),
 				'desc'              => '',
 				'id'                => self::FIRST_NAME_FIELD,
 				'type'              => 'text',
@@ -390,7 +390,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Last Name', 'cc-woo' ),
+				'title'             => esc_html__( 'Last Name', 'cc-woo' ),
 				'desc'              => '',
 				'id'                => self::LAST_NAME_FIELD,
 				'type'              => 'text',
@@ -399,7 +399,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Phone Number', 'cc-woo' ),
+				'title'             => esc_html__( 'Phone Number', 'cc-woo' ),
 				'id'                => self::PHONE_NUMBER_FIELD,
 				'desc'              => '',
 				'type'              => 'text',
@@ -408,7 +408,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Store Name', 'cc-woo' ),
+				'title'             => esc_html__( 'Store Name', 'cc-woo' ),
 				'id'                => self::STORE_NAME_FIELD,
 				'desc'              => '',
 				'type'              => 'text',
@@ -417,7 +417,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Contact E-mail Address', 'cc-woo' ),
+				'title'             => esc_html__( 'Contact E-mail Address', 'cc-woo' ),
 				'id'                => self::EMAIL_FIELD,
 				'desc'              => '',
 				'type'              => 'email',
@@ -426,7 +426,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Currency', 'cc-woo' ),
+				'title'             => esc_html__( 'Currency', 'cc-woo' ),
 				'id'                => self::CURRENCY_FIELD,
 				'desc'              => $readonly_from_general_settings,
 				'type'              => 'text',
@@ -436,7 +436,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'             => __( 'Country Code', 'cc-woo' ),
+				'title'             => esc_html__( 'Country Code', 'cc-woo' ),
 				'id'                => self::COUNTRY_CODE_FIELD,
 				'desc'              => $readonly_from_general_settings,
 				'type'              => 'text',
@@ -446,14 +446,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'   => __( 'Store Details', 'cc-woo' ),
-				'desc'    => __( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you this box checked by default?', 'cc-woo' ),
+				'title'   => esc_html__( 'Store Details', 'cc-woo' ),
+				'desc'    => esc_html__( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you this box checked by default?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 				'default' => 'no',
 				'options' => [
-					'no'  => __( 'No - do not check this box by default', 'cc-woo' ),
-					'yes' => __( 'Yes - check this box by default', 'cc-woo' ),
+					'no'  => esc_html__( 'No - do not check this box by default', 'cc-woo' ),
+					'yes' => esc_html__( 'Yes - check this box by default', 'cc-woo' ),
 				],
 			],
 			[
@@ -473,24 +473,23 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_customer_data_settings() {
 		$settings = [
 			[
-				'title' => __( 'Importing Existing Customers', 'cc-woo' ),
+				'title' => esc_html__( 'Importing Existing Customers', 'cc-woo' ),
 				'id'    => 'cc_woo_customer_data_settings',
 				'type'  => 'title',
 			],
 			[
 				'title' => '',
 				'type'  => 'title',
-				'desc'  => __( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
+				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
 			],
 			[
-				'title'   => __( 'User information consent', 'cc-woo' ),
-				'desc'    => __( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
+				'title'   => esc_html__( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
 				'default' => 'no',
 				'options' => [
-					'no'  => __( 'No', 'cc-woo' ),
-					'yes' => __( 'Yes', 'cc-woo' ),
+					'no'  => esc_html__( 'No', 'cc-woo' ),
+					'yes' => esc_html__( 'Yes', 'cc-woo' ),
 				],
 			],
 			[
@@ -499,15 +498,15 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'    => 'anti-spam-notice',
 			],
 			[
-				'title'   => __( 'Import historical customer data', 'cc-woo' ),
-				'desc'    => __( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
+				'title'   => esc_html__( 'Import historical customer data', 'cc-woo' ),
+				'desc'    => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
 					'cc-woo' ),
 				'type'    => 'select',
 				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
 				'default' => 'no',
 				'options' => [
-					'no'  => __( 'No', 'cc-woo' ),
-					'yes' => __( 'Yes', 'cc-woo' ),
+					'no'  => esc_html__( 'No', 'cc-woo' ),
+					'yes' => esc_html__( 'Yes', 'cc-woo' ),
 				],
 			],
 		];
@@ -516,7 +515,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			$settings[] = [
 				'id'    => 'cc_woo_customer_data_opt_in_import',
 				'type'  => 'button',
-				'title' => __( 'Import Customer Data', 'cc-woo' ),
+				'title' => esc_html__( 'Import Customer Data', 'cc-woo' ),
 			];
 		}
 
@@ -589,8 +588,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$connected = get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
 		$value     = $connected ? 'disconnect' : 'connect';
 		$message   = $connected
-			? __( 'Disconnect from Constant Contact', 'cc-woo' )
-			: __( 'Connect with Constant Contact', 'cc-woo' );
+			? esc_html__( 'Disconnect from Constant Contact', 'cc-woo' )
+			: esc_html__( 'Connect with Constant Contact', 'cc-woo' );
 
 		wp_nonce_field( $this->nonce_action, $this->nonce_name );
 		?>
@@ -735,8 +734,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		// translators: placeholder is the field's title.
-		$this->errors[ $field['id'] ] = sprintf( __( 'The "%s" field is required to connect to Constant Contact.',
-			'cc-woo' ), $field['title'] );
+		$this->errors[ $field['id'] ] = sprintf(
+			esc_html__( 'The "%s" field is required to connect to Constant Contact.', 'cc-woo' ),
+			$field['title']
+		);
 	}
 
 	/**
