@@ -236,8 +236,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			);
 		}
 
-		$GLOBALS['hide_save_button'] = true;
-
 		return $this->get_filtered_settings( array_merge(
 			$this->get_connection_established_options(),
 			$this->get_default_settings_options()
