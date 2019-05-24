@@ -64,7 +64,7 @@ class Disconnect extends Service {
 	 * @return array
 	 */
 	public function add_new_webhook_topics( $topics ) {
-		$topics['constantcontact.woo_disconnect'] = __( 'Constant Contact WooCommerce Disconnect', 'cc-woo' );
+		$topics['constantcontact.woo_disconnect'] = esc_html__( 'Constant Contact WooCommerce Disconnect', 'cc-woo' );
 		return $topics;
 	}
 }
