@@ -475,10 +475,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'    => esc_html__( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you this box checked by default?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
-				'default' => 'no',
+				'default' => 'false',
 				'options' => [
-					'no'  => esc_html__( 'No - do not check this box by default', 'cc-woo' ),
-					'yes' => esc_html__( 'Yes - check this box by default', 'cc-woo' ),
+					'false' => esc_html__( 'No - do not check this box by default', 'cc-woo' ),
+					'true'  => esc_html__( 'Yes - check this box by default', 'cc-woo' ),
 				],
 			],
 			[
@@ -511,10 +511,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title'   => esc_html__( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
-				'default' => 'no',
+				'default' => 'false',
 				'options' => [
-					'no'  => esc_html__( 'No', 'cc-woo' ),
-					'yes' => esc_html__( 'Yes', 'cc-woo' ),
+					'false' => esc_html__( 'No', 'cc-woo' ),
+					'true'  => esc_html__( 'Yes', 'cc-woo' ),
 				],
 			],
 			[
@@ -524,14 +524,13 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 			[
 				'title'   => esc_html__( 'Import historical customer data', 'cc-woo' ),
-				'desc'    => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.',
-					'cc-woo' ),
+				'desc'    => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
-				'default' => 'no',
+				'default' => 'false',
 				'options' => [
-					'no'  => esc_html__( 'No', 'cc-woo' ),
-					'yes' => esc_html__( 'Yes', 'cc-woo' ),
+					'false' => esc_html__( 'No', 'cc-woo' ),
+					'true'  => esc_html__( 'Yes', 'cc-woo' ),
 				],
 			],
 		];
@@ -560,7 +559,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function store_owner_confirmed_customer_consent_to_market() {
-		return 'yes' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
+		return 'true' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
 	}
 
 	/**
@@ -576,8 +575,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function maybe_prevent_importing( $value ) {
 		$opt_in_consent = get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
 
-		if ( 'no' === $opt_in_consent ) {
-			return 'no';
+		if ( 'false' === $opt_in_consent ) {
+			return 'false';
 		}
 
 		return $value;
@@ -693,8 +692,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
-			get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, 'no' ),
-			get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, 'no' )
+			get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, 'false' ),
+			get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, 'false' )
 		);
 
 		$validator = new SettingsValidator( $model );
