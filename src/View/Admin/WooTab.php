@@ -123,14 +123,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $connection;
 
 	/**
-	 * Is the current request a REST API request?
-	 *
-	 * @since 2019-04-16
-	 * @var bool
-	 */
-	private $is_rest = false;
-
-	/**
 	 * The identifier for the Importing Existing Customers section.
 	 *
 	 * @since 2019-04-16
@@ -149,7 +141,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$this->nonce_name   = '_cc_woo_nonce';
 		$this->nonce_action = 'cc-woo-connect-action';
 		$this->connection   = new ConnectionStatus();
-		$this->is_rest      = defined( 'REST_REQUEST' ) && REST_REQUEST;
 	}
 
 	/**
@@ -168,10 +159,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		// CC API interactions.
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_redirect_to_cc' ] );
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'maybe_update_connection_status' ], 1 );
-
-		// REST API.
-		add_filter( 'woocommerce_settings_groups', [ $this, 'add_rest_group' ] );
-		add_filter( "woocommerce_settings-{$this->id}", [ $this, 'add_rest_fields' ] );
 
 		// Form.
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
@@ -216,16 +203,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
-		if ( $this->is_rest ) {
-			$settings = $this->get_rest_settings_options();
-
-			if ( ! $this->connection->is_connected() ) {
-				$settings = array_merge( $settings, $this->get_connection_attempted_options() );
-			}
-
-			return $this->get_filtered_settings( $settings );
-		}
-
 		if ( ! $this->connection->connection_was_attempted() ) {
 			return $this->get_filtered_settings( $this->get_default_settings_options() );
 		}
@@ -277,53 +254,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		$settings = $this->process_errors( $settings );
 		$settings = $this->adjust_styles( $settings );
-
-		return $settings;
-	}
-
-	/**
-	 * Add our settings group to the REST API.
-	 *
-	 * @since  2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 *
-	 * @param array $groups The array of groups being sent to the API.
-	 *
-	 * @return array
-	 */
-	public function add_rest_group( $groups ) {
-		$groups[] = [
-			'id'          => 'cc_woo',
-			'label'       => esc_html__( 'Constant Contact WooCommerce', 'cc-woo' ),
-			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
-				'cc-woo' ),
-		];
-
-		return $groups;
-	}
-
-	/**
-	 * Add fields to the REST API for our settings.
-	 *
-	 * @since  2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 *
-	 * @param array $settings The array of settings going to the API.
-	 *
-	 * @return array
-	 */
-	public function add_rest_fields( $settings ) {
-		$fields       = [];
-		$section_keys = array_keys( $this->get_sections() );
-
-		foreach ( $section_keys as $section_id ) {
-			$fields = array_merge( $fields, $this->get_settings( $section_id ) );
-		}
-
-		foreach ( $fields as $field ) {
-			$field['option_key'] = $field['option_key'] ?? $field['id'];
-			$settings[]          = $field;
-		}
 
 		return $settings;
 	}
@@ -896,20 +826,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 		wp_safe_redirect( add_query_arg( 'section', $this->import_existing_customer_section ) );
 		exit;
-	}
-
-	/**
-	 * Return the options for REST requests.
-	 *
-	 * @since 2019-05-06
-	 * @author Zach Owen <zach@webdevstudios>
-	 * @return array
-	 */
-	private function get_rest_settings_options() : array {
-		return array_merge(
-			$this->get_store_information_settings(),
-			$this->get_customer_data_settings()
-		);
 	}
 
 	/**
