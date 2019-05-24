@@ -81,7 +81,7 @@ final class Plugin extends ServiceRegistrar {
 			throw new \Exception( $reason );
 		}
 
-		do_action( 'cc_woo_disconnect', __( 'Plugin deactivated.', 'cc-woo' ) );
+		do_action( 'cc_woo_disconnect', esc_html__( 'Plugin deactivated.', 'cc-woo' ) );
 
 		deactivate_plugins( $this->plugin_file );
 
@@ -108,13 +108,13 @@ final class Plugin extends ServiceRegistrar {
 			// Ensure requirements.
 			if ( ! $compatibility_checker->is_available() ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( esc_html__( 'WooCommerce version "%1$s" or greater must be installed and activated to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 
 			if ( ! $compatibility_checker->is_compatible( \WooCommerce::instance() ) ) {
 				// translators: placeholder is the minimum supported WooCommerce version.
-				$message = sprintf( __( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
+				$message = sprintf( esc_html__( 'WooCommerce version "%1$s" or greater is required to use %2$s.', 'cc-woo' ), PluginCompatibilityCheck::MINIMUM_WOO_VERSION, self::PLUGIN_NAME );
 				throw new \Exception( $message );
 			}
 		} catch ( \Exception $e ) {
