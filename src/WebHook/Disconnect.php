@@ -27,7 +27,6 @@ class Disconnect extends Service {
 		add_filter( 'woocommerce_webhook_topic_hooks', [ $this, 'add_new_topic_hooks' ] );
 		add_filter( 'woocommerce_valid_webhook_events', [ $this, 'add_new_topic_events' ] );
 		add_filter( 'woocommerce_webhook_topics', [ $this, 'add_new_webhook_topics' ] );
-		add_action( 'woocommerce_checkout_order_processed', [ $this, 'my_order_item_check' ], 10, 3 );
 	}
 
 	/**
