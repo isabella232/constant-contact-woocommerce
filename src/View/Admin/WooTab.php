@@ -890,7 +890,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function save() {
 		parent::save();
 
-		if ( ! $this->has_active_settings_section() ) {
+		if ( $this->has_active_settings_section() ) {
 			return;
 		}
 
