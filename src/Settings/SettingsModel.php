@@ -113,8 +113,8 @@ class SettingsModel {
 		string $currency,
 		string $country_code,
 		string $email_address,
-		string $import_historical_data = 'no',
-		string $permission_confirmed = 'no'
+		string $import_historical_data = 'false',
+		string $permission_confirmed = 'false'
 	) {
 		$this->first_name             = $first_name;
 		$this->last_name              = $last_name;
@@ -212,7 +212,7 @@ class SettingsModel {
 	 * @return bool
 	 */
 	public function get_import_historical_data() : bool {
-		return 'yes' === $this->import_historical_data;
+		return 'true' === $this->import_historical_data;
 	}
 
 	/**
@@ -223,6 +223,6 @@ class SettingsModel {
 	 * @return bool
 	 */
 	public function get_permission_confirmed() : bool {
-		return 'yes' === $this->permission_confirmed;
+		return 'true' === $this->permission_confirmed;
 	}
 }

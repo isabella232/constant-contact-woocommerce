@@ -106,7 +106,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	private function get_user_default_checked_state() : bool {
 		$user_preference = get_user_meta( get_current_user_id(), self::CUSTOMER_PREFERENCE_META_FIELD, true );
 
-		return ! empty( $user_preference ) ? 'yes' === $user_preference : $this->get_store_default_checked_state();
+		return ! empty( $user_preference ) ? 'true' === $user_preference : $this->get_store_default_checked_state();
 	}
 
 	/**
@@ -117,7 +117,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @return bool
 	 */
 	private function get_store_default_checked_state() : bool {
-		return 'yes' === get_option( self::STORE_NEWSLETTER_DEFAULT_OPTION );
+		return 'true' === get_option( self::STORE_NEWSLETTER_DEFAULT_OPTION );
 	}
 
 	/**
@@ -176,8 +176,8 @@ class NewsletterPreferenceCheckbox implements Hookable {
 
 		// @codingStandardsIgnoreStart - Nonce verification in guard clause.
 		return isset( $_POST['customer_newsletter_opt_in'] ) && 1 === filter_var( $_POST['customer_newsletter_opt_in'], FILTER_VALIDATE_INT )
-			? 'yes'
-			: 'no';
+			? 'true'
+			: 'false';
 		// @codingStandardsIgnoreEnd
 	}
 }

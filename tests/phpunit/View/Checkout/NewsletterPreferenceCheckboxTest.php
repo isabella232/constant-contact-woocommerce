@@ -42,7 +42,7 @@ class NewsletterPreferenceCheckboxTest extends TestCase {
 
 		\WP_Mock::userFunction( 'get_option', [
 			'args'   => 'cc_woo_customer_data_email_opt_in_default',
-			'return' => 'yes',
+			'return' => 'true',
 		] );
 
 		$this->assertEquals( $store_method->invoke( $object ), $default_method->invoke( $object ) );
@@ -78,7 +78,7 @@ class NewsletterPreferenceCheckboxTest extends TestCase {
 
 		\WP_Mock::userFunction( 'get_option', [
 			'args'   => 'cc_woo_customer_data_email_opt_in_default',
-			'return' => 'yes',
+			'return' => 'true',
 		] );
 
 		$this->assertTrue( $default_method->invoke( $object ) );
@@ -105,7 +105,7 @@ class NewsletterPreferenceCheckboxTest extends TestCase {
 		] );
 
 		\WP_Mock::userFunction( 'get_user_meta', [
-			'return' => 'no',
+			'return' => 'false',
 		]);
 
 		$this->assertFalse( $default_method->invoke( $object ) );
@@ -132,7 +132,7 @@ class NewsletterPreferenceCheckboxTest extends TestCase {
 		] );
 
 		\WP_Mock::userFunction( 'get_user_meta', [
-			'return' => 'yes',
+			'return' => 'true',
 		]);
 
 		$this->assertTrue( $default_method->invoke( $object ) );
