@@ -37,8 +37,8 @@ class Disconnect extends Service {
 	 * @return array
 	 */
 	public function add_new_topic_hooks( $topic_hooks ) {
-		$topic_hooks['constantcontact.woo_disconnect'] = [
-			'cc_woo_disconnect',
+		$topic_hooks['action.wc_ctct_disconnect'] = [
+			'cc_wc_ctct_disconnect',
 		];
 
 		return $topic_hooks;
@@ -52,7 +52,7 @@ class Disconnect extends Service {
 	 * @return array
 	 */
 	public function add_new_topic_events( $topic_events ) {
-		$topic_events[] = 'woo_disconnect';
+		$topic_events[] = 'wc_ctct_disconnect';
 		return $topic_events;
 	}
 
@@ -64,7 +64,7 @@ class Disconnect extends Service {
 	 * @return array
 	 */
 	public function add_new_webhook_topics( $topics ) {
-		$topics['constantcontact.woo_disconnect'] = esc_html__( 'Constant Contact WooCommerce Disconnect', 'cc-woo' );
+		$topics['action.wc_ctct_disconnect'] = esc_html__( 'Constant Contact WooCommerce Disconnect', 'cc-woo' );
 		return $topics;
 	}
 }
