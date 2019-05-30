@@ -143,5 +143,6 @@ SQL;
 	 */
 	public function disconnect_cc_woo() {
 		do_action( 'cc_woo_disconnect', esc_html__( 'REST API Key Revoked.', 'cc-woo' ) );
+		do_action( 'cc_wc_ctct_disconnect' );
 	}
 }
