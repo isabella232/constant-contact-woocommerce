@@ -199,11 +199,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_sections() {
-		$sections = [ '' => esc_html__( 'Store Information', 'cc-woo' ) ];
-
-		if ( ! $this->connection->is_connected() ) {
-			$sections[ $this->import_existing_customer_section ] = esc_html__( 'Importing Existing Customers', 'cc-woo' );
-		}
+		$sections = [
+			''                                      => esc_html__( 'Store Information', 'cc-woo' ),
+			$this->import_existing_customer_section => esc_html__( 'Importing Existing Customers', 'cc-woo' )
+		];
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
 	}
