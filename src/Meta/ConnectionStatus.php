@@ -28,6 +28,14 @@ class ConnectionStatus {
 	const CC_CONNECTION_USER_ID = 'cc_woo_api_user_id';
 
 	/**
+	 * First connection established key.
+	 *
+	 * @since 2019-05-30
+	 * @var string
+	 */
+	const CC_FIRST_CONNECTION = 'cc_woo_first_connection';
+
+	/**
 	 * Value to check whether the store has attempted a connection with CC.
 	 *
 	 * @var bool
@@ -85,5 +93,9 @@ class ConnectionStatus {
 
 		update_option( self::CC_CONNECTION_ESTABLISHED_KEY, $connected );
 		update_option( self::CC_CONNECTION_USER_ID, $user_id );
+
+		if ( $this->connected ) {
+			update_option( self::CC_FIRST_CONNECTION, true );
+		}
 	}
 }

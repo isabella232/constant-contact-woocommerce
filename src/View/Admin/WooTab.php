@@ -377,10 +377,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since  2019-03-21
 	 */
 	public function render_cta_button() {
+		$url = $this->get_dashboard_url();
 		?>
 		<a
 			class="button button-primary"
-			href="https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce"
+			href="<?php echo esc_url( $url ); ?>"
 		>
 			<?php esc_html_e( 'Constant Contact Dashboard', 'cc-woo' ); ?>
 		</a>
@@ -941,5 +942,23 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 */
 	private function has_active_settings_section() : bool {
 		return ! empty( $GLOBALS['current_section'] );
+	}
+
+	/**
+	 * Get the proper dashboard URL.
+	 *
+	 * @since 2019-05-30
+	 * @author Zach Owen <zach@webdevstudios>
+	 * @return string
+	 */
+	private function get_dashboard_url() : string {
+		$url = 'https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce';
+
+		if ( get_option( ConnectionStatus::CC_FIRST_CONNECTION ) ) {
+			delete_option( ConnectionStatus::CC_FIRST_CONNECTION );
+			$url .= '%2Finitial';
+		}
+
+		return $url;
 	}
 }
