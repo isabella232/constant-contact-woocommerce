@@ -411,7 +411,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'                => self::FIRST_NAME_FIELD,
 				'type'              => 'text',
 				'custom_attributes' => [
-					'required' => 'required',
+					'required'  => 'required',
+					'maxlength' => 255,
 				],
 			],
 			[
@@ -420,7 +421,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'                => self::LAST_NAME_FIELD,
 				'type'              => 'text',
 				'custom_attributes' => [
-					'required' => 'required',
+					'required'  => 'required',
+					'maxlength' => 255,
 				],
 			],
 			[
@@ -429,7 +431,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
-					'required' => 'required',
+					'required'  => 'required',
+					'maxlength' => 255,
 				],
 			],
 			[
@@ -438,7 +441,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'              => '',
 				'type'              => 'text',
 				'custom_attributes' => [
-					'required' => 'required',
+					'required'  => 'required',
+					'maxlength' => 255,
 				],
 			],
 			[
@@ -447,7 +451,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'              => '',
 				'type'              => 'email',
 				'custom_attributes' => [
-					'required' => 'required',
+					'required'  => 'required',
+					'maxlength' => 255,
 				],
 			],
 			[
