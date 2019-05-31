@@ -84,11 +84,10 @@ final class Plugin extends ServiceRegistrar {
 		}
 
 		do_action( 'cc_woo_disconnect', esc_html__( 'Plugin deactivated.', 'cc-woo' ) );
-		do_action( 'cc_wc_ctct_disconnect' );
-
-		deactivate_plugins( $this->plugin_file );
 
 		$this->do_deactivation_process();
+
+		deactivate_plugins( $this->plugin_file );
 
 		new Notice(
 			new NoticeMessage( $reason, 'error', true )
@@ -217,6 +216,8 @@ final class Plugin extends ServiceRegistrar {
 	 * @return void
 	 */
 	public function do_deactivation_process() {
+		do_action( 'cc_wc_ctct_disconnect' );
+
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
 		}
