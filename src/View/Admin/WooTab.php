@@ -476,8 +476,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
-				'title'   => esc_html__( 'Store Details', 'cc-woo' ),
-				'desc'    => esc_html__( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you this box checked by default?', 'cc-woo' ),
+				'title'   => esc_html__( 'Marketing Opt-in', 'cc-woo' ),
+				'desc'    => esc_html__( 'At checkout, new customers must check a box if they want to receive marketing emails from you. Do you want this box checked by default?', 'cc-woo' ),
 				'type'    => 'select',
 				'id'      => NewsletterPreferenceCheckbox::STORE_NEWSLETTER_DEFAULT_OPTION,
 				'default' => 'false',
