@@ -50,24 +50,12 @@ class SettingsValidator implements Validatable {
 	 */
 	public function is_valid(): bool {
 		return (
-			$this->store_owner_affirms_consent_to_market()
-			&& $this->has_valid_name()
+			$this->has_valid_name()
 			&& $this->has_valid_phone()
 			&& $this->has_valid_store_name()
 			&& $this->has_valid_email()
 			&& $this->has_valid_country_code()
 		);
-	}
-
-	/**
-	 * Compare settings to import historical data to store admin's confirmation of permission to e-mail customers.
-	 *
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-07
-	 * @return bool
-	 */
-	private function store_owner_affirms_consent_to_market() : bool {
-		return $this->settings->get_permission_confirmed();
 	}
 
 	/**

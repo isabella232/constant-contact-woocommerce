@@ -705,8 +705,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
-			get_option( self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, 'false' ),
-			get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD, 'false' )
 		);
 
 		$validator = new SettingsValidator( $model );
