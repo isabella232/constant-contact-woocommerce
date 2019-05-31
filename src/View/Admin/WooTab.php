@@ -513,11 +513,15 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
 			],
 			[
-				'title'   => esc_html__( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
-				'type'    => 'select',
-				'id'      => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
-				'default' => 'false',
-				'options' => [
+				'title'             => esc_html__( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
+				'type'              => 'select',
+				'id'                => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+				'default'           => '',
+				'custom_attributes' => [
+					'required' => true,
+				],
+				'options'           => [
+					''      => '----',
 					'false' => esc_html__( 'No', 'cc-woo' ),
 					'true'  => esc_html__( 'Yes', 'cc-woo' ),
 				],
@@ -528,12 +532,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'    => 'anti-spam-notice',
 			],
 			[
-				'title'   => esc_html__( 'Import historical customer data', 'cc-woo' ),
-				'desc'    => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
-				'type'    => 'select',
-				'id'      => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
-				'default' => 'false',
-				'options' => [
+				'title'             => esc_html__( 'Import historical customer data', 'cc-woo' ),
+				'desc'              => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
+				'type'              => 'select',
+				'id'                => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
+				'default'           => '',
+				'custom_attributes' => [
+					'required' => true,
+				],
+				'options'           => [
+					''      => '----',
 					'false' => esc_html__( 'No', 'cc-woo' ),
 					'true'  => esc_html__( 'Yes', 'cc-woo' ),
 				],
