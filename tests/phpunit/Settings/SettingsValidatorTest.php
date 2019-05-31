@@ -27,60 +27,12 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
 
 		$this->assertTrue( $validator->is_valid() );
-	}
-
-	/**
-	 * Assert that settings are valid when admins select not to import historical data.
-	 *
-	 * @test
-	 */
-	public function settings_are_invalid_if_store_owner_does_not_affirm_consent_to_market() {
-		$settings = new SettingsModel(
-			'Abbi',
-			'Jacobson',
-			'555-555-5555',
-			'Solstice',
-			'$',
-			'us',
-			'cleaner@solstice.com',
-			'false',
-			'false'
-		);
-
-		$validator = new SettingsValidator( $settings );
-
-		$this->assertFalse( $validator->is_valid() );
-	}
-
-	/**
-	 * Historical data and user consent options should be the same value.
-	 *
-	 * @test
-	 */
-	public function settings_are_invalid_if_import_historical_data_and_user_consent_are_mismatched() {
-		$settings = new SettingsModel(
-			'Abbi',
-			'Jacobson',
-			'555-555-5555',
-			'Solstice',
-			'$',
-			'us',
-			'cleaner@solstice.com',
-			'true',
-			'false'
-		);
-
-		$validator = new SettingsValidator( $settings );
-
-		$this->assertFalse( $validator->is_valid() );
 	}
 
 	/**
@@ -96,9 +48,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -119,9 +69,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -142,9 +90,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -165,9 +111,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -188,9 +132,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			true,
-			true
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -211,9 +153,7 @@ class SettingsValidatorTest extends TestCase {
 			'',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -232,9 +172,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -254,9 +192,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'',
-			'true',
-			'true'
+			''
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -275,9 +211,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -296,9 +230,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilana@dealsdealsdeals.com',
-			'true',
-			'true'
+			'ilana@dealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
@@ -317,9 +249,7 @@ class SettingsValidatorTest extends TestCase {
 			'Deals! Deals! Deals!',
 			'$',
 			'us',
-			'ilanadealsdealsdeals.com',
-			'true',
-			'true'
+			'ilanadealsdealsdeals.com'
 		);
 
 		$validator = new SettingsValidator( $settings );
