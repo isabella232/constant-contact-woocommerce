@@ -216,7 +216,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @return void
 	 */
 	public function do_deactivation_process() {
-		do_action( 'cc_wc_ctct_disconnect' );
+		do_action( 'wc_ctct_disconnect' );
 
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
