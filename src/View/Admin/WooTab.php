@@ -84,13 +84,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	const ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
 
 	/**
-	 * Store has user consent field.
-	 *
-	 * @since 2019-03-12
-	 */
-	const STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD = 'cc_woo_customer_data_opt_in_consent';
-
-	/**
 	 * Settings section ID.
 	 *
 	 * @var string
@@ -176,7 +169,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		// Form.
 		add_filter( 'pre_option_' . self::CURRENCY_FIELD, 'get_woocommerce_currency' );
 		add_filter( 'pre_option_' . self::COUNTRY_CODE_FIELD, [ $this, 'get_woo_country' ] );
-		add_filter( 'pre_update_option_' . self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD, [ $this, 'maybe_prevent_importing' ] );
 		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::PHONE_NUMBER_FIELD, [ $this, 'sanitize_phone_number' ] );
 		add_filter( "woocommerce_get_settings_{$this->id}", [ $this, 'maybe_add_connection_button' ] );
 		add_action( 'woocommerce_admin_field_cc_connection_button', [ $this, 'add_cc_connection_button' ] );
@@ -513,9 +505,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
 			],
 			[
-				'title'             => esc_html__( 'Do you have permission to send to the contacts you wish to import?', 'cc-woo' ),
+				'title'             => esc_html__( 'Import historical customer data', 'cc-woo' ),
+				'desc'              => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
 				'type'              => 'select',
-				'id'                => self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD,
+				'id'                => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
 				'default'           => '',
 				'custom_attributes' => [
 					'required' => true,
@@ -532,67 +525,12 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'    => 'anti-spam-notice',
 			],
 			[
-				'title'             => esc_html__( 'Import historical customer data', 'cc-woo' ),
-				'desc'              => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
-				'type'              => 'select',
-				'id'                => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
-				'default'           => '',
-				'custom_attributes' => [
-					'required' => true,
-				],
-				'options'           => [
-					''      => '----',
-					'false' => esc_html__( 'No', 'cc-woo' ),
-					'true'  => esc_html__( 'Yes', 'cc-woo' ),
-				],
+				'type' => 'sectionend',
+				'id'   => 'cc_woo_customer_data_settings',
 			],
 		];
 
-		if ( $this->store_owner_confirmed_customer_consent_to_market() ) {
-			$settings[] = [
-				'id'    => 'cc_woo_customer_data_opt_in_import',
-				'type'  => 'button',
-				'title' => esc_html__( 'Import Customer Data', 'cc-woo' ),
-			];
-		}
-
-		$settings[] = [
-			'type' => 'sectionend',
-			'id'   => 'cc_woo_customer_data_settings',
-		];
-
 		return $settings;
-	}
-
-	/**
-	 * Check whether a store owner has confirmed they have customer consent to market to them.
-	 *
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-14
-	 * @return bool
-	 */
-	private function store_owner_confirmed_customer_consent_to_market() {
-		return 'true' === get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
-	}
-
-	/**
-	 * Prevent importing if opt-in consent is not "Yes".
-	 *
-	 * @since  2019-03-08
-	 * @author Zach Owen <zach@webdevstudios>
-	 *
-	 * @param mixed $value The value being set for the import option.
-	 *
-	 * @return string
-	 */
-	public function maybe_prevent_importing( $value ) {
-		$opt_in_consent = get_option( self::STORE_AFFIRMS_CONSENT_TO_MARKET_FIELD );
-
-		if ( 'false' === $opt_in_consent ) {
-			return 'false';
-		}
-
-		return $value;
 	}
 
 	/**
