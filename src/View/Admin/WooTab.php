@@ -200,6 +200,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	public function get_settings() {
+		// @TODO this should be able to be removed.
 		if ( $this->is_rest ) {
 			$settings = $this->get_rest_settings_options();
 
