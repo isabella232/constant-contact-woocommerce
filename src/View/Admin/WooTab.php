@@ -77,13 +77,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
 
 	/**
-	 * Historical customer data import field.
-	 *
-	 * @since 2019-03-12
-	 */
-	const ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD = 'cc_woo_customer_data_allow_import';
-
-	/**
 	 * Settings section ID.
 	 *
 	 * @var string
@@ -503,32 +496,26 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title' => '',
 				'type'  => 'title',
 				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
-			],
-			[
-				'title'             => esc_html__( 'Import historical customer data', 'cc-woo' ),
-				'desc'              => esc_html__( 'Selecting Yes here will enable the ability to import your historical customer information to Constant Contact.', 'cc-woo' ),
-				'type'              => 'select',
-				'id'                => self::ALLOW_HISTORICAL_CUSTOMER_IMPORT_FIELD,
-				'default'           => '',
-				'custom_attributes' => [
-					'required' => true,
-				],
-				'options'           => [
-					''      => '----',
-					'false' => esc_html__( 'No', 'cc-woo' ),
-					'true'  => esc_html__( 'Yes', 'cc-woo' ),
-				],
-			],
-			[
-				'title' => '',
-				'type'  => 'cc_woo_anti_spam_notice',
-				'id'    => 'anti-spam-notice',
-			],
-			[
-				'type' => 'sectionend',
-				'id'   => 'cc_woo_customer_data_settings',
-			],
+			]
 		];
+
+		$historical_import_field = new \WebDevStudios\CCForWoo\View\Admin\Field\ImportHistoricalData();
+
+		$settings[] = array_merge(
+			$settings,
+			$historical_import_field->get_form_field(),
+			[
+				[
+					'title' => '',
+					'type'  => 'cc_woo_anti_spam_notice',
+					'id'    => 'anti-spam-notice',
+				],
+				[
+					'type' => 'sectionend',
+					'id'   => 'cc_woo_customer_data_settings',
+				],
+			]
+		);
 
 		return $settings;
 	}
