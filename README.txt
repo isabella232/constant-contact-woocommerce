@@ -1,9 +1,9 @@
 === Constant Contact + WooCommerce ===
 Contributors: constantcontact, znowebdev, jmichaelward
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
-Requires at least: 5.1.1
-Tested up to: 5.1.1
-Stable tag: 1.0.1
+Requires at least: 5.2.2
+Tested up to: 5.2.2
+Stable tag: 1.0.2
 Requires PHP: 7.2
 WC tested up to: 3.5.6
 License: GPLv3
