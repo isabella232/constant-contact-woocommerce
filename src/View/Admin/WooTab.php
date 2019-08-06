@@ -186,7 +186,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function get_sections() {
 		$sections = [
 			''                                      => esc_html__( 'Store Information', 'cc-woo' ),
-			$this->import_existing_customer_section => esc_html__( 'Importing Existing Customers', 'cc-woo' )
+			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' )
 		];
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -489,14 +489,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_customer_data_settings() {
 		$settings = [
 			[
-				'title' => esc_html__( 'Importing Existing Customers', 'cc-woo' ),
+				'title' => esc_html__( 'Import your contacts', 'cc-woo' ),
 				'id'    => 'cc_woo_customer_data_settings',
 				'type'  => 'title',
 			],
 			[
 				'title' => '',
 				'type'  => 'title',
-				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
+				'desc'  => esc_html__( "Start marketing to your customers right away by importing all your contacts now.\n\nDo you want to import your current contacts? By selecting yes below, you agree you have permission to market to your current contacts.", 'cc-woo' ),
 			]
 		];
 
