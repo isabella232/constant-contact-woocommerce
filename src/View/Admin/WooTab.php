@@ -712,7 +712,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function sanitize_phone_number( $value ) {
-		return is_scalar( $value ) ? preg_replace( '/[^\d-()+]+/', '', $value ) : '';
+		return is_scalar( $value ) ? preg_replace( '/[^\d\-()+]+/', '', $value ) : '';
 	}
 
 	/**
