@@ -20,14 +20,6 @@ and send targeted emails that engage your customers on every device.
 
 Unleash the power of your business—and drive more revenue—by integrating Constant Contact with WooCommerce today.
 
-== Changelog ==
-
-= 1.1.0 =
-
-* Added: Campaign ID data inclusion for purchased orders originating from your mailing campaigns.
-* Fixed: compatibility issue with phone numbers and PHP 7.3
-* Updated: Wording in our WooCommerce tab.
-
 With Constant Contact you can:
 - Drag and drop products from your store into any email and customize the details.
 - Automatically import WooCommere contacts into your Constant Contact account.
@@ -40,3 +32,11 @@ With Constant Contact you can:
 --- Prospects: Have not made a purchase yet
 - Send automated welcome emails and behavior based trigger emails
 - Find new customers with Facebook and Instagram ads
+
+== Changelog ==
+
+= 1.1.0 =
+
+* Added: Campaign ID data inclusion for purchased orders originating from your mailing campaigns.
+* Fixed: compatibility issue with phone numbers and PHP 7.3
+* Updated: Wording in our WooCommerce tab.
