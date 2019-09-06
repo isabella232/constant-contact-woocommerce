@@ -560,6 +560,16 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		<button class="button button-primary" type="submit" name="cc_woo_action" value="<?php echo esc_attr( $value ); ?>">
 			<?php echo esc_html( $message ); ?>
 		</button>
+			<span style="line-height:28px; margin-left:25px;">
+				<?php
+				printf(
+					/* translators: the placeholders hold opening and closing `<a>` tags. */
+					esc_html__( 'If you have any issues connecting please call %1$sConstant Contact Support%2$s', 'cc-woo' ),
+					'<a href="https://community.constantcontact.com/contact-support">',
+					'</a>'
+				);
+				?>
+			</span>
 		</div>
 		<?php
 	}
