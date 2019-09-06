@@ -565,7 +565,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				printf(
 					/* translators: the placeholders hold opening and closing `<a>` tags. */
 					esc_html__( 'If you have any issues connecting please call %1$sConstant Contact Support%2$s', 'cc-woo' ),
-					'<a href="https://community.constantcontact.com/contact-support">',
+					'<a href="https://community.constantcontact.com/contact-support" target="_blank">',
 					'</a>'
 				);
 				?>
