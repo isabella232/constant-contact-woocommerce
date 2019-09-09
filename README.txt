@@ -2,8 +2,8 @@
 Contributors: constantcontact, znowebdev, jmichaelward, webdevstudios
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
-Tested up to: 5.2.2
-Stable tag: 1.0.2
+Tested up to: 5.2.3
+Stable tag: 1.1.0
 Requires PHP: 7.2
 WC tested up to: 3.5.6
 License: GPLv3
@@ -20,7 +20,6 @@ and send targeted emails that engage your customers on every device.
 
 Unleash the power of your business—and drive more revenue—by integrating Constant Contact with WooCommerce today.
 
-
 With Constant Contact you can:
 - Drag and drop products from your store into any email and customize the details.
 - Automatically import WooCommere contacts into your Constant Contact account.
@@ -33,3 +32,11 @@ With Constant Contact you can:
 --- Prospects: Have not made a purchase yet
 - Send automated welcome emails and behavior based trigger emails
 - Find new customers with Facebook and Instagram ads
+
+== Changelog ==
+
+= 1.1.0 =
+
+* Added: Campaign ID data inclusion for purchased orders originating from your mailing campaigns.
+* Fixed: compatibility issue with phone numbers and PHP 7.3
+* Updated: Wording in our WooCommerce tab.

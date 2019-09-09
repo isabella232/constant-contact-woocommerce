@@ -10,6 +10,7 @@
 namespace WebDevStudios\CCForWoo\View;
 
 use WebDevStudios\CCForWoo\View\Admin\WooTab;
+use WebDevStudios\CCForWoo\View\Checkout\CampaignId;
 use WebDevStudios\CCForWoo\View\Checkout\NewsletterPreferenceCheckbox;
 use WebDevStudios\OopsWP\Structure\Service;
 
@@ -35,6 +36,7 @@ class ViewRegistrar extends Service {
 	 */
 	protected $forms = [
 		NewsletterPreferenceCheckbox::class,
+		CampaignId::class,
 	];
 
 
