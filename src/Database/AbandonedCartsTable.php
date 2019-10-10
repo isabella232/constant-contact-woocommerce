@@ -133,5 +133,9 @@ class AbandonedCartsTable extends Service {
 		if ( '' === $user_email ) {
 			return;
 		}
+
+		// Get current time.
+		$time_added = current_time( 'mysql' );
+		$time_added_ts = strtotime( $time_added );
 	}
 }
