@@ -9,7 +9,7 @@
 
 namespace WebDevStudios\CCForWoo\Database;
 
-use WebDevStudios\OopsWP\Utility\Hookable;
+use WebDevStudios\OopsWP\Structure\Service;
 
 /**
  * Class AbandonedCartsTable
@@ -18,7 +18,7 @@ use WebDevStudios\OopsWP\Utility\Hookable;
  * @package WebDevStudios\CCForWoo\Database
  * @since   2019-10-09
  */
-class AbandonedCartsTable implements Hookable {
+class AbandonedCartsTable extends Service {
 
 	/**
 	 * Current version of abandoned carts table.
