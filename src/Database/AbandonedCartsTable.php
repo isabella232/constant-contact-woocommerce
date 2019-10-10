@@ -1,6 +1,6 @@
 <?php
 /**
- * Class to handle creation and deletion of abandoned carts table.
+ * Class to handle creation of abandoned carts table.
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Database
@@ -53,7 +53,6 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-10
 	 */
 	public function create_table() {
-
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
@@ -113,7 +112,6 @@ class AbandonedCartsTable extends Service {
 	 * @return void
 	 */
 	protected function update_cart_data() {
-
 		$cart = WC()->cart->get_cart();
 		$user_id = get_current_user_id();
 
