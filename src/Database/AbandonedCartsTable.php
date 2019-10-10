@@ -77,27 +77,6 @@ class AbandonedCartsTable extends Service {
 	}
 
 	/**
-	 * Delete abandoned carts table.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
-	 */
-	public static function delete_table() {
-
-		global $wpdb;
-
-		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
-
-		$wpdb->query(
-			//@codingStandardsIgnoreStart
-			"DROP TABLE IF EXISTS {$table_name}"
-			//@codingStandardsIgnoreEnd
-		);
-
-		delete_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION );
-	}
-
-	/**
 	 * Check if table exists and is up-to-date.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
