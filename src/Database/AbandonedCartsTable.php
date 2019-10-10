@@ -144,8 +144,10 @@ class AbandonedCartsTable extends Service {
 		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
 		$wpdb->query(
 			$wpdb->prepare(
+				//@codingStandardsIgnoreStart
 				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`) VALUES (%d, %s, %s, %s, %d)
 				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
+				//@codingStandardsIgnoreEnd
 				$user_id,
 				$user_email,
 				maybe_serialize( $cart ),
