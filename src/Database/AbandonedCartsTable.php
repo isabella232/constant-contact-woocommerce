@@ -59,16 +59,16 @@ class AbandonedCartsTable extends Service {
 		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE $table_name (
+		$sql = "CREATE TABLE {$table_name} (
 			cart_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			cart_added datetime NOT NULL default '0000-00-00 00:00:00',
-			cart_added_ts
-			user_id bigint(20) unsigned NOT NULL DEFAULT '0',
+			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			user_email varchar(200) NOT NULL default '',
 			cart_contents longtext NOT NULL,
+			cart_updated datetime NOT NULL default '0000-00-00 00:00:00',
+			cart_updated_ts int(11) unsigned NOT NULL default 0,
 			PRIMARY KEY (cart_id),
-			KEY user (user_id, user_email)
-		) $charset_collate";
+			UNIQUE KEY user (user_id, user_email)
+		) {$charset_collate}";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
