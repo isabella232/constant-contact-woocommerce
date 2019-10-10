@@ -154,6 +154,7 @@ final class Plugin extends ServiceRegistrar {
 
 		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
 		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
+		register_uninstall_hook( $this->plugin_file, [ $this, 'do_uninstall_process' ] );
 	}
 
 	/**
@@ -227,5 +228,18 @@ final class Plugin extends ServiceRegistrar {
 		}
 
 		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
+	}
+
+	/**
+	 * Callback for register_uninstall_hook.
+	 *
+	 * Performs the plugin's uninstall routines, including deleting abandoned carts table.
+	 *
+	 * @see register_uninstall_hook()
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-10
+	 */
+	public function do_uninstall_process() {
+		( new AbandonedCartsTable() )->delete_table();
 	}
 }
