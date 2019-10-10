@@ -62,7 +62,7 @@ class AbandonedCartsTable extends Service {
 			user_email varchar(200) NOT NULL default '',
 			cart_contents longtext NOT NULL,
 			PRIMARY KEY (cart_id),
-			KEY user_id (user_id)
+			KEY user (user_id, user_email)
 		) $charset_collate";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
