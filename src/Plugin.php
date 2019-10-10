@@ -18,6 +18,7 @@ use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
+use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
 
 /**
  * "Core" plugin class.
@@ -52,6 +53,7 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
+		AbandonedCartsTable::class,
 	];
 
 	/**
@@ -201,6 +203,8 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
+
+		( new AbandonedCartsTable() )->create_table();
 
 		flush_rewrite_rules();
 	}

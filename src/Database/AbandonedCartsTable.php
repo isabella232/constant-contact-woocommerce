@@ -37,6 +37,7 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-09
 	 */
 	public function register_hooks() {
+		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
 	}
 
 	/**
@@ -67,5 +68,17 @@ class AbandonedCartsTable extends Service {
 		dbDelta( $sql );
 
 		add_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION, self::CC_ABANDONED_CARTS_DB_VERSION );
+	}
+
+	/**
+	 * Check if table exists and is up-to-date.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-10
+	 */
+	public function update_db_check() {
+		if ( self::CC_ABANDONED_CARTS_DB_VERSION !== get_site_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION ) ) {
+			$this->create_table();
+		}
 	}
 }
