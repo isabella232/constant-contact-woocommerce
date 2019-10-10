@@ -31,6 +31,11 @@ class AbandonedCartsTable extends Service {
 	const CC_ABANDONED_CARTS_DB_VERSION_OPTION = 'cc_abandoned_carts_db_version';
 
 	/**
+	 * Abandoned carts table name.
+	 */
+	const CC_ABANDONED_CARTS_TABLE = 'cc_abandoned_carts';
+
+	/**
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
@@ -51,7 +56,7 @@ class AbandonedCartsTable extends Service {
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'cc_abandoned_carts';
+		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
