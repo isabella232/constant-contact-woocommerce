@@ -38,6 +38,7 @@ class AbandonedCartsTable extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
+		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 	}
 
 	/**
@@ -80,5 +81,31 @@ class AbandonedCartsTable extends Service {
 		if ( self::CC_ABANDONED_CARTS_DB_VERSION !== get_site_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION ) ) {
 			$this->create_table();
 		}
+	}
+
+	/**
+	 * Check current WC template.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-10
+	 * @param  string $template_name Current template file name.
+	 * @param  string $template_path Current template path.
+	 * @param  string $located       Full local path to current template file.
+	 * @param  array  $args          Template args.
+	 */
+	public function check_template( $template_name, $template_path, $located, $args ) {
+		// If checkout page displayed, save cart data.
+		if ( 'checkout/form-checkout.php' === $template_name ) {
+			$this->update_cart_data();
+		}
+	}
+
+	/**
+	 * Update current cart session data in db.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-10
+	 */
+	protected function update_cart_data() {
 	}
 }
