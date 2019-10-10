@@ -82,7 +82,7 @@ class AbandonedCartsTable extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-10
 	 */
-	public function delete_table() {
+	public static function delete_table() {
 
 		global $wpdb;
 
