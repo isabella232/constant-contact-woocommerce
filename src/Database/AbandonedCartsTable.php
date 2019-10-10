@@ -26,6 +26,11 @@ class AbandonedCartsTable extends Service {
 	const CC_ABANDONED_CARTS_DB_VERSION = '1.0';
 
 	/**
+	 * Option name for abandoned carts db version.
+	 */
+	const CC_ABANDONED_CARTS_DB_VERSION_OPTION = 'cc_abandoned_carts_db_version';
+
+	/**
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
@@ -61,6 +66,6 @@ class AbandonedCartsTable extends Service {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
 
-		add_option( 'cc_abandoned_carts_db_version', self::CC_ABANDONED_CARTS_DB_VERSION );
+		add_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION, self::CC_ABANDONED_CARTS_DB_VERSION );
 	}
 }
