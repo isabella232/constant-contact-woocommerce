@@ -110,7 +110,28 @@ class AbandonedCartsTable extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-10
+	 * @return void
 	 */
 	protected function update_cart_data() {
+
+		$cart = WC()->cart->get_cart();
+		$user_id = get_current_user_id();
+
+		// Get user email if provided.
+		if ( 0 === $user_id ) {
+			// If guest user, check posted data for email.
+			$posted = WC()->checkout()->get_posted_data();
+			$user_email = '';
+			if ( isset( $posted['billing_email'] ) && '' !== $posted['billing_email'] ) {
+				$user_email = sanitize_email( $posted['billing_email'] );
+			}
+		} else {
+			// If registered user, get email from account.
+			$user_email = sanitize_email( get_userdata( $user_id )->user_email );
+		}
+
+		if ( '' === $user_email ) {
+			return;
+		}
 	}
 }
