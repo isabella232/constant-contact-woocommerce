@@ -137,5 +137,21 @@ class AbandonedCartsTable extends Service {
 		// Get current time.
 		$time_added = current_time( 'mysql' );
 		$time_added_ts = strtotime( $time_added );
+
+		global $wpdb;
+
+		// Insert/update cart data.
+		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
+		$wpdb->query(
+			$wpdb->prepare(
+				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`) VALUES (%d, %s, %s, %s, %d)
+				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
+				$user_id,
+				$user_email,
+				maybe_serialize( $cart ),
+				$time_added,
+				$time_added_ts
+			)
+		);
 	}
 }
