@@ -130,6 +130,9 @@ class AbandonedCartsTable extends Service {
 			return;
 		}
 
+		// Get current time.
+		$time_added = current_time( 'mysql' );
+
 		global $wpdb;
 
 		// Insert/update cart data.
@@ -143,7 +146,7 @@ class AbandonedCartsTable extends Service {
 				$user_id,
 				$user_email,
 				maybe_serialize( WC()->cart->get_cart() ),
-				current_time( 'mysql' ),
+				$time_added,
 				strtotime( $time_added )
 			)
 		);
