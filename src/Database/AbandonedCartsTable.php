@@ -44,6 +44,7 @@ class AbandonedCartsTable extends Service {
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
+		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
@@ -110,7 +111,7 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-10
 	 * @return void
 	 */
-	protected function update_cart_data() {
+	public function update_cart_data() {
 		$user_id = get_current_user_id();
 
 		// Get user email if provided.
