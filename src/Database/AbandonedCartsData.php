@@ -29,6 +29,7 @@ class AbandonedCartsData extends Service {
 	public function register_hooks() {
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
+		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
 	}
 
 	/**
@@ -80,7 +81,7 @@ class AbandonedCartsData extends Service {
 		}
 
 		// Get current time.
-		$time_added = current_time( 'mysql' );
+		$time_added = current_time( 'mysql', 1 );
 
 		global $wpdb;
 
@@ -137,6 +138,28 @@ class AbandonedCartsData extends Service {
 			array(
 				'%d',
 				'%s',
+			)
+		);
+	}
+
+	/**
+	 * Delete expired carts.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-11
+	 */
+	public function check_expired_carts() {
+		global $wpdb;
+
+		// Delete all carts at least 30 days old.
+		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$test = $wpdb->query(
+			$wpdb->prepare(
+				//@codingStandardsIgnoreStart
+				"DELETE FROM {$table_name}
+				WHERE `cart_updated_ts` <= %s",
+				//@codingStandardsIgnoreEnd
+				( new \DateTime() )->sub( new \DateInterval( 'P30D' ) )->format( 'U' )
 			)
 		);
 	}

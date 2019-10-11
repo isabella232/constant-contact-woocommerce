@@ -208,6 +208,10 @@ final class Plugin extends ServiceRegistrar {
 
 		( new AbandonedCartsTable() )->create_table();
 
+		if ( ! wp_next_scheduled( 'check_expired_carts' ) ) {
+			wp_schedule_event( strtotime( 'today' ), 'daily', 'check_expired_carts' );
+		}
+
 		flush_rewrite_rules();
 	}
 
