@@ -19,6 +19,7 @@ use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
+use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
 
 /**
  * "Core" plugin class.
@@ -54,6 +55,7 @@ final class Plugin extends ServiceRegistrar {
 		Disconnect::class,
 		MenuItem::class,
 		AbandonedCartsTable::class,
+		AbandonedCartsData::class,
 	];
 
 	/**

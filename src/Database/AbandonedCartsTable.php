@@ -43,8 +43,6 @@ class AbandonedCartsTable extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
-		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
-		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
@@ -85,104 +83,5 @@ class AbandonedCartsTable extends Service {
 		if ( self::CC_ABANDONED_CARTS_DB_VERSION !== get_site_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION ) ) {
 			$this->create_table();
 		}
-	}
-
-	/**
-	 * Check current WC template.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
-	 * @param  string $template_name Current template file name.
-	 * @param  string $template_path Current template path.
-	 * @param  string $located       Full local path to current template file.
-	 * @param  array  $args          Template args.
-	 */
-	public function check_template( $template_name, $template_path, $located, $args ) {
-		// If checkout page displayed, save cart data.
-		if ( 'checkout/form-checkout.php' === $template_name ) {
-			$this->update_cart_data();
-		}
-		// If thankyou page displayed, clear cart data.
-		if ( 'checkout/thankyou.php' === $template_name ) {
-			$this->clear_cart_data( $args['order'] );
-		}
-	}
-
-	/**
-	 * Update current cart session data in db.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
-	 * @return void
-	 */
-	public function update_cart_data() {
-		$user_id = get_current_user_id();
-
-		// Get user email if provided.
-		if ( 0 === $user_id ) {
-			// If guest user, check posted data for email.
-			$posted = WC()->checkout()->get_posted_data();
-			$user_email = '';
-			if ( isset( $posted['billing_email'] ) && '' !== $posted['billing_email'] ) {
-				$user_email = sanitize_email( $posted['billing_email'] );
-			}
-		} else {
-			// If registered user, get email from account.
-			$user_email = sanitize_email( get_userdata( $user_id )->user_email );
-		}
-
-		if ( '' === $user_email ) {
-			return;
-		}
-
-		// Get current time.
-		$time_added = current_time( 'mysql' );
-
-		global $wpdb;
-
-		// Insert/update cart data.
-		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
-		$wpdb->query(
-			$wpdb->prepare(
-				//@codingStandardsIgnoreStart
-				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`) VALUES (%d, %s, %s, %s, %d)
-				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
-				//@codingStandardsIgnoreEnd
-				$user_id,
-				$user_email,
-				maybe_serialize( WC()->cart->get_cart() ),
-				$time_added,
-				strtotime( $time_added )
-			)
-		);
-	}
-
-	/**
-	 * Remove current cart session data from db upon successful order submission.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
-	 * @param  WC_Order $order Newly submitted order object.
-	 * @return void
-	 */
-	public function clear_cart_data( $order ) {
-		if ( false === $order ) {
-			return;
-		}
-
-		global $wpdb;
-
-		// Delete current cart data.
-		$wpdb->delete(
-			$wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE,
-			array(
-				'user_id' => $order->get_user_id(),
-				'user_email' => $order->get_billing_email(),
-			),
-			array(
-				'%d',
-				'%s',
-			)
-		);
 	}
 }
