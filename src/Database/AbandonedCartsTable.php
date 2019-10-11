@@ -56,7 +56,6 @@ class AbandonedCartsTable extends Service {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
-		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE {$table_name} (
 			cart_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -67,7 +66,7 @@ class AbandonedCartsTable extends Service {
 			cart_updated_ts int(11) unsigned NOT NULL default 0,
 			PRIMARY KEY (cart_id),
 			UNIQUE KEY user (user_id, user_email)
-		) {$charset_collate}";
+		) {$wpdb->get_charset_collate()}";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		dbDelta( $sql );
@@ -112,7 +111,6 @@ class AbandonedCartsTable extends Service {
 	 * @return void
 	 */
 	protected function update_cart_data() {
-		$cart = WC()->cart->get_cart();
 		$user_id = get_current_user_id();
 
 		// Get user email if provided.
@@ -132,10 +130,6 @@ class AbandonedCartsTable extends Service {
 			return;
 		}
 
-		// Get current time.
-		$time_added = current_time( 'mysql' );
-		$time_added_ts = strtotime( $time_added );
-
 		global $wpdb;
 
 		// Insert/update cart data.
@@ -148,9 +142,9 @@ class AbandonedCartsTable extends Service {
 				//@codingStandardsIgnoreEnd
 				$user_id,
 				$user_email,
-				maybe_serialize( $cart ),
-				$time_added,
-				$time_added_ts
+				maybe_serialize( WC()->cart->get_cart() ),
+				current_time( 'mysql' ),
+				strtotime( $time_added )
 			)
 		);
 	}
