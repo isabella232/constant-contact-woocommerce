@@ -102,6 +102,10 @@ class AbandonedCartsTable extends Service {
 		if ( 'checkout/form-checkout.php' === $template_name ) {
 			$this->update_cart_data();
 		}
+		// If thankyou page displayed, clear cart data.
+		if ( 'checkout/thankyou.php' === $template_name ) {
+			$this->clear_cart_data( $args['order'] );
+		}
 	}
 
 	/**
@@ -149,6 +153,35 @@ class AbandonedCartsTable extends Service {
 				maybe_serialize( WC()->cart->get_cart() ),
 				$time_added,
 				strtotime( $time_added )
+			)
+		);
+	}
+
+	/**
+	 * Remove current cart session data from db upon successful order submission.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-11
+	 * @param  WC_Order $order Newly submitted order object.
+	 * @return void
+	 */
+	public function clear_cart_data( $order ) {
+		if ( false === $order ) {
+			return;
+		}
+
+		global $wpdb;
+
+		// Delete current cart data.
+		$wpdb->delete(
+			$wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE,
+			array(
+				'user_id' => $order->get_user_id(),
+				'user_email' => $order->get_billing_email(),
+			),
+			array(
+				'%d',
+				'%s',
 			)
 		);
 	}
