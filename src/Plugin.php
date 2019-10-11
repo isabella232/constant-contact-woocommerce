@@ -228,6 +228,8 @@ final class Plugin extends ServiceRegistrar {
 	public function do_deactivation_process() {
 		do_action( 'wc_ctct_disconnect' );
 
+		wp_clear_scheduled_hook( 'check_expired_carts' );
+
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
 		}
