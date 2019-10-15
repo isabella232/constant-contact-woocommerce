@@ -63,20 +63,25 @@ class AbandonedCartsData extends Service {
 	public function update_cart_data() {
 		$user_id = get_current_user_id();
 
-		// Get user email if provided.
-		if ( 0 === $user_id ) {
-			// If guest user, check posted data for email.
-			$posted = WC()->checkout()->get_posted_data();
-			$user_email = '';
-			if ( isset( $posted['billing_email'] ) && '' !== $posted['billing_email'] ) {
-				$user_email = sanitize_email( $posted['billing_email'] );
-			}
-		} else {
-			// If registered user, get email from account.
-			$user_email = sanitize_email( get_userdata( $user_id )->user_email );
+		$customer_data = array(
+			'billing'  => array(),
+			'shipping' => array(),
+		);
+
+		// Get saved customer data if exists.
+		if ( 0 !== $user_id ) {
+			$customer = new \WC_Customer( $user_id );
+			$customer_data['billing'] = $customer->get_billing();
+			$customer_data['shipping'] = $customer->get_shipping();
 		}
 
-		if ( '' === $user_email ) {
+		// Update customer data from posted data.
+		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // @codingStandardsIgnoreLine.
+			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
+			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
+		}
+
+		if ( ! isset( $customer_data['billing']['email'] ) || '' === $customer_data['billing']['email'] ) {
 			return;
 		}
 
@@ -94,12 +99,33 @@ class AbandonedCartsData extends Service {
 				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
 				//@codingStandardsIgnoreEnd
 				$user_id,
-				$user_email,
-				maybe_serialize( WC()->cart->get_cart() ),
+				$customer_data['billing']['email'],
+				maybe_serialize(
+					array(
+						'products'        => WC()->cart->get_cart(),
+						'coupons'         => WC()->cart->get_applied_coupons(),
+						'customer'        => $customer_data,
+						'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
+					)
+				),
 				$time_added,
 				strtotime( $time_added )
 			)
 		);
+	}
+
+	/**
+	 * Merge database and posted customer data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  string $value  Value of posted array item.
+	 * @param  string $key    Key of posted array item.
+	 * @param  string $type   Type of array (billing or shipping).
+	 */
+	protected function process_customer_data( &$value, $key, $type ) {
+		$posted = WC()->checkout()->get_posted_data();
+		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
 
 	/**
