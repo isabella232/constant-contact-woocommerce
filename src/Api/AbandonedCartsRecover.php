@@ -42,15 +42,15 @@ class AbandonedCartsRecover extends Service {
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
-		$cart_id = $this->get_cart_data( 'cart_id', $cart_id );
+		$cart_hash = $this->get_cart_data( 'cart_hash', $cart_id );
 
-		if ( null === $cart_id ) {
+		if ( null === $cart_hash ) {
 			return;
 		}
 
 		return add_query_arg(
 			'recover-cart',
-			$cart_id,
+			$cart_hash,
 			get_site_url()
 		);
 	}
@@ -104,6 +104,8 @@ class AbandonedCartsRecover extends Service {
 
 		// Get/confirm cart ID.
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		// Handle binary columns.
+		$field = 'cart_hash' === $field ? "HEX({$field}) AS {$field}" : $field;
 		return maybe_unserialize(
 			$wpdb->get_var(
 				$wpdb->prepare(
