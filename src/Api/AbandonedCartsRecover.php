@@ -10,6 +10,7 @@
 namespace WebDevStudios\CCForWoo\Api;
 
 use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
+use WebDevStudios\OopsWP\Structure\Service;
 
 /**
  * Class AbandonedCartsRecover
@@ -18,7 +19,16 @@ use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
  * @package WebDevStudios\CCForWoo\Database
  * @since   2019-10-11
  */
-class AbandonedCartsRecover {
+class AbandonedCartsRecover extends Service {
+
+	/**
+	 * Register hooks with WordPress.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 */
+	public function register_hooks() {
+	}
 
 	/**
 	 * Generate cart recovery URL.
