@@ -42,14 +42,17 @@ class AbandonedCartsRecover extends Service {
 	public function get_cart_url( $cart_id ) {
 		$cart_id = $this->get_cart_data( 'cart_id', $cart_id );
 
-		if ( null === $cart_id ) {
+		// Get cart permalink regardless of hook.
+		$cart_link = $this->get_cart_link();
+
+		if ( null === $cart_id || null === $cart_link ) {
 			return;
 		}
 
 		return add_query_arg(
 			'recover-cart',
 			$cart_id,
-			get_site_url()
+			$cart_link
 		);
 	}
 
@@ -68,6 +71,28 @@ class AbandonedCartsRecover extends Service {
 		if ( 0 === $cart_id ) {
 			return;
 		}
+	}
+
+	/**
+	 * Retrieve cart permalink.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @return mixed Link to cart page if available, null if not.
+	 */
+	protected function get_cart_link() {
+		global $wpdb;
+
+		return $wpdb->get_var(
+			$wpdb->prepare(
+				//@codingStandardsIgnoreStart
+				"SELECT `guid`
+				FROM {$wpdb->posts}
+				WHERE `ID` = %d",
+				//@codingStandardsIgnoreEnd
+				get_option( 'woocommerce_cart_page_id' )
+			)
+		);
 	}
 
 	/**
