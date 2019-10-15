@@ -69,11 +69,9 @@ class AbandonedCartsData extends Service {
 		);
 
 		// Get saved customer data if exists.
-		if ( 0 !== $user_id ) {
-			$customer = new \WC_Customer( $user_id );
-			$customer_data['billing'] = $customer->get_billing();
-			$customer_data['shipping'] = $customer->get_shipping();
-		}
+		$customer = new \WC_Customer( $user_id );
+		$customer_data['billing'] = $customer->get_billing();
+		$customer_data['shipping'] = $customer->get_shipping();
 
 		// Update customer data from posted data.
 		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // @codingStandardsIgnoreLine.
