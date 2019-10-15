@@ -60,6 +60,10 @@ class AbandonedCartsRecover extends Service {
 			return;
 		}
 
-		return get_site_url( null, '/?recover-cart=' . $cart_id );
+		return add_query_arg(
+			'recover-cart',
+			$cart_id,
+			get_site_url()
+		);
 	}
 }
