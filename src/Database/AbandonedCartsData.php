@@ -62,7 +62,6 @@ class AbandonedCartsData extends Service {
 	 */
 	public function update_cart_data() {
 		$user_id = get_current_user_id();
-
 		$customer_data = array(
 			'billing'  => array(),
 			'shipping' => array(),
@@ -73,16 +72,46 @@ class AbandonedCartsData extends Service {
 		$customer_data['billing'] = $customer->get_billing();
 		$customer_data['shipping'] = $customer->get_shipping();
 
-		// Update customer data from posted data.
+		// Check if submission attempted.
 		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // @codingStandardsIgnoreLine.
+			// Update customer data from posted data.
 			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
 			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
+		} else {
+			// Update customer data from saved cart data, if exists.
 		}
 
 		if ( ! isset( $customer_data['billing']['email'] ) || '' === $customer_data['billing']['email'] ) {
 			return;
 		}
 
+		// Save cart data to db.
+		$this->save_cart_data( $user_id, $customer_data );
+	}
+
+	/**
+	 * Merge database and posted customer data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  string $value  Value of posted array item.
+	 * @param  string $key    Key of posted array item.
+	 * @param  string $type   Type of array (billing or shipping).
+	 */
+	protected function process_customer_data( &$value, $key, $type ) {
+		$posted = WC()->checkout()->get_posted_data();
+		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
+	}
+
+	/**
+	 * Save current cart data to db.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  int   $user_id       Current user ID.
+	 * @param  array $customer_data Customer billing and shipping data.
+	 */
+	protected function save_cart_data( $user_id, $customer_data ) {
 		// Get current time.
 		$time_added = current_time( 'mysql', 1 );
 
@@ -110,20 +139,6 @@ class AbandonedCartsData extends Service {
 				strtotime( $time_added )
 			)
 		);
-	}
-
-	/**
-	 * Merge database and posted customer data.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
-	 * @param  string $value  Value of posted array item.
-	 * @param  string $key    Key of posted array item.
-	 * @param  string $type   Type of array (billing or shipping).
-	 */
-	protected function process_customer_data( &$value, $key, $type ) {
-		$posted = WC()->checkout()->get_posted_data();
-		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
 
 	/**
