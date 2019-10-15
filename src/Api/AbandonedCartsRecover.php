@@ -42,7 +42,7 @@ class AbandonedCartsRecover extends Service {
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
-		$cart_hash = $this->get_cart_data( 'cart_hash', 'cart_id', $cart_id, '%d' );
+		$cart_hash = $this->get_cart_data( 'cart_hash', 'cart_id', $cart_id );
 
 		if ( null === $cart_hash ) {
 			return;
@@ -63,18 +63,20 @@ class AbandonedCartsRecover extends Service {
 	 * @return void
 	 */
 	public function recover_cart() {
-		$cart_id = intval(
-			sanitize_key( $_GET['recover-cart'] )
-		);
+		$cart_hash = sanitize_key( $_GET['recover-cart'] );
 
-		if ( 0 === $cart_id ) {
+		if ( '' === $cart_hash ) {
 			return;
 		}
 
 		// Clear current cart contents.
 		WC()->cart->empty_cart();
 
-		$cart_contents = $this->get_cart_data( 'cart_contents', $cart_id );
+		$cart_contents = $this->get_cart_data( 'cart_contents', 'cart_hash', $cart_hash );
+
+		if ( null === $cart_contents ) {
+			return;
+		}
 
 		// Programmatically add each product to cart.
 		foreach ( $cart_contents as $product ) {
@@ -98,26 +100,23 @@ class AbandonedCartsRecover extends Service {
 	 * @param  string $select_field Field to return.
 	 * @param  string $where_field  Field to search on.
 	 * @param  string $where_value  Value to search on.
-	 * @param  string $where_type   Placeholder string for $where_field.
 	 * @return string Cart data.
 	 */
-	protected function get_cart_data( $select_field, $where_field, $where_value, $where_type = '%s' ) {
+	protected function get_cart_data( $select_field, $where_field, $where_value ) {
 		global $wpdb;
 
 		// Get/confirm cart ID.
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		// Handle binary columns.
 		$select_field = 'cart_hash' === $select_field ? "HEX({$select_field}) AS {$select_field}" : $select_field;
+		$where_value = 'cart_hash' === $where_field ? "UNHEX('{$where_value}')" : $where_value;
 		return maybe_unserialize(
 			$wpdb->get_var(
-				$wpdb->prepare(
-					//@codingStandardsIgnoreStart
-					"SELECT {$select_field}
-					FROM {$table_name}
-					WHERE {$where_field} = {$where_type}",
-					//@codingStandardsIgnoreEnd
-					$where_value
-				)
+				//@codingStandardsIgnoreStart
+				"SELECT {$select_field}
+				FROM {$table_name}
+				WHERE {$where_field} = {$where_value}"
+				//@codingStandardsIgnoreEnd
 			)
 		);
 	}
