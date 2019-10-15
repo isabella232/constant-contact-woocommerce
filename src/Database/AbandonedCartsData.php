@@ -90,7 +90,7 @@ class AbandonedCartsData extends Service {
 		$wpdb->query(
 			$wpdb->prepare(
 				//@codingStandardsIgnoreStart
-				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`) VALUES (%d, %s, %s, %s, %d)
+				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`, `cart_hash`) VALUES (%d, %s, %s, %s, %d, UNHEX(MD5(CONCAT(user_id, user_email))))
 				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
 				//@codingStandardsIgnoreEnd
 				$user_id,
