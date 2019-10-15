@@ -28,7 +28,9 @@ class AbandonedCartsRecover extends Service {
 	 * @since  2019-10-15
 	 */
 	public function register_hooks() {
-		add_action( 'plugins_loaded', [ $this, 'recover_cart' ] );
+		if ( isset( $_GET['recover-cart'] ) ) {
+			add_action( 'wp_loaded', [ $this, 'recover_cart' ] );
+		}
 	}
 
 	/**
