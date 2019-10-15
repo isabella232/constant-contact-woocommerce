@@ -25,9 +25,31 @@ class AbandonedCartsRecover {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-11
-	 * @param  int    $cart_id ID of abandoned cart.
+	 * @param  int $cart_id ID of abandoned cart.
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
+		global $wpdb;
+
+		// Get/confirm cart ID.
+		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$cart_id = maybe_unserialize(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					//@codingStandardsIgnoreStart
+					"SELECT cart_id
+					FROM {$table_name}
+					WHERE `cart_id` = %d",
+					//@codingStandardsIgnoreEnd
+					$cart_id
+				)
+			)
+		);
+
+		if ( null === $cart_id ) {
+			return;
+		}
+
+		return get_site_url( null, '/?recover-cart=' . $cart_id );
 	}
 }
