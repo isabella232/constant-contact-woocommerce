@@ -40,22 +40,7 @@ class AbandonedCartsRecover extends Service {
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
-		global $wpdb;
-
-		// Get/confirm cart ID.
-		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
-		$cart_id = maybe_unserialize(
-			$wpdb->get_var(
-				$wpdb->prepare(
-					//@codingStandardsIgnoreStart
-					"SELECT cart_id
-					FROM {$table_name}
-					WHERE `cart_id` = %d",
-					//@codingStandardsIgnoreEnd
-					$cart_id
-				)
-			)
-		);
+		$cart_id = $this->get_cart_data( 'cart_id', $cart_id );
 
 		if ( null === $cart_id ) {
 			return;
@@ -83,5 +68,33 @@ class AbandonedCartsRecover extends Service {
 		if ( 0 === $cart_id ) {
 			return;
 		}
+	}
+
+	/**
+	 * Retrieve cart data from cart ID.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  string $field   Field to return.
+	 * @param  int    $cart_id Target cart ID.
+	 * @return string Cart data.
+	 */
+	protected function get_cart_data( $field, $cart_id ) {
+		global $wpdb;
+
+		// Get/confirm cart ID.
+		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		return maybe_unserialize(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					//@codingStandardsIgnoreStart
+					"SELECT {$field}
+					FROM {$table_name}
+					WHERE `cart_id` = %d",
+					//@codingStandardsIgnoreEnd
+					$cart_id
+				)
+			)
+		);
 	}
 }
