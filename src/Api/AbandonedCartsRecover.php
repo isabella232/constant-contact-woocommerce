@@ -42,7 +42,7 @@ class AbandonedCartsRecover extends Service {
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
-		$cart_hash = $this->get_cart_data( 'cart_hash', $cart_id );
+		$cart_hash = $this->get_cart_data( 'cart_hash', 'cart_id', $cart_id, '%d' );
 
 		if ( null === $cart_hash ) {
 			return;
@@ -95,26 +95,28 @@ class AbandonedCartsRecover extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-15
-	 * @param  string $field   Field to return.
-	 * @param  int    $cart_id Target cart ID.
+	 * @param  string $select_field Field to return.
+	 * @param  string $where_field  Field to search on.
+	 * @param  string $where_value  Value to search on.
+	 * @param  string $where_type   Placeholder string for $where_field.
 	 * @return string Cart data.
 	 */
-	protected function get_cart_data( $field, $cart_id ) {
+	protected function get_cart_data( $select_field, $where_field, $where_value, $where_type = '%s' ) {
 		global $wpdb;
 
 		// Get/confirm cart ID.
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		// Handle binary columns.
-		$field = 'cart_hash' === $field ? "HEX({$field}) AS {$field}" : $field;
+		$select_field = 'cart_hash' === $select_field ? "HEX({$select_field}) AS {$select_field}" : $select_field;
 		return maybe_unserialize(
 			$wpdb->get_var(
 				$wpdb->prepare(
 					//@codingStandardsIgnoreStart
-					"SELECT {$field}
+					"SELECT {$select_field}
 					FROM {$table_name}
-					WHERE `cart_id` = %d",
+					WHERE {$where_field} = {$where_type}",
 					//@codingStandardsIgnoreEnd
-					$cart_id
+					$where_value
 				)
 			)
 		);
