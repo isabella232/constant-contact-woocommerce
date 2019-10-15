@@ -28,6 +28,7 @@ class AbandonedCartsRecover extends Service {
 	 * @since  2019-10-15
 	 */
 	public function register_hooks() {
+		add_action( 'plugins_loaded', [ $this, 'recover_cart' ] );
 	}
 
 	/**
@@ -65,5 +66,22 @@ class AbandonedCartsRecover extends Service {
 			$cart_id,
 			get_site_url()
 		);
+	}
+
+	/**
+	 * Recovery saved cart from ID.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @return void
+	 */
+	public function recover_cart() {
+		$cart_id = intval(
+			sanitize_key( $_GET['recover-cart'] )
+		);
+
+		if ( 0 === $cart_id ) {
+			return;
+		}
 	}
 }
