@@ -71,7 +71,23 @@ class AbandonedCartsRecover extends Service {
 			return;
 		}
 
+		// Clear current cart contents.
+		WC()->cart->empty_cart();
 
+		$cart_contents = $this->get_cart_data( 'cart_contents', $cart_id );
+
+		// Programmatically add each product to cart.
+		foreach ( $cart_contents as $product ) {
+			WC()->cart->add_to_cart(
+				$product['product_id'],
+				$product['quantity'],
+				empty( $product['variation_id'] ) ? 0 : $product['variation_id'],
+				empty( $product['variation'] ) ? array() : $product['variation']
+			);
+		}
+
+		// Redirect to cart page.
+		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 	}
 
 	/**
