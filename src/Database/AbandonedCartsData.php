@@ -10,6 +10,7 @@
 namespace WebDevStudios\CCForWoo\Database;
 
 use WebDevStudios\OopsWP\Structure\Service;
+use WC_Customer;
 
 /**
  * Class AbandonedCartsData
@@ -61,15 +62,15 @@ class AbandonedCartsData extends Service {
 	 * @return void
 	 */
 	public function update_cart_data() {
-		$user_id = get_current_user_id();
+		$user_id       = get_current_user_id();
 		$customer_data = array(
 			'billing'  => array(),
 			'shipping' => array(),
 		);
 
 		// Get saved customer data if exists.
-		$customer = new \WC_Customer( $user_id );
-		$customer_data['billing'] = $customer->get_billing();
+		$customer                  = new WC_Customer( $user_id );
+		$customer_data['billing']  = $customer->get_billing();
 		$customer_data['shipping'] = $customer->get_shipping();
 
 		// Check if submission attempted.
