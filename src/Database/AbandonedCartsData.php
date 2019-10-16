@@ -81,7 +81,23 @@ class AbandonedCartsData extends Service {
 			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
 			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
 		} else {
-			// Update customer data from saved cart data, if exists.
+			// Retrieve cart data for current user, if exists.
+			$cart_data = $this->get_cart_data(
+				'cart_contents',
+				[
+					'user_id = %d',
+					'user_email = %s',
+				],
+				[
+					$user_id,
+					WC()->checkout->get_value( 'billing_email' ),
+				]
+			);
+			if ( null !== $cart_data && ! empty( $cart_data['customer'] ) ) {
+				// Update customer data from saved cart data.
+				$customer_data['billing'] = array_merge( $customer_data['billing'], $cart_data['customer']['billing'] );
+				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $cart_data['customer']['shipping'] );
+			}
 		}
 
 		if ( empty( $customer_data['billing']['email'] ) ) {
@@ -104,6 +120,37 @@ class AbandonedCartsData extends Service {
 	protected function process_customer_data( &$value, $key, $type ) {
 		$posted = WC()->checkout()->get_posted_data();
 		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
+	}
+
+	/**
+	 * Retrieve specific user's cart data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-16
+	 * @param  string $select        Field to return.
+	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
+	 * @param  array  $where_values  Array of WHERE clause values.
+	 * @return string Cart data.
+	 */
+	protected function get_cart_data( $select, $where, $where_values ) {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
+
+		// Construct query to return cart data.
+		return maybe_unserialize(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variables in SQL.
+					"SELECT {$select}
+					FROM {$table_name}
+					WHERE {$where}",
+					// phpcs:enable
+					$where_values
+				)
+			)
+		);
 	}
 
 	/**
