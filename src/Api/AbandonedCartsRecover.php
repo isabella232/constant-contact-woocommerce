@@ -102,6 +102,11 @@ class AbandonedCartsRecover extends Service {
 			);
 		}
 
+		// Apply coupons.
+		foreach ( $cart_contents['coupons'] as $coupon ) {
+			WC()->cart->apply_coupon( $coupon );
+		}
+
 		// Redirect to cart page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 	}
