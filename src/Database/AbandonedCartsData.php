@@ -65,10 +65,10 @@ class AbandonedCartsData extends Service {
 	 */
 	public function update_cart_data() {
 		$user_id       = get_current_user_id();
-		$customer_data = array(
-			'billing'  => array(),
-			'shipping' => array(),
-		);
+		$customer_data = [
+			'billing'  => [],
+			'shipping' => [],
+		];
 
 		// Get saved customer data if exists.
 		$customer                  = new WC_Customer( $user_id );
@@ -130,14 +130,12 @@ class AbandonedCartsData extends Service {
 				// phpcs:enable
 				$user_id,
 				$customer_data['billing']['email'],
-				maybe_serialize(
-					array(
-						'products'        => WC()->cart->get_cart(),
-						'coupons'         => WC()->cart->get_applied_coupons(),
-						'customer'        => $customer_data,
-						'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
-					)
-				),
+				maybe_serialize( [
+					'products'        => WC()->cart->get_cart(),
+					'coupons'         => WC()->cart->get_applied_coupons(),
+					'customer'        => $customer_data,
+					'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
+				] ),
 				$time_added,
 				strtotime( $time_added )
 			)
@@ -173,14 +171,14 @@ class AbandonedCartsData extends Service {
 		// Delete current cart data.
 		$wpdb->delete(
 			$wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE,
-			array(
+			[
 				'user_id' => $user_id,
 				'user_email' => $user_email,
-			),
-			array(
+			],
+			[
 				'%d',
 				'%s',
-			)
+			]
 		);
 	}
 
