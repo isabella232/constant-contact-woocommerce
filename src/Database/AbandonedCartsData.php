@@ -11,6 +11,8 @@ namespace WebDevStudios\CCForWoo\Database;
 
 use WebDevStudios\OopsWP\Structure\Service;
 use WC_Customer;
+use DateTime;
+use DateInterval;
 
 /**
  * Class AbandonedCartsData
@@ -199,7 +201,7 @@ class AbandonedCartsData extends Service {
 				"DELETE FROM {$table_name}
 				WHERE `cart_updated_ts` <= %s",
 				// phpcs:enable
-				( new \DateTime() )->sub( new \DateInterval( 'P30D' ) )->format( 'U' )
+				( new DateTime() )->sub( new DateInterval( 'P30D' ) )->format( 'U' )
 			)
 		);
 	}
