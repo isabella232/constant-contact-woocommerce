@@ -107,6 +107,20 @@ class AbandonedCartsRecover extends Service {
 			WC()->cart->apply_coupon( $coupon );
 		}
 
+		// Update customer info.
+		foreach ( $cart_contents['customer']['billing'] as $key => $value ) {
+			call_user_func(
+				[ WC()->customer, "set_billing_{$key}" ],
+				$value
+			);
+		}
+		foreach ( $cart_contents['customer']['shipping'] as $key => $value ) {
+			call_user_func(
+				[ WC()->customer, "set_shipping_{$key}" ],
+				$value
+			);
+		}
+
 		// Redirect to cart page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 	}
