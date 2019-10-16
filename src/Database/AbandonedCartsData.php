@@ -82,7 +82,7 @@ class AbandonedCartsData extends Service {
 		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
 
 		// Check if submission attempted.
-		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // @codingStandardsIgnoreLine.
+		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.
 			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
 			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
