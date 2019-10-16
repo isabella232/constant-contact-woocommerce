@@ -79,14 +79,21 @@ class AbandonedCartsRecover extends Service {
 		// Clear current cart contents.
 		WC()->cart->empty_cart();
 
-		$cart_contents = $this->get_cart_data( 'cart_contents', 'cart_hash', $cart_hash );
+		// Get saved cart contents.
+		$cart_contents = AbandonedCartsData::get_cart_data(
+			'cart_contents',
+			'cart_hash = UNHEX(%s)',
+			[
+				$cart_hash,
+			]
+		);
 
 		if ( null === $cart_contents ) {
 			return;
 		}
 
 		// Programmatically add each product to cart.
-		foreach ( $cart_contents as $product ) {
+		foreach ( $cart_contents['products'] as $product ) {
 			WC()->cart->add_to_cart(
 				$product['product_id'],
 				$product['quantity'],
@@ -97,34 +104,5 @@ class AbandonedCartsRecover extends Service {
 
 		// Redirect to cart page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
-	}
-
-	/**
-	 * Retrieve cart data from cart ID.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
-	 * @param  string $select_field Field to return.
-	 * @param  string $where_field  Field to search on.
-	 * @param  string $where_value  Value to search on.
-	 * @return string Cart data.
-	 */
-	protected function get_cart_data( $select_field, $where_field, $where_value ) {
-		global $wpdb;
-
-		// Get/confirm cart ID.
-		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
-		// Handle binary columns.
-		$select_field = 'cart_hash' === $select_field ? "HEX({$select_field}) AS {$select_field}" : $select_field;
-		$where_value = 'cart_hash' === $where_field ? "UNHEX('{$where_value}')" : $where_value;
-		return maybe_unserialize(
-			$wpdb->get_var(
-				//@codingStandardsIgnoreStart
-				"SELECT {$select_field}
-				FROM {$table_name}
-				WHERE {$where_field} = {$where_value}"
-				//@codingStandardsIgnoreEnd
-			)
-		);
 	}
 }
