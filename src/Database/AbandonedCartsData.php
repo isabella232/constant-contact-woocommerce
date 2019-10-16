@@ -33,6 +33,7 @@ class AbandonedCartsData extends Service {
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
+		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
@@ -70,10 +71,14 @@ class AbandonedCartsData extends Service {
 			'shipping' => [],
 		];
 
-		// Get saved customer data if exists.
+		// Get saved customer data if exists. If guest user, blank customer data will be generated.
 		$customer                  = new WC_Customer( $user_id );
 		$customer_data['billing']  = $customer->get_billing();
 		$customer_data['shipping'] = $customer->get_shipping();
+
+		// Update customer data from user session data.
+		$customer_data['billing'] = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
+		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
 
 		// Check if submission attempted.
 		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // @codingStandardsIgnoreLine.
