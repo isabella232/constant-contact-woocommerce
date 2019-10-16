@@ -34,6 +34,7 @@ class AbandonedCartsData extends Service {
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
+		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
@@ -109,8 +110,14 @@ class AbandonedCartsData extends Service {
 			return;
 		}
 
-		// Save cart data to db.
-		$this->save_cart_data( $user_id, $customer_data );
+		// Delete saved cart if cart emptied; update otherwise.
+		if ( false === WC()->cart->is_empty() ) {
+			// Save cart data to db.
+			$this->save_cart_data( $user_id, $customer_data );
+		} else {
+			// Delete cart data from db.
+			$this->remove_cart_data( $user_id, $customer_data['billing']['email'] );
+		}
 	}
 
 	/**
