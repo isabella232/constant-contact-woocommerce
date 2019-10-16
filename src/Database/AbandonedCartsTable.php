@@ -42,7 +42,7 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-09
 	 */
 	public function register_hooks() {
-		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
+		add_action( 'admin_init', [ $this, 'update_db_check' ] );
 	}
 
 	/**
