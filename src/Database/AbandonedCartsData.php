@@ -88,7 +88,7 @@ class AbandonedCartsData extends Service {
 			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
 		} else {
 			// Retrieve cart data for current user, if exists.
-			$cart_data = $this->get_cart_data(
+			$cart_data = $this::get_cart_data(
 				'cart_contents',
 				[
 					'user_id = %d',
@@ -144,7 +144,7 @@ class AbandonedCartsData extends Service {
 	 * @param  array  $where_values  Array of WHERE clause values.
 	 * @return string Cart data.
 	 */
-	protected function get_cart_data( $select, $where, $where_values ) {
+	public static function get_cart_data( $select, $where, $where_values ) {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
