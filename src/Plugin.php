@@ -18,6 +18,8 @@ use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
+use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
+use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
 
 /**
  * "Core" plugin class.
@@ -52,6 +54,8 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
+		AbandonedCartsTable::class,
+		AbandonedCartsData::class,
 	];
 
 	/**
@@ -202,6 +206,12 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
+		( new AbandonedCartsTable() )->create_table();
+
+		if ( ! wp_next_scheduled( 'check_expired_carts' ) ) {
+			wp_schedule_event( strtotime( 'today' ), 'daily', 'check_expired_carts' );
+		}
+
 		flush_rewrite_rules();
 	}
 
@@ -217,6 +227,8 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function do_deactivation_process() {
 		do_action( 'wc_ctct_disconnect' );
+
+		wp_clear_scheduled_hook( 'check_expired_carts' );
 
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
