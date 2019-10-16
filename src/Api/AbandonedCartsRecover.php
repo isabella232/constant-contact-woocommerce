@@ -10,6 +10,7 @@
 namespace WebDevStudios\CCForWoo\Api;
 
 use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
+use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
@@ -42,7 +43,13 @@ class AbandonedCartsRecover extends Service {
 	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
 	 */
 	public function get_cart_url( $cart_id ) {
-		$cart_hash = $this->get_cart_data( 'cart_hash', 'cart_id', $cart_id );
+		$cart_hash = AbandonedCartsData::get_cart_data(
+			'HEX(cart_hash)',
+			'cart_id = %d',
+			[
+				intval( $cart_id ),
+			]
+		);
 
 		if ( null === $cart_hash ) {
 			return;
