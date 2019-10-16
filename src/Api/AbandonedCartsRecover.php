@@ -121,6 +121,13 @@ class AbandonedCartsRecover extends Service {
 			);
 		}
 
+		// Apply shipping method.
+		WC()->session->set( 'chosen_shipping_methods', $cart_contents['shipping_method'] );
+
+		// Update totals.
+		WC()->cart->calculate_totals();
+		WC()->cart->calculate_shipping();
+
 		// Redirect to cart page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 	}
