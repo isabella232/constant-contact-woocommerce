@@ -82,7 +82,7 @@ class AbandonedCartsData extends Service {
 			// Update customer data from saved cart data, if exists.
 		}
 
-		if ( ! isset( $customer_data['billing']['email'] ) || '' === $customer_data['billing']['email'] ) {
+		if ( empty( $customer_data['billing']['email'] ) ) {
 			return;
 		}
 
