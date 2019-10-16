@@ -122,10 +122,10 @@ class AbandonedCartsData extends Service {
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		$wpdb->query(
 			$wpdb->prepare(
-				//@codingStandardsIgnoreStart
+				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`, `cart_hash`) VALUES (%d, %s, %s, %s, %d, UNHEX(MD5(CONCAT(user_id, user_email))))
 				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
-				//@codingStandardsIgnoreEnd
+				// phpcs:enable
 				$user_id,
 				$customer_data['billing']['email'],
 				maybe_serialize(
@@ -195,10 +195,10 @@ class AbandonedCartsData extends Service {
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		$test = $wpdb->query(
 			$wpdb->prepare(
-				//@codingStandardsIgnoreStart
+				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"DELETE FROM {$table_name}
 				WHERE `cart_updated_ts` <= %s",
-				//@codingStandardsIgnoreEnd
+				// phpcs:enable
 				( new \DateTime() )->sub( new \DateInterval( 'P30D' ) )->format( 'U' )
 			)
 		);
