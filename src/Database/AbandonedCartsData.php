@@ -10,6 +10,9 @@
 namespace WebDevStudios\CCForWoo\Database;
 
 use WebDevStudios\OopsWP\Structure\Service;
+use WC_Customer;
+use DateTime;
+use DateInterval;
 
 /**
  * Class AbandonedCartsData
@@ -30,6 +33,8 @@ class AbandonedCartsData extends Service {
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
+		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
+		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
@@ -61,25 +66,114 @@ class AbandonedCartsData extends Service {
 	 * @return void
 	 */
 	public function update_cart_data() {
-		$user_id = get_current_user_id();
+		$user_id       = get_current_user_id();
+		$customer_data = [
+			'billing'  => [],
+			'shipping' => [],
+		];
 
-		// Get user email if provided.
-		if ( 0 === $user_id ) {
-			// If guest user, check posted data for email.
-			$posted = WC()->checkout()->get_posted_data();
-			$user_email = '';
-			if ( isset( $posted['billing_email'] ) && '' !== $posted['billing_email'] ) {
-				$user_email = sanitize_email( $posted['billing_email'] );
-			}
+		// Get saved customer data if exists. If guest user, blank customer data will be generated.
+		$customer                  = new WC_Customer( $user_id );
+		$customer_data['billing']  = $customer->get_billing();
+		$customer_data['shipping'] = $customer->get_shipping();
+
+		// Update customer data from user session data.
+		$customer_data['billing'] = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
+		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
+
+		// Check if submission attempted.
+		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
+			// Update customer data from posted data.
+			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
+			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
 		} else {
-			// If registered user, get email from account.
-			$user_email = sanitize_email( get_userdata( $user_id )->user_email );
+			// Retrieve cart data for current user, if exists.
+			$cart_data = $this->get_cart_data(
+				'cart_contents',
+				[
+					'user_id = %d',
+					'user_email = %s',
+				],
+				[
+					$user_id,
+					WC()->checkout->get_value( 'billing_email' ),
+				]
+			);
+			if ( null !== $cart_data && ! empty( $cart_data['customer'] ) ) {
+				// Update customer data from saved cart data.
+				$customer_data['billing'] = array_merge( $customer_data['billing'], $cart_data['customer']['billing'] );
+				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $cart_data['customer']['shipping'] );
+			}
 		}
 
-		if ( '' === $user_email ) {
+		if ( empty( $customer_data['billing']['email'] ) ) {
 			return;
 		}
 
+		// Delete saved cart if cart emptied; update otherwise.
+		if ( false === WC()->cart->is_empty() ) {
+			// Save cart data to db.
+			$this->save_cart_data( $user_id, $customer_data );
+		} else {
+			// Delete cart data from db.
+			$this->remove_cart_data( $user_id, $customer_data['billing']['email'] );
+		}
+	}
+
+	/**
+	 * Merge database and posted customer data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  string $value  Value of posted array item.
+	 * @param  string $key    Key of posted array item.
+	 * @param  string $type   Type of array (billing or shipping).
+	 */
+	protected function process_customer_data( &$value, $key, $type ) {
+		$posted = WC()->checkout()->get_posted_data();
+		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
+	}
+
+	/**
+	 * Retrieve specific user's cart data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-16
+	 * @param  string $select        Field to return.
+	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
+	 * @param  array  $where_values  Array of WHERE clause values.
+	 * @return string Cart data.
+	 */
+	protected function get_cart_data( $select, $where, $where_values ) {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
+
+		// Construct query to return cart data.
+		return maybe_unserialize(
+			$wpdb->get_var(
+				$wpdb->prepare(
+					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variables in SQL.
+					"SELECT {$select}
+					FROM {$table_name}
+					WHERE {$where}",
+					// phpcs:enable
+					$where_values
+				)
+			)
+		);
+	}
+
+	/**
+	 * Save current cart data to db.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-15
+	 * @param  int   $user_id       Current user ID.
+	 * @param  array $customer_data Customer billing and shipping data.
+	 */
+	protected function save_cart_data( $user_id, $customer_data ) {
 		// Get current time.
 		$time_added = current_time( 'mysql', 1 );
 
@@ -89,13 +183,18 @@ class AbandonedCartsData extends Service {
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		$wpdb->query(
 			$wpdb->prepare(
-				//@codingStandardsIgnoreStart
-				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`) VALUES (%d, %s, %s, %s, %d)
+				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
+				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`, `cart_hash`) VALUES (%d, %s, %s, %s, %d, UNHEX(MD5(CONCAT(user_id, user_email))))
 				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
-				//@codingStandardsIgnoreEnd
+				// phpcs:enable
 				$user_id,
-				$user_email,
-				maybe_serialize( WC()->cart->get_cart() ),
+				$customer_data['billing']['email'],
+				maybe_serialize( [
+					'products'        => WC()->cart->get_cart(),
+					'coupons'         => WC()->cart->get_applied_coupons(),
+					'customer'        => $customer_data,
+					'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
+				] ),
 				$time_added,
 				strtotime( $time_added )
 			)
@@ -131,14 +230,14 @@ class AbandonedCartsData extends Service {
 		// Delete current cart data.
 		$wpdb->delete(
 			$wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE,
-			array(
+			[
 				'user_id' => $user_id,
 				'user_email' => $user_email,
-			),
-			array(
+			],
+			[
 				'%d',
 				'%s',
-			)
+			]
 		);
 	}
 
@@ -155,11 +254,11 @@ class AbandonedCartsData extends Service {
 		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
 		$test = $wpdb->query(
 			$wpdb->prepare(
-				//@codingStandardsIgnoreStart
+				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"DELETE FROM {$table_name}
 				WHERE `cart_updated_ts` <= %s",
-				//@codingStandardsIgnoreEnd
-				( new \DateTime() )->sub( new \DateInterval( 'P30D' ) )->format( 'U' )
+				// phpcs:enable
+				( new DateTime() )->sub( new DateInterval( 'P30D' ) )->format( 'U' )
 			)
 		);
 	}
