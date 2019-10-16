@@ -20,6 +20,7 @@ use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
 use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
+use WebDevStudios\CCForWoo\Rest\V1\Main as RestRegistrar;
 
 /**
  * "Core" plugin class.
@@ -46,8 +47,10 @@ final class Plugin extends ServiceRegistrar {
 	private $plugin_file;
 
 	/**
-	 * @var array
+	 * Services to register.
+	 *
 	 * @since 2019-03-13
+	 * @var array
 	 */
 	protected $services = [
 		ViewRegistrar::class,
@@ -56,6 +59,7 @@ final class Plugin extends ServiceRegistrar {
 		MenuItem::class,
 		AbandonedCartsTable::class,
 		AbandonedCartsData::class,
+		RestRegistrar::class,
 	];
 
 	/**
