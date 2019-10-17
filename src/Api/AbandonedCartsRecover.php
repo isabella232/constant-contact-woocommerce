@@ -50,9 +50,9 @@ class AbandonedCartsRecover extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-11
 	 * @param  int $cart_id ID of abandoned cart.
-	 * @return mixed           Cart recovery URL on successful retrieval, void on failure.
+	 * @return string       Cart recovery URL on successful retrieval (void on failure).
 	 */
-	public function get_cart_url( $cart_id ) {
+	public function get_cart_url( int $cart_id ) {
 		$cart_hash = AbandonedCartsData::get_cart_data(
 			'HEX(cart_hash)',
 			'cart_id = %d',
