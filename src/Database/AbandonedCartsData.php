@@ -184,6 +184,24 @@ class AbandonedCartsData extends Service {
 	}
 
 	/**
+	 * Helper function to retrieve cart contents based on cart hash key.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-17
+	 * @param  string $cart_hash Cart key hash string.
+	 * @return array             Cart contents.
+	 */
+	public static function get_cart_contents( $cart_hash ) {
+		return $this::get_cart_data(
+			'cart_contents',
+			'cart_hash = UNHEX(%s)',
+			[
+				$cart_hash,
+			]
+		);
+	}
+
+	/**
 	 * Save current cart data to db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
