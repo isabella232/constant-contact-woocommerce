@@ -23,14 +23,22 @@ use WebDevStudios\OopsWP\Structure\Service;
 class AbandonedCartsRecover extends Service {
 
 	/**
+	 * Current cart hash key string.
+	 */
+	protected $cart_hash = '';
+
+	/**
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-15
 	 */
 	public function register_hooks() {
-		if ( ! empty( $_GET['recover-cart'] ) ) {
-			add_action( 'wp_loaded', [ $this, 'recover_cart' ] );
+		// Sanitize cart hash key string.
+		$this->cart_hash = filter_input( INPUT_GET, 'recover-cart', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
+
+		if ( empty( $this->cart_hash ) ) {
+			return;
 		}
 	}
 
@@ -84,7 +92,7 @@ class AbandonedCartsRecover extends Service {
 			'cart_contents',
 			'cart_hash = UNHEX(%s)',
 			[
-				$cart_hash,
+				$this->cart_hash,
 			]
 		);
 
