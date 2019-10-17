@@ -174,7 +174,7 @@ class AbandonedCartsData extends Service {
 	 * @return string       Hash key string of abandoned cart.
 	 */
 	public static function get_cart_hash( int $cart_id ) {
-		return $this::get_cart_data(
+		return self::get_cart_data(
 			'HEX(cart_hash)',
 			'cart_id = %d',
 			[
@@ -192,7 +192,7 @@ class AbandonedCartsData extends Service {
 	 * @return array             Cart contents.
 	 */
 	public static function get_cart_contents( $cart_hash ) {
-		return $this::get_cart_data(
+		return self::get_cart_data(
 			'cart_contents',
 			'cart_hash = UNHEX(%s)',
 			[
