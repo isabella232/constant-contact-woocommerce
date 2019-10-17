@@ -103,18 +103,8 @@ class AbandonedCartsRecover extends Service {
 		}
 
 		// Update customer info.
-		foreach ( $cart_contents['customer']['billing'] as $key => $value ) {
-			call_user_func(
-				[ WC()->customer, "set_billing_{$key}" ],
-				$value
-			);
-		}
-		foreach ( $cart_contents['customer']['shipping'] as $key => $value ) {
-			call_user_func(
-				[ WC()->customer, "set_shipping_{$key}" ],
-				$value
-			);
-		}
+		$this->recover_customer_info( $cart_contents['customer'], 'billing' );
+		$this->recover_customer_info( $cart_contents['customer'], 'shipping' );
 
 		// Apply shipping method.
 		WC()->session->set( 'chosen_shipping_methods', $cart_contents['shipping_method'] );
@@ -185,6 +175,23 @@ class AbandonedCartsRecover extends Service {
 					( count( $products ) - count( $products_added ) )
 				),
 				'error'
+			);
+		}
+	}
+
+	/**
+	 * Recover and apply customer billing and shipping info from saved cart data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-17
+	 * @param  array  $customer_info Array of customer billing and shipping info.
+	 * @param  string $type          Type of customer info to recover (billing or shipping).
+	 */
+	protected function recover_customer_info( $customer_info, string $type ) {
+		foreach ( $customer_info[ $type ] as $key => $value ) {
+			call_user_func(
+				[ WC()->customer, "set_{$type}_{$key}" ],
+				$value
 			);
 		}
 	}
