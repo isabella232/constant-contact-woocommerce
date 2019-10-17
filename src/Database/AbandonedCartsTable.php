@@ -42,7 +42,7 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-09
 	 */
 	public function register_hooks() {
-		add_action( 'plugins_loaded', [ $this, 'update_db_check' ] );
+		add_action( 'admin_init', [ $this, 'update_db_check' ] );
 	}
 
 	/**
@@ -86,23 +86,23 @@ class AbandonedCartsTable extends Service {
 		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
 
 		// Check if hash key exists, if not, create key and update existing values.
-		//@codingStandardsIgnoreStart
+		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
 			if ( ! $wpdb->get_var( "SHOW KEYS FROM {$table_name} WHERE Key_name = 'cart_hash'" ) ) {
-				//@codingStandardsIgnoreEnd
+				// phpcs:enable
 				// Update existing entries.
 				$wpdb->query(
-					//@codingStandardsIgnoreStart
+					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 					"UPDATE {$table_name}
 					SET cart_hash = UNHEX(MD5(CONCAT(user_id, user_email)))"
-					//@codingStandardsIgnoreEnd
+					// phpcs:enable
 				);
 				// Add unique key constraint.
 				$wpdb->query(
-					//@codingStandardsIgnoreStart
+					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 					"ALTER TABLE {$table_name}
 					ADD UNIQUE KEY(`cart_hash`)"
-					//@codingStandardsIgnoreEnd
+					// phpcs:enable
 				);
 				update_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION, self::CC_ABANDONED_CARTS_DB_VERSION );
 			}
