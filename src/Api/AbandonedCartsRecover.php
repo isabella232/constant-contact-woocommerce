@@ -158,4 +158,22 @@ class AbandonedCartsRecover extends Service {
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		exit();
 	}
+
+	/**
+	 * Helper function to retrieve cart contents based on cart hash key.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-17
+	 * @param  string $cart_hash Cart key hash string.
+	 * @return array             Cart contents.
+	 */
+	public static function get_cart_contents( $cart_hash ) {
+		return AbandonedCartsData::get_cart_data(
+			'cart_contents',
+			'cart_hash = UNHEX(%s)',
+			[
+				$this->cart_hash,
+			]
+		);
+	}
 }
