@@ -24,6 +24,9 @@ class AbandonedCartsRecover extends Service {
 
 	/**
 	 * Current cart hash key string.
+	 *
+	 * @var string
+	 * @since  2019-10-17
 	 */
 	protected $cart_hash = '';
 
@@ -32,6 +35,7 @@ class AbandonedCartsRecover extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-15
+	 * @return void
 	 */
 	public function register_hooks() {
 		// Sanitize cart hash key string.
@@ -84,13 +88,7 @@ class AbandonedCartsRecover extends Service {
 		WC()->cart->empty_cart();
 
 		// Get saved cart contents.
-		$cart_contents = AbandonedCartsData::get_cart_data(
-			'cart_contents',
-			'cart_hash = UNHEX(%s)',
-			[
-				$this->cart_hash,
-			]
-		);
+		$cart_contents = $this::get_cart_contents( $this->cart_hash );
 
 		if ( null === $cart_contents ) {
 			return;
