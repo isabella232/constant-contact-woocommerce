@@ -73,19 +73,13 @@ class AbandonedCartsRecover extends Service {
 	}
 
 	/**
-	 * Recovery saved cart from ID.
+	 * Recovery saved cart from hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-15
 	 * @return void
 	 */
 	public function recover_cart() {
-		$cart_hash = sanitize_key( $_GET['recover-cart'] );
-
-		if ( '' === $cart_hash ) {
-			return;
-		}
-
 		// Clear current cart contents.
 		WC()->cart->empty_cart();
 
