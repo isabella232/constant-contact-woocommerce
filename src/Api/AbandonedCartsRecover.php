@@ -172,7 +172,7 @@ class AbandonedCartsRecover extends Service {
 			'cart_contents',
 			'cart_hash = UNHEX(%s)',
 			[
-				$this->cart_hash,
+				$cart_hash,
 			]
 		);
 	}
