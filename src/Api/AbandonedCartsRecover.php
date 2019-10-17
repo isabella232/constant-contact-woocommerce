@@ -40,6 +40,8 @@ class AbandonedCartsRecover extends Service {
 		if ( empty( $this->cart_hash ) ) {
 			return;
 		}
+
+		add_action( 'wp_loaded', [ $this, 'recover_cart' ] );
 	}
 
 	/**
