@@ -94,39 +94,8 @@ class AbandonedCartsRecover extends Service {
 			return;
 		}
 
-		// Programmatically add each product to cart.
-		$products_added = [];
-		foreach ( $cart_contents['products'] as $product ) {
-			$added = WC()->cart->add_to_cart(
-				$product['product_id'],
-				$product['quantity'],
-				empty( $product['variation_id'] ) ? 0 : $product['variation_id'],
-				empty( $product['variation'] ) ? array() : $product['variation']
-			);
-			if ( false !== $added ) {
-				$products_added[ ( empty( $product['variation_id'] ) ? $product['product_id'] : $product['variation_id'] ) ] = $product['quantity'];
-			}
-		}
-
-		// Add product notices.
-		if ( 0 < count( $products_added ) ) {
-			wc_add_to_cart_message( $products_added );
-		}
-		if ( count( $cart_contents['products'] ) > count( $products_added ) ) {
-			wc_add_notice(
-				sprintf(
-					/* translators: %d item count */
-					_n(
-						'%d item from your previous order is currently unavailable and could not be added to your cart.',
-						'%d items from your previous order are currently unavailable and could not be added to your cart.',
-						( count( $cart_contents['products'] ) - count( $products_added ) ),
-						'cc-woo'
-					),
-					( count( $cart_contents['products'] ) - count( $products_added ) )
-				),
-				'error'
-			);
-		}
+		// Recover saved products.
+		$this->recover_products( $cart_contents['products'] );
 
 		// Apply coupons.
 		foreach ( $cart_contents['coupons'] as $coupon ) {
@@ -175,5 +144,48 @@ class AbandonedCartsRecover extends Service {
 				$cart_hash,
 			]
 		);
+	}
+
+	/**
+	 * Recover products from saved cart data.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-17
+	 * @param  array $products Array of product data.
+	 */
+	protected function recover_products( $products ) {
+		// Programmatically add each product to cart.
+		$products_added = [];
+		foreach ( $products as $product ) {
+			$added = WC()->cart->add_to_cart(
+				$product['product_id'],
+				$product['quantity'],
+				empty( $product['variation_id'] ) ? 0 : $product['variation_id'],
+				empty( $product['variation'] ) ? array() : $product['variation']
+			);
+			if ( false !== $added ) {
+				$products_added[ ( empty( $product['variation_id'] ) ? $product['product_id'] : $product['variation_id'] ) ] = $product['quantity'];
+			}
+		}
+
+		// Add product notices.
+		if ( 0 < count( $products_added ) ) {
+			wc_add_to_cart_message( $products_added );
+		}
+		if ( count( $products ) > count( $products_added ) ) {
+			wc_add_notice(
+				sprintf(
+					/* translators: %d item count */
+					_n(
+						'%d item from your previous order is currently unavailable and could not be added to your cart.',
+						'%d items from your previous order are currently unavailable and could not be added to your cart.',
+						( count( $products ) - count( $products_added ) ),
+						'cc-woo'
+					),
+					( count( $products ) - count( $products_added ) )
+				),
+				'error'
+			);
+		}
 	}
 }
