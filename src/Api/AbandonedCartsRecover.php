@@ -57,13 +57,7 @@ class AbandonedCartsRecover extends Service {
 	 * @return string       Cart recovery URL on successful retrieval (void on failure).
 	 */
 	public function get_cart_url( int $cart_id ) {
-		$cart_hash = AbandonedCartsData::get_cart_data(
-			'HEX(cart_hash)',
-			'cart_id = %d',
-			[
-				intval( $cart_id ),
-			]
-		);
+		$cart_hash = AbandonedCartsData::get_cart_hash( $cart_id );
 
 		if ( null === $cart_hash ) {
 			return;
