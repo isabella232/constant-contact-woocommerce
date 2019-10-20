@@ -18,9 +18,9 @@ use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
-use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
-use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
-use WebDevStudios\CCForWoo\Rest\V1\Main as RestRegistrar;
+use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
+use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
+use WebDevStudios\CCForWoo\Rest\V1\Registrar as RestRegistrar;
 
 /**
  * "Core" plugin class.
@@ -57,8 +57,8 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
-		AbandonedCartsTable::class,
-		AbandonedCartsData::class,
+		CartHandler::class,
+		CartsTable::class,
 		RestRegistrar::class,
 	];
 
@@ -85,7 +85,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
 	private function deactivate( $reason ) {
-		unset( $_GET['activate'] );
+		unset( $_GET['activate'] ); // phpcs:ignore -- Ok use of $_GET.
 
 		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );

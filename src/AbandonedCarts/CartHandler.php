@@ -1,13 +1,13 @@
 <?php
 /**
- * Class to handle abandoned carts data.
+ * Class to listen to WooCommerce checkouts and possibly store carts that are "abandoned".
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Database
+ * @package WebDevStudios\CCForWoo\AbandonedCarts
  * @since   2019-10-11
  */
 
-namespace WebDevStudios\CCForWoo\Database;
+namespace WebDevStudios\CCForWoo\AbandonedCarts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 use WC_Customer;
@@ -15,13 +15,13 @@ use DateTime;
 use DateInterval;
 
 /**
- * Class AbandonedCartsData
+ * Class CartHandler
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Database
+ * @package WebDevStudios\CCForWoo\AbandonedCarts
  * @since   2019-10-11
  */
-class AbandonedCartsData extends Service {
+class CartHandler extends Service {
 
 	/**
 	 * Register hooks with WordPress.
@@ -30,12 +30,19 @@ class AbandonedCartsData extends Service {
 	 * @since  2019-10-11
 	 */
 	public function register_hooks() {
+		add_action( 'init', [ $this, 'test' ] );
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
 	}
+
+	// phpcs:disable
+	public function test() {
+		$cart = ( new Cart( 4 ) );
+	}
+	// phpcs:enable
 
 	/**
 	 * Check current WC template.
@@ -78,7 +85,7 @@ class AbandonedCartsData extends Service {
 		$customer_data['shipping'] = $customer->get_shipping();
 
 		// Update customer data from user session data.
-		$customer_data['billing'] = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
+		$customer_data['billing']  = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
 		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
 
 		// Check if submission attempted.
@@ -99,9 +106,10 @@ class AbandonedCartsData extends Service {
 					WC()->checkout->get_value( 'billing_email' ),
 				]
 			);
+
 			if ( null !== $cart_data && ! empty( $cart_data['customer'] ) ) {
 				// Update customer data from saved cart data.
-				$customer_data['billing'] = array_merge( $customer_data['billing'], $cart_data['customer']['billing'] );
+				$customer_data['billing']  = array_merge( $customer_data['billing'], $cart_data['customer']['billing'] );
 				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $cart_data['customer']['shipping'] );
 			}
 		}
@@ -112,10 +120,8 @@ class AbandonedCartsData extends Service {
 
 		// Delete saved cart if cart emptied; update otherwise.
 		if ( false === WC()->cart->is_empty() ) {
-			// Save cart data to db.
 			$this->save_cart_data( $user_id, $customer_data );
 		} else {
-			// Delete cart data from db.
 			$this->remove_cart_data( $user_id, $customer_data['billing']['email'] );
 		}
 	}
@@ -131,7 +137,7 @@ class AbandonedCartsData extends Service {
 	 */
 	protected function process_customer_data( &$value, $key, $type ) {
 		$posted = WC()->checkout()->get_posted_data();
-		$value = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
+		$value  = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
 
 	/**
@@ -147,7 +153,7 @@ class AbandonedCartsData extends Service {
 	public static function get_cart_data( $select, $where, $where_values ) {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
 
 		// Construct query to return cart data.
@@ -174,13 +180,11 @@ class AbandonedCartsData extends Service {
 	 * @param  array $customer_data Customer billing and shipping data.
 	 */
 	protected function save_cart_data( $user_id, $customer_data ) {
-		// Get current time.
-		$time_added = current_time( 'mysql', 1 );
-
 		global $wpdb;
 
-		// Insert/update cart data.
-		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
+		$time_added = current_time( 'mysql', 1 );
+		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
+
 		$wpdb->query(
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
@@ -213,6 +217,7 @@ class AbandonedCartsData extends Service {
 		if ( false === $order ) {
 			return;
 		}
+
 		$this->remove_cart_data( $order->get_user_id(), $order->get_billing_email() );
 	}
 
@@ -229,9 +234,9 @@ class AbandonedCartsData extends Service {
 
 		// Delete current cart data.
 		$wpdb->delete(
-			$wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE,
+			$wpdb->prefix . CartsTable::TABLE_NAME,
 			[
-				'user_id' => $user_id,
+				'user_id'    => $user_id,
 				'user_email' => $user_email,
 			],
 			[
@@ -251,8 +256,8 @@ class AbandonedCartsData extends Service {
 		global $wpdb;
 
 		// Delete all carts at least 30 days old.
-		$table_name = $wpdb->prefix . AbandonedCartsTable::CC_ABANDONED_CARTS_TABLE;
-		$test = $wpdb->query(
+		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
+		$test       = $wpdb->query(
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"DELETE FROM {$table_name}
