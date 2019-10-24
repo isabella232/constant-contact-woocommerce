@@ -21,6 +21,7 @@ use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\Rest\V1\Registrar as RestRegistrar;
+use WebDevStudios\CCForWoo\Api\AbandonedCartsRecover;
 
 /**
  * "Core" plugin class.
@@ -57,9 +58,15 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
+<<<<<<< HEAD
 		CartHandler::class,
 		CartsTable::class,
 		RestRegistrar::class,
+=======
+		AbandonedCartsTable::class,
+		AbandonedCartsData::class,
+		AbandonedCartsRecover::class,
+>>>>>>> origin/feature/abandoned-carts
 	];
 
 	/**
