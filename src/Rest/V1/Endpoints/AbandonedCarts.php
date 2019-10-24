@@ -147,7 +147,6 @@ class AbandonedCarts extends WP_REST_Controller {
 	private function prepare_cart_data_for_api( array $data ) {
 		foreach ( $data as $cart ) {
 			$cart->cart_contents = maybe_unserialize( $cart->cart_contents );
-			$cart->cart_contents['totals'] = 'poopie';
 		}
 
 		return $data;
