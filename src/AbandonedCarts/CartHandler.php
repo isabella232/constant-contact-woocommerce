@@ -30,19 +30,12 @@ class CartHandler extends Service {
 	 * @since  2019-10-11
 	 */
 	public function register_hooks() {
-		add_action( 'init', [ $this, 'test' ] );
 		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
 	}
-
-	// phpcs:disable
-	public function test() {
-		$cart = ( new Cart( 4 ) );
-	}
-	// phpcs:enable
 
 	/**
 	 * Check current WC template.

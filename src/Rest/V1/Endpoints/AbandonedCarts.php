@@ -110,11 +110,10 @@ class AbandonedCarts extends WP_REST_Controller {
 	private function get_cart_data( int $per_page, int $offset ) : array {
 		global $wpdb;
 
-		$data       = [];
 		$table_name = CartsTable::get_table_name();
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
-		$carts = $wpdb->get_results(
+		$data = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT
 					cart_id,
@@ -133,7 +132,7 @@ class AbandonedCarts extends WP_REST_Controller {
 			)
 		);
 
-		return $this->prepare_cart_data_for_api( $carts );
+		return $this->prepare_cart_data_for_api( $data );
 	}
 
 	/**
@@ -142,15 +141,16 @@ class AbandonedCarts extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
 	 *
-	 * @param array $carts The carts whose fields need preparation.
+	 * @param array $data The carts whose fields need preparation.
 	 * @return array
 	 */
-	private function prepare_cart_data_for_api( array $carts ) {
-		foreach ( $carts as $cart ) {
+	private function prepare_cart_data_for_api( array $data ) {
+		foreach ( $data as $cart ) {
 			$cart->cart_contents = maybe_unserialize( $cart->cart_contents );
+			$cart->cart_contents['totals'] = 'poopie';
 		}
 
-		return $carts;
+		return $data;
 	}
 
 	/**
