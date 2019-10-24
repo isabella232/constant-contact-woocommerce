@@ -58,15 +58,10 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
-<<<<<<< HEAD
 		CartHandler::class,
 		CartsTable::class,
 		RestRegistrar::class,
-=======
-		AbandonedCartsTable::class,
-		AbandonedCartsData::class,
 		AbandonedCartsRecover::class,
->>>>>>> origin/feature/abandoned-carts
 	];
 
 	/**
