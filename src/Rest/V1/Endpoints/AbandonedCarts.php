@@ -1,6 +1,6 @@
 <?php
 /**
- * AbandonedCarts Rest API endpoint.
+ * REST API endpoint for collection of Abandoned Carts.
  *
  * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Rest\V1
@@ -124,7 +124,7 @@ class AbandonedCarts extends WP_REST_Controller {
 					cart_updated_ts,
 					HEX(cart_hash) as cart_hash
 				FROM {$table_name}
-				ORDER BY cart_updated
+				ORDER BY cart_updated_ts
 				DESC
 				LIMIT %d OFFSET %d",
 				$per_page,
@@ -136,21 +136,40 @@ class AbandonedCarts extends WP_REST_Controller {
 	}
 
 	/**
-	 * Prepare fields in the cart data response.
+	 * Adds and modifies fields in individual carts before displaying them in the API response.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-16
+	 * @since 2019-10-23
 	 *
 	 * @param array $data The carts whose fields need preparation.
 	 * @return array
 	 */
 	private function prepare_cart_data_for_api( array $data ) {
 		foreach ( $data as $cart ) {
-			$cart->cart_contents = maybe_unserialize( $cart->cart_contents );
+			$cart->cart_contents                  = maybe_unserialize( $cart->cart_contents );
+			$cart->cart_contents['currency_code'] = $this->get_currency_code();
 		}
 
 		return $data;
 	}
+
+	/**
+	 * Get the currency code for the store's base currency.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @return string
+	 */
+	private function get_currency_code() : string {
+		return get_woocommerce_currency();
+	}
+
+	// private function get_cart_totals_for_contents( array $cart_contents ) : array {
+	// 	return [
+
+	// 	];
+	// }
 
 	/**
 	 * Permissions for reading the the Abandoned Carts endpoint.
