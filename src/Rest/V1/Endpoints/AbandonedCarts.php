@@ -123,6 +123,8 @@ class AbandonedCarts extends WP_REST_Controller {
 					cart_contents,
 					cart_updated,
 					cart_updated_ts,
+					cart_created,
+					cart_created_ts,
 					HEX(cart_hash) as cart_hash
 				FROM {$table_name}
 				ORDER BY cart_updated_ts
@@ -132,6 +134,7 @@ class AbandonedCarts extends WP_REST_Controller {
 				$offset
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL
 
 		return $this->prepare_cart_data_for_api( $data );
 	}
