@@ -153,10 +153,10 @@ class AbandonedCarts extends WP_REST_Controller {
 		foreach ( $data as $cart ) {
 			$cart->cart_contents     = maybe_unserialize( $cart->cart_contents );
 			$cart->cart_contents     = $this->get_additional_product_fields( $cart->cart_contents );
-			$cart->cart_subtotal     = $this->get_cart_subtotal( $cart->cart_contents );
-			$cart->cart_total        = $this->get_cart_total( $cart->cart_contents );
-			$cart->cart_subtotal_tax = $this->get_cart_subtotal_tax( $cart->cart_contents );
-			$cart->cart_total_tax    = $this->get_cart_total_tax( $cart->cart_contents );
+			$cart->cart_subtotal     = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_subtotal' );
+			$cart->cart_total        = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_total' );
+			$cart->cart_subtotal_tax = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_subtotal_tax' );
+			$cart->cart_total_tax    = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_tax' );
 			$cart->cart_recovery_url = $this->get_cart_recovery_url( $cart->cart_hash );
 		}
 
@@ -173,6 +173,26 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	private function get_currency_code() : string {
 		return get_woocommerce_currency();
+	}
+
+	/**
+	 * Looks at the value of the specified field in each product in the cart, and gets the sum of those values.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array  $cart_contents The cart contents, whose products have the line items we want for calculating the sum.
+	 * @param string $field_name Name of the product field to get.
+	 * @return string
+	 */
+	private function get_cart_sum_for_product_field( array $cart_contents, string $field_name ) : string {
+		$line_items = wp_list_pluck( $cart_contents['products'], $field_name );
+
+		if ( empty( $line_items ) || ! is_array( $line_items ) ) {
+			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
+		}
+
+		return html_entity_decode( wp_strip_all_tags( wc_price( array_sum( $line_items ) ) ) );
 	}
 
 	/**
@@ -294,9 +314,17 @@ class AbandonedCarts extends WP_REST_Controller {
 		return $cart_contents;
 	}
 
-	private function get_product_image_url( WC_Product $wc_product ) {
-		$image_id = $wc_product->get_image_id();
-		return wp_get_attachment_url( $image_id );
+	/**
+	 * Get attachment URL for the product's full-size image.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-25
+	 *
+	 * @param WC_Product $wc_product The product whose image to get.
+	 * @return string
+	 */
+	private function get_product_image_url( WC_Product $wc_product ) : string {
+		return wp_get_attachment_url( $wc_product->get_image_id() );
 	}
 
 	/**
