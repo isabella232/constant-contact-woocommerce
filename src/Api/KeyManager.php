@@ -68,7 +68,7 @@ class KeyManager extends Service {
 	 * @return bool
 	 */
 	private function is_cc_api_revocation_query( string $query ) : bool {
-		if( ! $this->is_delete_query( $query ) ) {
+		if ( ! $this->is_delete_query( $query ) ) {
 			return false;
 		}
 

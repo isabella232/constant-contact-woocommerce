@@ -3,37 +3,43 @@
  * Class to handle creation of abandoned carts table.
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Database
+ * @package WebDevStudios\CCForWoo\AbandonedCarts
  * @since   2019-10-09
  */
 
-namespace WebDevStudios\CCForWoo\Database;
+namespace WebDevStudios\CCForWoo\AbandonedCarts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
- * Class AbandonedCartsTable
+ * Class CartsTable
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Database
+ * @package WebDevStudios\CCForWoo\AbandonedCarts
  * @since   2019-10-09
  */
-class AbandonedCartsTable extends Service {
+class CartsTable extends Service {
 
 	/**
 	 * Current version of abandoned carts table.
+	 *
+	 * @since 2019-10-09
 	 */
-	const CC_ABANDONED_CARTS_DB_VERSION = '1.1';
+	const DB_VERSION = '1.1';
 
 	/**
 	 * Option name for abandoned carts db version.
+	 *
+	 * @since 2019-10-09
 	 */
-	const CC_ABANDONED_CARTS_DB_VERSION_OPTION = 'cc_abandoned_carts_db_version';
+	const DB_VERSION_OPTION_NAME = 'cc_abandoned_carts_db_version';
 
 	/**
 	 * Abandoned carts table name.
+	 *
+	 * @since 2019-10-09
 	 */
-	const CC_ABANDONED_CARTS_TABLE = 'cc_abandoned_carts';
+	const TABLE_NAME = 'cc_abandoned_carts';
 
 	/**
 	 * Register hooks with WordPress.
@@ -54,7 +60,7 @@ class AbandonedCartsTable extends Service {
 	public function create_table() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
+		$table_name = self::get_table_name();
 
 		$sql = "CREATE TABLE {$table_name} (
 			cart_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -68,10 +74,10 @@ class AbandonedCartsTable extends Service {
 			UNIQUE KEY user (user_id, user_email)
 		) {$wpdb->get_charset_collate()}";
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
 
-		add_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION, self::CC_ABANDONED_CARTS_DB_VERSION );
+		add_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
 	}
 
 	/**
@@ -83,30 +89,29 @@ class AbandonedCartsTable extends Service {
 	protected function update_table() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . self::CC_ABANDONED_CARTS_TABLE;
+		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
 		// Check if hash key exists, if not, create key and update existing values.
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
 			if ( ! $wpdb->get_var( "SHOW KEYS FROM {$table_name} WHERE Key_name = 'cart_hash'" ) ) {
-				// phpcs:enable
+
 				// Update existing entries.
 				$wpdb->query(
-					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 					"UPDATE {$table_name}
 					SET cart_hash = UNHEX(MD5(CONCAT(user_id, user_email)))"
-					// phpcs:enable
 				);
+
 				// Add unique key constraint.
 				$wpdb->query(
-					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 					"ALTER TABLE {$table_name}
 					ADD UNIQUE KEY(`cart_hash`)"
-					// phpcs:enable
 				);
-				update_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION, self::CC_ABANDONED_CARTS_DB_VERSION );
+
+				update_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
 			}
 		}
+		// phpcs:enable
 	}
 
 	/**
@@ -116,9 +121,22 @@ class AbandonedCartsTable extends Service {
 	 * @since  2019-10-10
 	 */
 	public function update_db_check() {
-		if ( self::CC_ABANDONED_CARTS_DB_VERSION !== get_site_option( self::CC_ABANDONED_CARTS_DB_VERSION_OPTION ) ) {
+		if ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
 			$this->create_table();
 			$this->update_table();
 		}
+	}
+
+	/**
+	 * A simple utility for grabbing the full table name, including the WPDB table prefix.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  2019-10-10
+	 *
+	 * @return string
+	 */
+	public static function get_table_name() : string {
+		global $wpdb;
+		return $wpdb->prefix . self::TABLE_NAME;
 	}
 }
