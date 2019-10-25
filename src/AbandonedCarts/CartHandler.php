@@ -150,18 +150,19 @@ class CartHandler extends Service {
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
 
 		// Construct query to return cart data.
+		// phpcs:disable -- Disabling a number of sniffs that erroneously flag following block of code.
+		// $where often includes placeholders for replacement via $wpdb->prepare(). $where_values provides those values.
 		return maybe_unserialize(
 			$wpdb->get_var(
 				$wpdb->prepare(
-					// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variables in SQL.
 					"SELECT {$select}
 					FROM {$table_name}
 					WHERE {$where}",
-					// phpcs:enable
 					$where_values
 				)
 			)
 		);
+		// phpcs:enable
 	}
 
 	/**
@@ -211,15 +212,31 @@ class CartHandler extends Service {
 	protected function save_cart_data( $user_id, $customer_data ) {
 		global $wpdb;
 
-		$time_added = current_time( 'mysql', 1 );
-		$table_name = CartsTable::get_table_name();
+		$current_time = current_time( 'mysql', 1 );
+		$table_name   = CartsTable::get_table_name();
 
+		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		$wpdb->query(
 			$wpdb->prepare(
-				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
-				"INSERT INTO {$table_name} (`user_id`, `user_email`, `cart_contents`, `cart_updated`, `cart_updated_ts`, `cart_hash`) VALUES (%d, %s, %s, %s, %d, UNHEX(MD5(CONCAT(user_id, user_email))))
-				ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
-				// phpcs:enable
+				"INSERT INTO {$table_name} (
+					`user_id`,
+					`user_email`,
+					`cart_contents`,
+					`cart_updated`,
+					`cart_updated_ts`,
+					`cart_created`,
+					`cart_created_ts`,
+					`cart_hash`
+				) VALUES (
+					%d,
+					%s,
+					%s,
+					%s,
+					%d,
+					%s,
+					%d,
+					UNHEX(MD5(CONCAT(user_id, user_email)))
+				) ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
 				$user_id,
 				$customer_data['billing']['email'],
 				maybe_serialize( [
@@ -228,10 +245,13 @@ class CartHandler extends Service {
 					'customer'        => $customer_data,
 					'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
 				] ),
-				$time_added,
-				strtotime( $time_added )
+				$current_time,
+				strtotime( $current_time ),
+				$current_time,
+				strtotime( $current_time )
 			)
 		);
+		// phpcs:enable
 	}
 
 	/**

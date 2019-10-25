@@ -7,20 +7,18 @@
  * @since   2019-10-11
  */
 
-namespace WebDevStudios\CCForWoo\Api;
+namespace WebDevStudios\CCForWoo\AbandonedCarts;
 
-use WebDevStudios\CCForWoo\Database\AbandonedCartsTable;
-use WebDevStudios\CCForWoo\Database\AbandonedCartsData;
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
- * Class AbandonedCartsRecover
+ * Class CartRecovery
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Database
  * @since   2019-10-11
  */
-class AbandonedCartsRecover extends Service {
+class CartRecovery extends Service {
 
 	/**
 	 * Current cart hash key string.
@@ -59,7 +57,7 @@ class AbandonedCartsRecover extends Service {
 	public function get_cart_url( int $cart_id ) {
 		return add_query_arg(
 			'recover-cart',
-			AbandonedCartsData::get_cart_hash( $cart_id ),
+			CartHandler::get_cart_hash( $cart_id ),
 			get_site_url()
 		);
 	}
@@ -76,7 +74,7 @@ class AbandonedCartsRecover extends Service {
 		WC()->cart->empty_cart();
 
 		// Get saved cart contents.
-		$cart_contents = AbandonedCartsData::get_cart_contents( $this->cart_hash );
+		$cart_contents = CartHandler::get_cart_contents( $this->cart_hash );
 
 		if ( null === $cart_contents ) {
 			return;

@@ -25,7 +25,7 @@ class CartsTable extends Service {
 	 *
 	 * @since 2019-10-09
 	 */
-	const DB_VERSION = '1.1';
+	const DB_VERSION = '1.2';
 
 	/**
 	 * Option name for abandoned carts db version.
@@ -69,6 +69,8 @@ class CartsTable extends Service {
 			cart_contents longtext NOT NULL,
 			cart_updated datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			cart_updated_ts int(11) unsigned NOT NULL DEFAULT 0,
+			cart_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
 			cart_hash binary(16) NOT NULL DEFAULT 0,
 			PRIMARY KEY (cart_id),
 			UNIQUE KEY user (user_id, user_email)
