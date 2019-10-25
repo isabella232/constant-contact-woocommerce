@@ -12,6 +12,7 @@ namespace WebDevStudios\CCForWoo\Rest\V1\Endpoints;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Controller;
+use WC_Product;
 
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
@@ -151,6 +152,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	private function prepare_cart_data_for_api( array $data ) {
 		foreach ( $data as $cart ) {
 			$cart->cart_contents     = maybe_unserialize( $cart->cart_contents );
+			$cart->cart_contents     = $this->get_additional_product_fields( $cart->cart_contents );
 			$cart->cart_subtotal     = $this->get_cart_subtotal( $cart->cart_contents );
 			$cart->cart_total        = $this->get_cart_total( $cart->cart_contents );
 			$cart->cart_subtotal_tax = $this->get_cart_subtotal_tax( $cart->cart_contents );
@@ -200,7 +202,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total.
 	 * @return string
 	 */
 	private function get_cart_total( array $cart_contents ) : string {
@@ -221,11 +223,11 @@ class AbandonedCarts extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal tax.
 	 * @return string
 	 */
 	private function get_cart_subtotal_tax( array $cart_contents ) : string {
-		$subtotal_taxes = wp_list_pluck( $cart_contents['products'], 'subtotal_taxes' );
+		$subtotal_taxes = wp_list_pluck( $cart_contents['products'], 'line_subtotal_tax' );
 
 		if ( empty( $subtotal_taxes ) || ! is_array( $subtotal_taxes ) ) {
 			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
@@ -242,11 +244,11 @@ class AbandonedCarts extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total tax.
 	 * @return string
 	 */
 	private function get_cart_total_tax( array $cart_contents ) : string {
-		$total_taxes = wp_list_pluck( $cart_contents['products'], 'total_taxes' );
+		$total_taxes = wp_list_pluck( $cart_contents['products'], 'line_tax' );
 
 		if ( empty( $total_taxes ) || ! is_array( $total_taxes ) ) {
 			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
@@ -268,6 +270,33 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	private function get_cart_recovery_url( string $cart_hash ) : string {
 		return add_query_arg( 'recover-cart', $cart_hash, home_url() );
+	}
+
+	/**
+	 * Get additional product fields to display in the API response--SKU, title, thumbnail, and more.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array $cart_contents The original cart contents.
+	 * @return array The modified cart contents.
+	 */
+	private function get_additional_product_fields( array $cart_contents ) : array {
+		foreach ( $cart_contents['products'] as $n => $product ) {
+			$wc_product = wc_get_product( $product['product_id'] );
+
+			$cart_contents['products'][ $n ]['product_title']     = $wc_product->get_title();
+			$cart_contents['products'][ $n ]['product_sku']       = $wc_product->get_sku();
+			$cart_contents['products'][ $n ]['product_permalink'] = $wc_product->get_permalink();
+			$cart_contents['products'][ $n ]['product_image_url'] = $this->get_product_image_url( $wc_product );
+		}
+
+		return $cart_contents;
+	}
+
+	private function get_product_image_url( WC_Product $wc_product ) {
+		$image_id = $wc_product->get_image_id();
+		return wp_get_attachment_url( $image_id );
 	}
 
 	/**
