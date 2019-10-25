@@ -92,8 +92,9 @@ class AbandonedCarts extends WP_REST_Controller {
 		$offset   = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
 
 		return [
-			'data' => $this->get_cart_data( $per_page, $offset ),
-			'page' => $page,
+			'carts'         => $this->get_cart_data( $per_page, $offset ),
+			'currency_code' => $this->get_currency_code(),
+			'page'          => $page,
 		];
 	}
 
@@ -146,9 +147,12 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	private function prepare_cart_data_for_api( array $data ) {
 		foreach ( $data as $cart ) {
-			$cart->cart_contents = maybe_unserialize( $cart->cart_contents );
-			$cart->currency_code = $this->get_currency_code();
-			$cart->subtotal      = $this->get_cart_subtotal( $cart->cart_contents );
+			$cart->cart_contents     = maybe_unserialize( $cart->cart_contents );
+			$cart->cart_subtotal     = $this->get_cart_subtotal( $cart->cart_contents );
+			$cart->cart_total        = $this->get_cart_total( $cart->cart_contents );
+			$cart->cart_subtotal_tax = $this->get_cart_subtotal_tax( $cart->cart_contents );
+			$cart->cart_total_tax    = $this->get_cart_total_tax( $cart->cart_contents );
+			$cart->cart_recovery_url = $this->get_cart_recovery_url( $cart->cart_hash );
 		}
 
 		return $data;
@@ -167,7 +171,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get the subtotal for the whole cart.
+	 * Get the accumulated subtotal for the whole cart.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
@@ -185,6 +189,82 @@ class AbandonedCarts extends WP_REST_Controller {
 		$subtotal = array_sum( $line_subtotals );
 
 		return html_entity_decode( wp_strip_all_tags( wc_price( $subtotal ) ) );
+	}
+
+	/**
+	 * Get the accumulated total for the whole cart.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @return string
+	 */
+	private function get_cart_total( array $cart_contents ) : string {
+		$line_totals = wp_list_pluck( $cart_contents['products'], 'line_total' );
+
+		if ( empty( $line_totals ) || ! is_array( $line_totals ) ) {
+			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
+		}
+
+		$total = array_sum( $line_totals );
+
+		return html_entity_decode( wp_strip_all_tags( wc_price( $total ) ) );
+	}
+
+	/**
+	 * Get the accumulated "subtotal taxes" for the whole cart.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @return string
+	 */
+	private function get_cart_subtotal_tax( array $cart_contents ) : string {
+		$subtotal_taxes = wp_list_pluck( $cart_contents['products'], 'subtotal_taxes' );
+
+		if ( empty( $subtotal_taxes ) || ! is_array( $subtotal_taxes ) ) {
+			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
+		}
+
+		$subtotal_tax = array_sum( $subtotal_taxes );
+
+		return html_entity_decode( wp_strip_all_tags( wc_price( $subtotal_tax ) ) );
+	}
+
+	/**
+	 * Get the accumulated "total taxes" for the whole cart.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @return string
+	 */
+	private function get_cart_total_tax( array $cart_contents ) : string {
+		$total_taxes = wp_list_pluck( $cart_contents['products'], 'total_taxes' );
+
+		if ( empty( $total_taxes ) || ! is_array( $total_taxes ) ) {
+			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
+		}
+
+		$total_tax = array_sum( $total_taxes );
+
+		return html_entity_decode( wp_strip_all_tags( wc_price( $total_tax ) ) );
+	}
+
+	/**
+	 * Get the account recovery URL.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param string $cart_hash The cart hash.
+	 * @return string
+	 */
+	private function get_cart_recovery_url( string $cart_hash ) : string {
+		return add_query_arg( 'recover-cart', $cart_hash, home_url() );
 	}
 
 	/**
