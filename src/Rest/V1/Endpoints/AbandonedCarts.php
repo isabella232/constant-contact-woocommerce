@@ -146,8 +146,9 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	private function prepare_cart_data_for_api( array $data ) {
 		foreach ( $data as $cart ) {
-			$cart->cart_contents                  = maybe_unserialize( $cart->cart_contents );
-			$cart->cart_contents['currency_code'] = $this->get_currency_code();
+			$cart->cart_contents = maybe_unserialize( $cart->cart_contents );
+			$cart->currency_code = $this->get_currency_code();
+			$cart->subtotal      = $this->get_cart_subtotal( $cart->cart_contents );
 		}
 
 		return $data;
@@ -165,11 +166,26 @@ class AbandonedCarts extends WP_REST_Controller {
 		return get_woocommerce_currency();
 	}
 
-	// private function get_cart_totals_for_contents( array $cart_contents ) : array {
-	// 	return [
+	/**
+	 * Get the subtotal for the whole cart.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-23
+	 *
+	 * @param array $cart_contents The actual cart contents, whose line items are used to calculate the total subtotal.
+	 * @return string
+	 */
+	private function get_cart_subtotal( array $cart_contents ) : string {
+		$line_subtotals = wp_list_pluck( $cart_contents['products'], 'line_subtotal' );
 
-	// 	];
-	// }
+		if ( empty( $line_subtotals ) || ! is_array( $line_subtotals ) ) {
+			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
+		}
+
+		$subtotal = array_sum( $line_subtotals );
+
+		return html_entity_decode( wp_strip_all_tags( wc_price( $subtotal ) ) );
+	}
 
 	/**
 	 * Permissions for reading the the Abandoned Carts endpoint.
