@@ -146,7 +146,7 @@ class CartHandler extends Service {
 	public static function get_cart_data( $select, $where, $where_values ) {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
+		$table_name = CartsTable::get_table_name();
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
 
 		// Construct query to return cart data.
@@ -212,7 +212,7 @@ class CartHandler extends Service {
 		global $wpdb;
 
 		$time_added = current_time( 'mysql', 1 );
-		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
+		$table_name = CartsTable::get_table_name();
 
 		$wpdb->query(
 			$wpdb->prepare(
@@ -263,7 +263,7 @@ class CartHandler extends Service {
 
 		// Delete current cart data.
 		$wpdb->delete(
-			$wpdb->prefix . CartsTable::TABLE_NAME,
+			CartsTable::get_table_name(),
 			[
 				'user_id'    => $user_id,
 				'user_email' => $user_email,
@@ -285,7 +285,7 @@ class CartHandler extends Service {
 		global $wpdb;
 
 		// Delete all carts at least 30 days old.
-		$table_name = $wpdb->prefix . CartsTable::TABLE_NAME;
+		$table_name = CartsTable::get_table_name();
 		$test       = $wpdb->query(
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
