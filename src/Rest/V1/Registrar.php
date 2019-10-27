@@ -46,6 +46,7 @@ class Registrar extends Service {
 	 * @since   2019-10-16
 	 */
 	public function init_rest_endpoints() {
+		( new Endpoints\GetToken() )->register_routes();
 		( new Endpoints\AbandonedCarts() )->register_routes();
 	}
 
