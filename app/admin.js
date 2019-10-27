@@ -48,18 +48,18 @@ window.ccWooAdmin = {};
     };
 
     /**
-     * Gets a new key from the WP.org Salts API and replaces the current key with it.
+     * Gets a new key.
      *
      * @author George Gecewicz <george.gecewicz@webdevstudios.com>
      * @since 2019-10-24
      */
     app.generateKey = function() {
-        wp.ajax.send( 'cc_woo_abandoneds_cart_generate_secret_key', {
+        wp.ajax.send( 'cc_woo_abandoned_carts_generate_secret_key', {
             data: {
                 nonce: app.els.button.getAttribute( 'data-wp-nonce' )
             },
-            success: app.getGenerateKeySuccess(),
-            error: app.getGenerateKeyError()
+            success: app.handleGenerateKeySuccess,
+            error: app.handleGenerateKeyError
         } );
     };
 
@@ -69,8 +69,8 @@ window.ccWooAdmin = {};
      * @author George Gecewicz <george.gecewicz@webdevstudios.com>
      * @since 2019-10-24
      */
-    app.getGenerateKeySuccess = function() {
-
+    app.handleGenerateKeySuccess = function( data ) {
+        app.els.input.value = data.key;
     };
 
     /**
@@ -79,7 +79,7 @@ window.ccWooAdmin = {};
      * @author George Gecewicz <george.gecewicz@webdevstudios.com>
      * @since 2019-10-24
      */
-    app.getGenerateKeyError = function() {
+    app.handleGenerateKeyError = function( data ) {
 
     };
 

@@ -21,6 +21,7 @@ use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartRecovery;
+use WebDevStudios\CCForWoo\Ajax\GenerateSecretKey;
 use WebDevStudios\CCForWoo\Rest\V1\Registrar as RestRegistrar;
 
 /**
@@ -77,6 +78,7 @@ final class Plugin extends ServiceRegistrar {
 		CartsTable::class,
 		CartRecovery::class,
 		RestRegistrar::class,
+		GenerateSecretKey::class,
 	];
 
 	/**
@@ -296,5 +298,6 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function register_admin_scripts() {
 		wp_register_script( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.js', [], self::PLUGIN_VERSION, false );
+		wp_register_style( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.css', [], self::PLUGIN_VERSION, false );
 	}
 }

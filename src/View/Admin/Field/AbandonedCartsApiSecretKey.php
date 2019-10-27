@@ -43,7 +43,6 @@ class AbandonedCartsApiSecretKey {
 			'id'                => self::OPTION_FIELD_NAME,
 			'default'           => '',
 			'custom_attributes' => [
-				'class'    => 'widefat',
 				'readonly' => 'true',
 			],
 		];
@@ -68,6 +67,9 @@ class AbandonedCartsApiSecretKey {
 			>
 				<?php esc_html_e( 'Generate Key', 'cc-woo' ); ?>
 			</button>
+			<p class="description">
+				<?php esc_html_e( 'This secret key helps generate secure tokens for the Abandoned Carts REST API endpoint; generating a new one immediately invalidates preexisting tokens.', 'cc-woo' ); ?>
+			</p>
 		</div>
 	<?php
 		return ob_get_clean();

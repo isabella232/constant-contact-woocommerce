@@ -12,8 +12,10 @@ namespace WebDevStudios\CCForWoo\Rest\V1\Endpoints;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Controller;
+use WP_REST_Response;
 use WP_Error;
 
+use Firebase\JWT\JWT;
 use WebDevStudios\CCForWoo\Rest\V1\Registrar;
 
 /**
@@ -77,9 +79,24 @@ class GetToken extends WP_REST_Controller {
 			return new WP_Error( 'cc-woo-rest-auth-config-error', esc_html__( 'Could not authenticate: Not configured properly.', 'cc-woo' ), [ 'status' => 403 ] );
 		}
 
-		$params = $request->get_json_param();
+		$params = $request->get_json_params();
 		$user   = wp_authenticate( $params['username'], $params['password'] );
 
+		// @todo If not admin, the settings input should not show!
+		if ( is_wp_error( $user ) ) {
+			return new WP_Error( 'cc-woo-rest-invalid-user-error', $user->get_error_message( $user->get_error_code() ), [ 'status' => 403 ] );
+		}
+
+		if ( user_can( $user->ID, 'administrator' ) ) {
+			return new WP_Error( 'cc-woo-rest-unauthorized-user-error', esc_html__( 'Could not authenticate: Insufficient permissions.', 'cc-woo' ), [ 'status' => 403 ] );
+		}
+
+		// @todo Otherwise, get token
+		// -- if no token, get new one using secret key
+		// -- if token but timestamp is >1 hour, get new one using secret key
+		// -- if token and timestamp <1 hour old, get existing token
+		//
+		// @todo require valid token for api response
 		return new WP_REST_Response( $user, 200 );
 	}
 
@@ -92,7 +109,7 @@ class GetToken extends WP_REST_Controller {
 	 * @return mixed String of the secret key if exists AND valid; bool false if not either.
 	 */
 	private function get_secret_key() {
-		return false;
+		return get_option( 'cc_woo_abandoned_carts_secret_key', false );
 	}
 
 }

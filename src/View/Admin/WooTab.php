@@ -192,6 +192,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since 2019-10-25
 	 */
 	public function enqueue_scripts() {
+		wp_enqueue_style( 'cc-woo-admin' );
 		wp_enqueue_script( 'cc-woo-admin' );
 	}
 
