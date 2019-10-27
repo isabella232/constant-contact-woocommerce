@@ -10,13 +10,13 @@
 namespace WebDevStudios\CCForWoo\View\Admin\Field;
 
 /**
- * AbandonedCartApiSecretKey clss
+ * AbandonedCartsApiSecretKey clss
  *
  * @since 2019-10-24
  * @author George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package cc-woo-view-admin-field
  */
-class AbandonedCartApiSecretKey {
+class AbandonedCartsApiSecretKey {
 
 	/**
 	 * Secret Key field.
@@ -25,7 +25,7 @@ class AbandonedCartApiSecretKey {
 	 *
 	 * @var string
 	 */
-	const OPTION_FIELD_NAME = 'cc_woo_abandoned_cart_secret_key';
+	const OPTION_FIELD_NAME = 'cc_woo_abandoned_carts_secret_key';
 
 	/**
 	 * Returns the form field configuration.
@@ -58,6 +58,18 @@ class AbandonedCartApiSecretKey {
 	 * @return string
 	 */
 	private function get_description() : string {
-		return '<button class="button button-secondary">Generate Key</button>';
+		ob_start();
+	?>
+		<div style="padding:1rem 0;">
+			<button
+				id="cc_woo_abandoned_carts_generate_secret_key"
+				class="button button-secondary"
+				data-wp-nonce="<?php echo esc_attr( wp_create_nonce( 'cc-woo-abandoned-cart-generate-secret-key' ) ); ?>"
+			>
+				<?php esc_html_e( 'Generate Key', 'cc-woo' ); ?>
+			</button>
+		</div>
+	<?php
+		return ob_get_clean();
 	}
 }

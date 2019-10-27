@@ -567,7 +567,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 		];
 
-		$secret_key_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCartApiSecretKey();
+		$secret_key_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCartsApiSecretKey();
 
 		$settings[] = array_merge(
 			$settings,
