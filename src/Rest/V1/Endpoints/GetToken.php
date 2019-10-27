@@ -87,17 +87,34 @@ class GetToken extends WP_REST_Controller {
 			return new WP_Error( 'cc-woo-rest-invalid-user-error', $user->get_error_message( $user->get_error_code() ), [ 'status' => 403 ] );
 		}
 
-		if ( user_can( $user->ID, 'administrator' ) ) {
+		if ( ! user_can( $user->ID, 'administrator' ) ) {
 			return new WP_Error( 'cc-woo-rest-unauthorized-user-error', esc_html__( 'Could not authenticate: Insufficient permissions.', 'cc-woo' ), [ 'status' => 403 ] );
 		}
+
+		$current_time = time();
+		$expiration   = time() + WEEK_IN_SECONDS;
+
+		$token_body = [
+			'iss'  => get_bloginfo( 'url' ),
+			'iat'  => $current_time,
+			'nbf'  => $current_time,
+			'exp'  => $expiration,
+			'data' => [
+				'user' => [
+					'id' => $user->data->ID,
+				],
+			],
+		];
+
+		$token = JWT::encode( $token_body, $this->get_secret_key() );
 
 		// @todo Otherwise, get token
 		// -- if no token, get new one using secret key
 		// -- if token but timestamp is >1 hour, get new one using secret key
 		// -- if token and timestamp <1 hour old, get existing token
-		//
+
 		// @todo require valid token for api response
-		return new WP_REST_Response( $user, 200 );
+		return new WP_REST_Response( [ 'token' => $token ], 200 );
 	}
 
 	/**
