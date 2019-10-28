@@ -58,8 +58,7 @@ window.ccWooAdmin = {};
             data: {
                 nonce: app.els.button.getAttribute( 'data-wp-nonce' )
             },
-            success: app.handleGenerateKeySuccess,
-            error: app.handleGenerateKeyError
+            success: app.handleGenerateKeySuccess
         } );
     };
 
@@ -71,16 +70,6 @@ window.ccWooAdmin = {};
      */
     app.handleGenerateKeySuccess = function( data ) {
         app.els.input.value = data.key;
-    };
-
-    /**
-     * Handle a failed generation of new secret key.
-     *
-     * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-     * @since 2019-10-24
-     */
-    app.handleGenerateKeyError = function( data ) {
-
     };
 
     app.init();

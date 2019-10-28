@@ -48,7 +48,6 @@ class GenerateSecretKey extends Service {
 
 		$secret_key = wp_generate_password( 64, true, true );
 
-		// @TODO delete any existing/stored tokens.
 		update_option( 'cc_woo_abandoned_carts_secret_key', $secret_key );
 
 		wp_send_json_success(

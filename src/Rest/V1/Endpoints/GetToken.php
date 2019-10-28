@@ -92,7 +92,7 @@ class GetToken extends WP_REST_Controller {
 		}
 
 		$current_time = time();
-		$expiration   = time() + WEEK_IN_SECONDS;
+		$expiration   = time() + ( 15 * MINUTE_IN_SECONDS );
 
 		$token_body = [
 			'iss'  => get_bloginfo( 'url' ),
@@ -108,12 +108,6 @@ class GetToken extends WP_REST_Controller {
 
 		$token = JWT::encode( $token_body, $this->get_secret_key() );
 
-		// @todo Otherwise, get token
-		// -- if no token, get new one using secret key
-		// -- if token but timestamp is >1 hour, get new one using secret key
-		// -- if token and timestamp <1 hour old, get existing token
-
-		// @todo require valid token for api response
 		return new WP_REST_Response( [ 'token' => $token ], 200 );
 	}
 

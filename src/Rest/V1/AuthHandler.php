@@ -11,6 +11,7 @@ namespace WebDevStudios\CCForWoo\Rest\V1;
 
 use WebDevStudios\OopsWP\Structure\Service;
 use Firebase\JWT\JWT;
+use Firebase\JWT\SignatureInvalidException;
 
 use WP_Error;
 use WP_REST_Request;
@@ -106,22 +107,22 @@ class AuthHandler extends Service {
 			return new WP_Error( 'cc-woo-rest-auth-config-error', esc_html__( 'Could not authenticate: Not configured properly.', 'cc-woo' ), [ 'status' => 403 ] );
 		}
 
-		// Attempt to decode token and ensure required fields are present and valid.
 		try {
 			$token = JWT::decode( $token, $secret_key, [ 'HS256' ] );
 
-			// Validate iss.
 			if ( get_bloginfo( 'url' ) !== $token->iss ) {
 				return new WP_Error( 'cc-woo-rest-auth-bad-request', esc_html__( 'Could not validate token iss.', 'cc-woo' ), [ 'status' => 403 ] );
 			}
 
-			// Validate token user ID.
 			if ( ! isset( $token->data->user->id ) ) {
 				return new WP_Error( 'cc-woo-rest-auth-bad-request', esc_html__( 'Could not validate token user ID.', 'cc-woo' ), [ 'status' => 403 ] );
 			}
 
 			return $token;
 
+		} catch ( SignatureInvalidException $e ) {
+			// Handles if the signing key changed since time token was issued.
+			return new WP_Error( 'cc-woo-rest-auth-invalid-key', $e->getMessage(), [ 'status' => 403 ] );
 		} catch ( Exception $e ) {
 			return new WP_Error( 'cc-woo-rest-auth-invalid-token', $e->getMessage(), [ 'status' => 403 ] );
 		}
