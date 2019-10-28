@@ -72,7 +72,7 @@ class GetToken extends WP_REST_Controller {
 	 * @since 2019-10-24
 	 *
 	 * @param WP_REST_Request $request The REST request.
-	 * @return array
+	 * @return WP_REST_Response
 	 */
 	public function get_token( $request ) {
 		if ( ! $this->get_secret_key() ) {
@@ -82,7 +82,6 @@ class GetToken extends WP_REST_Controller {
 		$params = $request->get_json_params();
 		$user   = wp_authenticate( $params['username'], $params['password'] );
 
-		// @todo If not admin, the settings input should not show!
 		if ( is_wp_error( $user ) ) {
 			return new WP_Error( 'cc-woo-rest-invalid-user-error', $user->get_error_message( $user->get_error_code() ), [ 'status' => 403 ] );
 		}

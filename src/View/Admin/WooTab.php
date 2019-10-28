@@ -564,7 +564,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			[
 				'title' => '',
 				'type'  => 'title',
-				'desc'  => esc_html__( 'An example of abandoned carts description maybe.', 'cc-woo' ),
 			],
 		];
 
