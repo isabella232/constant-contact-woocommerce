@@ -245,7 +245,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @since 2019-20-24
 	 */
 	private function create_abandoned_carts_table() {
-		( new AbandonedCartsTable() )->create_table();
+		( new CartsTable() )->create_table();
 	}
 
 	/**
