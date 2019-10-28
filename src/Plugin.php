@@ -23,6 +23,7 @@ use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartRecovery;
 use WebDevStudios\CCForWoo\Ajax\GenerateSecretKey;
 use WebDevStudios\CCForWoo\Rest\V1\Registrar as RestRegistrar;
+use WebDevStudios\CCForWoo\Rest\V1\AuthHandler as RestAuthHandler;
 
 /**
  * "Core" plugin class.
@@ -78,6 +79,7 @@ final class Plugin extends ServiceRegistrar {
 		CartsTable::class,
 		CartRecovery::class,
 		RestRegistrar::class,
+		RestAuthHandler::class,
 		GenerateSecretKey::class,
 	];
 
