@@ -12,6 +12,7 @@ namespace WebDevStudios\CCForWoo\Rest\V1\Endpoints;
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Controller;
+use WP_REST_Response;
 use WC_Product;
 
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
@@ -47,7 +48,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	}
 
 	/**
-	 * Register the Abandoned Carts endpoint.
+	 * Register the Abandoned Carts route.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
@@ -57,15 +58,8 @@ class AbandonedCarts extends WP_REST_Controller {
 			Registrar::$namespace, '/' . $this->rest_base,
 			[
 				[
-					'methods'             => WP_REST_Server::READABLE,
-					'callback'            => [ $this, 'get_items' ],
-					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-				],
-				[
-					'methods'             => WP_REST_Server::EDITABLE,
-					'callback'            => [ $this, 'update_item' ],
-					'permission_callback' => [ $this, 'update_item_permissions_check' ],
-					'args'                => $this->get_endpoint_args_for_item_schema( false ),
+					'methods'  => WP_REST_Server::READABLE,
+					'callback' => [ $this, 'get_items' ],
 				],
 				'schema' => null,
 			]
@@ -74,8 +68,6 @@ class AbandonedCarts extends WP_REST_Controller {
 
 	/**
 	 * Register the Abandoned Carts endpoint.
-	 *
-	 * Note: Type and return hints are intentionally avoided here to match abstract method signature and prevent PHP warnings.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
@@ -92,11 +84,13 @@ class AbandonedCarts extends WP_REST_Controller {
 		$per_page = (int) isset( $params['per_page'] ) ? $params['per_page'] : 10;
 		$offset   = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
 
-		return [
+		$response = [
 			'carts'         => $this->get_cart_data( $per_page, $offset ),
 			'currency_code' => $this->get_currency_code(),
 			'page'          => $page,
 		];
+
+		return new WP_REST_Response( $response, 200 );
 	}
 
 	/**
@@ -241,23 +235,6 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	private function get_product_image_url( WC_Product $wc_product ) : string {
 		return wp_get_attachment_url( $wc_product->get_image_id() );
-	}
-
-	/**
-	 * Permissions for reading the the Abandoned Carts endpoint.
-	 *
-	 * Note: Type and return hints are intentionally avoided here to match abstract method signature and prevent PHP warnings.
-	 *
-	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-16
-	 *
-	 * @todo Require auth via token!
-	 *
-	 * @param WP_REST_Request $request The REST request.
-	 * @return bool
-	 */
-	public function get_items_permissions_check( $request ) {
-		return true;
 	}
 
 }
