@@ -212,7 +212,7 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
-		( new AbandonedCartsTable() )->create_table();
+		( new CartsTable() )->create_table();
 
 		if ( ! wp_next_scheduled( 'check_expired_carts' ) ) {
 			wp_schedule_event( strtotime( 'today' ), 'daily', 'check_expired_carts' );
