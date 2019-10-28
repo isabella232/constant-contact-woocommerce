@@ -125,6 +125,14 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $import_existing_customer_section = 'customer_data_import';
 
 	/**
+	 * The identifier for the Abandoned Carts section.
+	 *
+	 * @since 2019-10-24
+	 * @var string
+	 */
+	private $abandoned_carts_section = 'abandoned_carts';
+
+	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -147,6 +155,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function register_hooks() {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
+		add_action( "woocommerce_settings_{$this->id}", [ $this, 'enqueue_scripts' ] );
 
 		// Output settings sections.
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
@@ -177,6 +186,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	}
 
 	/**
+	 * Enqueue admin scripts and stylsheets.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-25
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_style( 'cc-woo-admin' );
+		wp_enqueue_script( 'cc-woo-admin' );
+	}
+
+	/**
 	 * Add the settings sections.
 	 *
 	 * @since  2019-03-08
@@ -186,7 +206,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function get_sections() {
 		$sections = [
 			''                                      => esc_html__( 'Store Information', 'cc-woo' ),
-			$this->import_existing_customer_section => esc_html__( 'Importing Existing Customers', 'cc-woo' )
+			$this->import_existing_customer_section => esc_html__( 'Importing Existing Customers', 'cc-woo' ),
+			$this->abandoned_carts_section          => esc_html__( 'Abandoned Carts', 'cc-woo' ),
 		];
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -258,6 +279,10 @@ class WooTab extends WC_Settings_Page implements Hookable {
 
 			case $this->import_existing_customer_section:
 				$settings = $this->get_customer_data_settings();
+				break;
+
+			case $this->abandoned_carts_section:
+				$settings = $this->get_abandoned_carts_settings();
 				break;
 		}
 
@@ -497,7 +522,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title' => '',
 				'type'  => 'title',
 				'desc'  => esc_html__( 'All contacts must agree to receive marketing messages in order to be added to your mailing list.  Therefore, when you import contacts, you are agreeing that you have permission to send them marketing messages.', 'cc-woo' ),
-			]
+			],
 		];
 
 		$historical_import_field = new \WebDevStudios\CCForWoo\View\Admin\Field\ImportHistoricalData();
@@ -516,6 +541,37 @@ class WooTab extends WC_Settings_Page implements Hookable {
 					'id'   => 'cc_woo_customer_data_settings',
 				],
 			]
+		);
+
+		return $settings;
+	}
+
+	/**
+	 * Get the Abandoned Carts settings.
+	 *
+	 * @since  2019-10-24
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 *
+	 * @return array
+	 */
+	private function get_abandoned_carts_settings() {
+		$settings = [
+			[
+				'title' => esc_html__( 'Abandoned Cart Settings', 'cc-woo' ),
+				'id'    => 'cc_woo_abandoned_cart_settings',
+				'type'  => 'title',
+			],
+			[
+				'title' => '',
+				'type'  => 'title',
+			],
+		];
+
+		$secret_key_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCartsApiSecretKey();
+
+		$settings[] = array_merge(
+			$settings,
+			$secret_key_field->get_form_field()
 		);
 
 		return $settings;
@@ -694,8 +750,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return;
 		}
 
-		// translators: placeholder is the field's title.
 		$this->errors[ $field['id'] ] = sprintf(
+			/* Translators: Placeholder is the field's title. */
 			esc_html__( 'The "%s" field is required to connect to Constant Contact.', 'cc-woo' ),
 			$field['title']
 		);
