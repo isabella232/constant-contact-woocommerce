@@ -83,8 +83,6 @@ class CartHandler extends Service {
 		$customer_data['billing']  = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
 		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
 
-		write_log( $_POST, 'posted' );
-
 		// Check if submission attempted.
 		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.

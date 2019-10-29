@@ -33,7 +33,7 @@ class ImportHistoricalData {
 	 */
 	public function get_form_field() : array {
 		return [
-			'title'             => esc_html__( 'Import historical customer data', 'cc-woo' ),
+			'title'             => esc_html__( 'Import your contacts', 'cc-woo' ),
 			'desc'              => $this->get_description(),
 			'type'              => 'select',
 			'id'                => self::OPTION_FIELD_NAME,
