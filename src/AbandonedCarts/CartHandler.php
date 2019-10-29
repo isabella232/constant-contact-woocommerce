@@ -11,6 +11,7 @@ namespace WebDevStudios\CCForWoo\AbandonedCarts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 use WC_Customer;
+use WC_Order;
 use DateTime;
 use DateInterval;
 
@@ -30,15 +31,15 @@ class CartHandler extends Service {
 	 * @since  2019-10-11
 	 */
 	public function register_hooks() {
-		add_action( 'woocommerce_after_template_part', [ $this, 'check_template' ], 10, 4 );
+		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_cart_data' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
-		add_action( 'check_expired_carts', [ $this, 'check_expired_carts' ] );
+		add_action( 'cc_woo_check_expired_carts', [ $this, 'delete_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
 	}
 
 	/**
-	 * Check current WC template.
+	 * Either call an update of cart data which will be saved or remove cart data based on what template we arrive at.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-11
@@ -47,13 +48,14 @@ class CartHandler extends Service {
 	 * @param  string $located       Full local path to current template file.
 	 * @param  array  $args          Template args.
 	 */
-	public function check_template( $template_name, $template_path, $located, $args ) {
+	public function save_or_clear_cart_data( $template_name, $template_path, $located, $args ) {
 		// If checkout page displayed, save cart data.
 		if ( 'checkout/form-checkout.php' === $template_name ) {
 			$this->update_cart_data();
 		}
+
 		// If thankyou page displayed, clear cart data.
-		if ( 'checkout/thankyou.php' === $template_name ) {
+		if ( isset( $args['order'] ) && 'checkout/thankyou.php' === $template_name ) {
 			$this->clear_purchased_data( $args['order'] );
 		}
 	}
@@ -80,6 +82,8 @@ class CartHandler extends Service {
 		// Update customer data from user session data.
 		$customer_data['billing']  = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
 		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
+
+		write_log( $_POST, 'posted' );
 
 		// Check if submission attempted.
 		if ( isset( $_POST['woocommerce_checkout_place_order'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
@@ -263,7 +267,7 @@ class CartHandler extends Service {
 	 * @return void
 	 */
 	public function clear_purchased_data( $order ) {
-		if ( false === $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 
@@ -301,12 +305,13 @@ class CartHandler extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  2019-10-11
 	 */
-	public function check_expired_carts() {
+	public function delete_expired_carts() {
 		global $wpdb;
 
 		// Delete all carts at least 30 days old.
 		$table_name = CartsTable::get_table_name();
-		$test       = $wpdb->query(
+
+		$wpdb->query(
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"DELETE FROM {$table_name}
