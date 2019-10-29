@@ -12,6 +12,7 @@ namespace WebDevStudios\CCForWoo\Rest\V1;
 use WebDevStudios\OopsWP\Structure\Service;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\ExpiredException;
 
 use WP_Error;
 use WP_REST_Request;
@@ -108,6 +109,7 @@ class AuthHandler extends Service {
 		}
 
 		try {
+
 			$token = JWT::decode( $token, $secret_key, [ 'HS256' ] );
 
 			if ( get_bloginfo( 'url' ) !== $token->iss ) {
@@ -120,6 +122,9 @@ class AuthHandler extends Service {
 
 			return $token;
 
+		} catch ( ExpiredException $e ) {
+			// Handles if the token has expired.
+			return new WP_Error( 'cc-woo-rest-auth-expired-token', $e->getMessage(), [ 'status' => 403 ] );
 		} catch ( SignatureInvalidException $e ) {
 			// Handles if the signing key changed since time token was issued.
 			return new WP_Error( 'cc-woo-rest-auth-invalid-key', $e->getMessage(), [ 'status' => 403 ] );
