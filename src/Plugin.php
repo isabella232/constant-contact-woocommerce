@@ -232,6 +232,7 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
+		$this->create_initial_secret_key();
 		$this->create_abandoned_carts_table();
 		$this->create_abandoned_carts_expiration_check();
 
@@ -239,10 +240,20 @@ final class Plugin extends ServiceRegistrar {
 	}
 
 	/**
+	 * Create a secret key on plugin activation so JWT tokens can used in the Abandoned Carts REST API.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-29
+	 */
+	private function create_initial_secret_key() {
+		update_option( 'cc_woo_abandoned_carts_secret_key', wp_generate_password( 64, true, true ) );
+	}
+
+	/**
 	 * Creates the database table for Abandoned Carts.
 	 *
-	 * @author Rebekah Van Epps <george.gecewicz@webdevstudios.com>
-	 * @since 2019-20-24
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since 2019-10-24
 	 */
 	private function create_abandoned_carts_table() {
 		( new CartsTable() )->create_table();
