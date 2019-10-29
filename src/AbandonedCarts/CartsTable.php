@@ -72,7 +72,8 @@ class CartsTable extends Service {
 			cart_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
 			cart_hash binary(16) NOT NULL DEFAULT 0,
-			PRIMARY KEY (cart_id)
+			PRIMARY KEY (cart_id),
+			UNIQUE KEY (cart_hash)
 		) {$wpdb->get_charset_collate()}";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
