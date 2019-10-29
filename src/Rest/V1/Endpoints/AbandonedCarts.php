@@ -78,14 +78,15 @@ class AbandonedCarts extends WP_REST_Controller {
 	public function get_items( $request ) {
 		global $wpdb;
 
-		$params = $request->get_query_params();
-
-		$page     = (int) isset( $params['page'] ) ? $params['page'] : 1;
-		$per_page = (int) isset( $params['per_page'] ) ? $params['per_page'] : 10;
+		$params   = $request->get_query_params();
+		$page     = $this->get_page_param( $params );
+		$per_page = $this->get_per_page_param( $params );
+		$date_min = $this->get_date_min_param( $params );
+		$date_max = $this->get_date_max_param( $params );
 		$offset   = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
 
 		$response = [
-			'carts'         => $this->get_cart_data( $per_page, $offset ),
+			'carts'         => $this->get_cart_data( $per_page, $offset, $date_min, $date_max ),
 			'currency_code' => $this->get_currency_code(),
 			'page'          => $page,
 		];
@@ -94,19 +95,74 @@ class AbandonedCarts extends WP_REST_Controller {
 	}
 
 	/**
+	 * Get the "page" request param.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-28
+	 *
+	 * @param array $params The request params.
+	 * @return int
+	 */
+	private function get_page_param( array $params ) : int {
+		return (int) isset( $params['page'] ) ? $params['page'] : 1;
+	}
+
+	/**
+	 * Get the "per_page" request param.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-28
+	 *
+	 * @param array $params The request params.
+	 * @return int
+	 */
+	private function get_per_page_param( array $params ) : int {
+		return (int) isset( $params['per_page'] ) ? $params['per_page'] : 10;
+	}
+
+	/**
+	 * Get the "date_min" request param.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-28
+	 *
+	 * @param array $params The request params.
+	 * @return string
+	 */
+	private function get_date_min_param( array $params ) : string {
+		return (string) isset( $params['date_min'] ) ? $params['date_min'] : '';
+	}
+
+	/**
+	 * Get the "date_max" request param.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-28
+	 *
+	 * @param array $params The request params.
+	 * @return string
+	 */
+	private function get_date_max_param( array $params ) : string {
+		return (string) isset( $params['date_max'] ) ? $params['date_max'] : '';
+	}
+
+	/**
 	 * Get an array of cart data.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
 	 *
-	 * @param int $per_page The per_page value from the REST request.
-	 * @param int $offset The offset for use in SQL query, based on page number specified in REST request.
+	 * @param int    $per_page The per_page value from the REST request.
+	 * @param int    $offset The offset for use in SQL query, based on page number specified in REST request.
+	 * @param string $date_min The oldest created_at date to get results from.
+	 * @param string $date_max The most recent created_at date to get results from.
 	 * @return array
 	 */
-	private function get_cart_data( int $per_page, int $offset ) : array {
+	private function get_cart_data( int $per_page, int $offset, string $date_min, string $date_max ) : array {
 		global $wpdb;
 
-		$table_name = CartsTable::get_table_name();
+		$table_name  = CartsTable::get_table_name();
+		$dates_where = $this->get_dates_where( $date_min, $date_max );
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		$data = $wpdb->get_results(
@@ -122,6 +178,7 @@ class AbandonedCarts extends WP_REST_Controller {
 					cart_created_ts,
 					HEX(cart_hash) as cart_hash
 				FROM {$table_name}
+				{$dates_where}
 				ORDER BY cart_updated_ts
 				DESC
 				LIMIT %d OFFSET %d",
@@ -132,6 +189,36 @@ class AbandonedCarts extends WP_REST_Controller {
 		// phpcs:enable WordPress.DB.PreparedSQL
 
 		return $this->prepare_cart_data_for_api( $data );
+	}
+
+	/**
+	 * Gets the WHERE clause for passing date_min and date_max values via SQL.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-28
+	 *
+	 * @param string $date_min The oldest created_at date to get results from.
+	 * @param string $date_max The most recent created_at date to get results from.
+	 * @return string
+	 */
+	private function get_dates_where( string $date_min, string $date_max ) : string {
+		if ( ! empty( $date_min ) && empty( $date_max ) ) {
+			return "WHERE cart_created >= '$date_min'";
+		}
+
+		if ( empty( $date_min ) && ! empty( $date_max ) ) {
+			return "WHERE cart_created <= '$date_max'";
+		}
+
+		if ( ! empty( $date_min ) && ! empty( $date_max ) ) {
+			return "WHERE cart_created >= '$date_min' AND cart_created <= '$date_max'";
+		}
+
+		if ( empty( $date_min ) && empty( $date_max ) ) {
+			return '';
+		}
+
+		return '';
 	}
 
 	/**
