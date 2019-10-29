@@ -25,7 +25,7 @@ class CartsTable extends Service {
 	 *
 	 * @since 2019-10-09
 	 */
-	const DB_VERSION = '1.2';
+	const DB_VERSION = '1.3';
 
 	/**
 	 * Option name for abandoned carts db version.
@@ -73,7 +73,7 @@ class CartsTable extends Service {
 			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
 			cart_hash binary(16) NOT NULL DEFAULT 0,
 			PRIMARY KEY (cart_id),
-			UNIQUE KEY (cart_hash)
+			UNIQUE KEY cart_hash (cart_hash)
 		) {$wpdb->get_charset_collate()}";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -91,27 +91,13 @@ class CartsTable extends Service {
 	protected function update_table() {
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . self::TABLE_NAME;
+		$table_name = self::get_table_name();
 
-		// Check if hash key exists, if not, create key and update existing values.
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
-			if ( ! $wpdb->get_var( "SHOW KEYS FROM {$table_name} WHERE Key_name = 'cart_hash'" ) ) {
 
-				// Update existing entries.
-				$wpdb->query(
-					"UPDATE {$table_name}
-					SET cart_hash = UNHEX(MD5(CONCAT(user_id, user_email)))"
-				);
-
-				// Add unique key constraint.
-				$wpdb->query(
-					"ALTER TABLE {$table_name}
-					ADD UNIQUE KEY(`cart_hash`)"
-				);
-
-				update_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
-			}
+			// Any data updates would be performed here.
+			update_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
 		}
 		// phpcs:enable
 	}
