@@ -84,7 +84,7 @@ class CartHandler extends Service {
 		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
 
 		// Check if submission attempted.
-		if ( isset( $_POST['billing_first_name'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
+		if ( isset( $_POST['billing_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.
 			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
 			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
