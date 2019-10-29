@@ -18,6 +18,12 @@ use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
+use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
+use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
+use WebDevStudios\CCForWoo\AbandonedCarts\CartRecovery;
+use WebDevStudios\CCForWoo\Ajax\GenerateSecretKey;
+use WebDevStudios\CCForWoo\Rest\V1\Registrar as RestRegistrar;
+use WebDevStudios\CCForWoo\Rest\V1\AuthHandler as RestAuthHandler;
 
 /**
  * "Core" plugin class.
@@ -25,7 +31,22 @@ use WebDevStudios\CCForWoo\View\Admin\MenuItem;
  * @since 0.0.1
  */
 final class Plugin extends ServiceRegistrar {
+
+	/**
+	 * The plugin name.
+	 *
+	 * @since 0.0.1
+	 * @var string
+	 */
 	const PLUGIN_NAME = 'Constant Contact + WooCommerce';
+
+	/**
+	 * The plugin version.
+	 *
+	 * @since 1.0.0
+	 * @var string
+	 */
+	const PLUGIN_VERSION = '1.0.0';
 
 	/**
 	 * Whether the plugin is currently active.
@@ -44,14 +65,22 @@ final class Plugin extends ServiceRegistrar {
 	private $plugin_file;
 
 	/**
-	 * @var array
+	 * Services to register.
+	 *
 	 * @since 2019-03-13
+	 * @var array
 	 */
 	protected $services = [
 		ViewRegistrar::class,
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
+		CartHandler::class,
+		CartsTable::class,
+		CartRecovery::class,
+		RestRegistrar::class,
+		RestAuthHandler::class,
+		GenerateSecretKey::class,
 	];
 
 	/**
@@ -77,7 +106,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @throws \Exception If the plugin isn't active, throw an \Exception.
 	 */
 	private function deactivate( $reason ) {
-		unset( $_GET['activate'] );
+		unset( $_GET['activate'] ); // phpcs:ignore -- Ok use of $_GET.
 
 		if ( ! $this->is_active() ) {
 			throw new \Exception( $reason );
@@ -149,6 +178,7 @@ final class Plugin extends ServiceRegistrar {
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
 
 		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
 		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
@@ -202,7 +232,53 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
+		$this->create_initial_secret_key();
+		$this->create_abandoned_carts_table();
+		$this->create_abandoned_carts_expiration_check();
+
 		flush_rewrite_rules();
+	}
+
+	/**
+	 * Create a secret key on plugin activation so JWT tokens can used in the Abandoned Carts REST API.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-29
+	 */
+	private function create_initial_secret_key() {
+		update_option( 'cc_woo_abandoned_carts_secret_key', wp_generate_password( 64, true, true ) );
+	}
+
+	/**
+	 * Creates the database table for Abandoned Carts.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since 2019-10-24
+	 */
+	private function create_abandoned_carts_table() {
+		( new CartsTable() )->create_table();
+	}
+
+	/**
+	 * Schedules the daily check for abandoned carts that have sat in the DB longer than 30 days (by default...).
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-24
+	 */
+	private function create_abandoned_carts_expiration_check() {
+		if ( ! wp_next_scheduled( 'cc_woo_check_expired_carts' ) ) {
+			wp_schedule_event( strtotime( 'today' ), 'daily', 'cc_woo_check_expired_carts' );
+		}
+	}
+
+	/**
+	 * Removes the scheduled daily check for expired abandoned carts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-24
+	 */
+	private function clear_abandoned_carts_expiration_check() {
+		wp_clear_scheduled_hook( 'cc_woo_check_expired_carts' );
 	}
 
 	/**
@@ -218,10 +294,23 @@ final class Plugin extends ServiceRegistrar {
 	public function do_deactivation_process() {
 		do_action( 'wc_ctct_disconnect' );
 
+		$this->clear_abandoned_carts_expiration_check();
+
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
 		}
 
 		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
+	}
+
+	/**
+	 * Registers admin scripts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-10-24
+	 */
+	public function register_admin_scripts() {
+		wp_register_script( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.js', [], self::PLUGIN_VERSION, false );
+		wp_register_style( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.css', [], self::PLUGIN_VERSION, false );
 	}
 }

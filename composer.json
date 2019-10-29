@@ -28,7 +28,8 @@
 	},
 	"require": {
 		"webdevstudios/oops-wp": "^0.1",
-		"composer/installers": "^1.6"
+		"composer/installers": "^1.6",
+		"firebase/php-jwt": "^5.0"
 	},
 	"archive": {
 		"exclude": [

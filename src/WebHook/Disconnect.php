@@ -22,6 +22,7 @@ class Disconnect extends Service {
 	 * Hook into Woo.
 	 *
 	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 0.0.1
 	 */
 	public function register_hooks() {
 		add_filter( 'woocommerce_webhook_topic_hooks', [ $this, 'add_new_topic_hooks' ] );
@@ -33,6 +34,8 @@ class Disconnect extends Service {
 	 * Add a new topic hook for disconnecting.
 	 *
 	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 0.0.1
+	 *
 	 * @param array $topic_hooks Array of hooks from Woo.
 	 * @return array
 	 */
@@ -48,6 +51,8 @@ class Disconnect extends Service {
 	 * Add new events for our topic.
 	 *
 	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 0.0.1
+	 *
 	 * @param array $topic_events Existing valid events for resources.
 	 * @return array
 	 */
@@ -60,6 +65,8 @@ class Disconnect extends Service {
 	 * Adds the topic hook to the dropdown on Woo -> Settings -> Advanced -> WebHooks.
 	 *
 	 * @author Zach Owen <zach@webdevstudios>
+	 * @since 0.0.1
+	 *
 	 * @param array $topics Array of topics with the i18n proper name.
 	 * @return array
 	 */
