@@ -564,14 +564,25 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			[
 				'title' => '',
 				'type'  => 'title',
+				'desc'  => esc_html__( 'Settings for the Abandoned Carts functionality, namely its REST API endpoint.', 'cc-woo' ),
 			],
 		];
 
-		$secret_key_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCartsApiSecretKey();
+		$rest_endpoints_field  = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\RestEndpoints();
+		$secret_key_field      = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\ApiSecretKey();
+		$server_info_field     = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\ServerInfo();
+
+		$settings[] = array_merge( $settings,
+			$rest_endpoints_field->get_form_field()
+		);
+
+		$settings[] = array_merge( $settings,
+			$secret_key_field->get_form_field()
+		);
 
 		$settings[] = array_merge(
 			$settings,
-			$secret_key_field->get_form_field()
+			$server_info_field->get_form_field()
 		);
 
 		return $settings;

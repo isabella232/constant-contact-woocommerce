@@ -7,16 +7,16 @@
  * @package cc-woo-view-admin-field
  */
 
-namespace WebDevStudios\CCForWoo\View\Admin\Field;
+namespace WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts;
 
 /**
- * AbandonedCartsApiSecretKey clss
+ * ApiSecretKey field class
  *
  * @since 2019-10-24
  * @author George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package cc-woo-view-admin-field
  */
-class AbandonedCartsApiSecretKey {
+class ApiSecretKey {
 
 	/**
 	 * Secret Key field.

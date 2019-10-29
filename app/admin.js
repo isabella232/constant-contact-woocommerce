@@ -67,6 +67,8 @@ window.ccWooAdmin = {};
      *
      * @author George Gecewicz <george.gecewicz@webdevstudios.com>
      * @since 2019-10-24
+     *
+     * @param {object} data The AJAX response data from wp.ajax's success callback.
      */
     app.handleGenerateKeySuccess = function( data ) {
         app.els.input.value = data.key;
