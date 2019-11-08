@@ -177,7 +177,7 @@ class CartHandler extends Service {
 	 */
 	public static function get_cart_hash( int $cart_id ) {
 		return self::get_cart_data(
-			'HEX(cart_hash)',
+			'cart_hash',
 			'cart_id = %d',
 			[
 				intval( $cart_id ),
@@ -196,7 +196,7 @@ class CartHandler extends Service {
 	public static function get_cart_contents( $cart_hash ) {
 		return self::get_cart_data(
 			'cart_contents',
-			'cart_hash = UNHEX(%s)',
+			'cart_hash = %s',
 			[
 				$cart_hash,
 			]
@@ -237,7 +237,7 @@ class CartHandler extends Service {
 					%d,
 					%s,
 					%d,
-					UNHEX(MD5(CONCAT(user_id, user_email)))
+					MD5(CONCAT(user_id, user_email))
 				) ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
 				$user_id,
 				$customer_data['billing']['email'],
