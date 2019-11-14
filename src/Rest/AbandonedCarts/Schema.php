@@ -23,7 +23,7 @@ class Schema {
 	 * @since  2019-11-13
 	 *
 	 * @return array
-	 * */
+	 */
 	public static function get_collection_params() {
 	   return [
 		   'page' => [
@@ -48,7 +48,7 @@ class Schema {
 				'type'        => 'string',
 			],
 	   ];
-   }
+	}
 
 	/**
 	 * Get the Abandoned Cart's schema for public consumption.
