@@ -71,6 +71,9 @@ class Controller extends WP_REST_Controller {
 	/**
 	 * Check whether a given request has permission to show abandoned carts.
 	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-11-12
+	 *
 	 * @param  WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 */

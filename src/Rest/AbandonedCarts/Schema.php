@@ -150,6 +150,14 @@ class Schema {
 		];
 	}
 
+	/**
+	 * Get properties for individual Products definition in Schema.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  2019-11-13
+	 *
+	 * @return array
+	 */
 	public static function get_products_properties() {
 		return [
 			'key' => [
