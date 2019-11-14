@@ -51,7 +51,7 @@ class Registrar extends Service {
     }
 
     /**
-	 * Register REST endpoints with WooCommerce's REST auth handler.
+	 * Register REST endpoints with wc/cc-woo namespace with WooCommerce's REST auth handler.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since  2019-11-13
