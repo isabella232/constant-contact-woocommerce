@@ -3,11 +3,11 @@
  * REST API endpoint for collection of Abandoned Carts.
  *
  * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Rest\V1
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
 
-namespace WebDevStudios\CCForWoo\Rest\Endpoints;
+namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
 
 use WP_REST_Server;
 use WP_REST_Request;
@@ -21,13 +21,13 @@ use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
 use WebDevStudios\CCForWoo\Rest\Registrar;
 
 /**
- * Class AbandonedCarts
+ * Class AbandonedCarts\Controller
  *
  * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Rest\V1
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
-class AbandonedCarts extends WP_REST_Controller {
+class Controller extends WP_REST_Controller {
 
 	/**
 	 * This endpoint's rest base.
