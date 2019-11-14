@@ -26,10 +26,27 @@ class Schema {
 	 * */
 	public static function get_collection_params() {
 	   return [
-		   'page'     => [],
-		   'per_page' => [],
-		   'date_min' => [],
-		   'date_max' => [],
+		   'page' => [
+				'description' => esc_html__( 'Current page of paginated results.', 'woocommerce' ),
+				'required'    => false,
+				'type'        => 'integer',
+		   ],
+		   'per_page' => [
+				'description' => esc_html__( 'How many abandoned carts to show per page.', 'woocommerce' ),
+				'required'    => false,
+				'type'        => 'integer',
+				'default'     => 10,
+			],
+		   'date_min' => [
+				'description' => esc_html__( 'Filters results to only show abandoned carts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'required'    => false,
+				'type'        => 'string',
+			],
+			'date_max' => [
+				'description' => esc_html__( 'Filters results to only show abandoned carts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'required'    => false,
+				'type'        => 'string',
+			],
 	   ];
    }
 
