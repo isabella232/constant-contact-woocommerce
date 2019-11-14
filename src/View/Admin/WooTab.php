@@ -125,14 +125,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private $import_existing_customer_section = 'customer_data_import';
 
 	/**
-	 * The identifier for the Abandoned Carts section.
-	 *
-	 * @since 2019-10-24
-	 * @var string
-	 */
-	private $abandoned_carts_section = 'abandoned_carts';
-
-	/**
 	 * WooTab constructor.
 	 *
 	 * @since  2019-03-08
@@ -207,7 +199,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$sections = [
 			''                                      => esc_html__( 'Store Information', 'cc-woo' ),
 			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' ),
-			$this->abandoned_carts_section          => esc_html__( 'Abandoned Carts', 'cc-woo' ),
 		];
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -280,10 +271,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			case $this->import_existing_customer_section:
 				$settings = $this->get_customer_data_settings();
 				break;
-
-			case $this->abandoned_carts_section:
-				$settings = $this->get_abandoned_carts_settings();
-				break;
 		}
 
 		$settings = $this->process_errors( $settings );
@@ -306,8 +293,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$groups[] = [
 			'id'          => 'cc_woo',
 			'label'       => esc_html__( 'Constant Contact WooCommerce', 'cc-woo' ),
-			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
-				'cc-woo' ),
+			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.', 'cc-woo' ),
 		];
 
 		return $groups;
@@ -541,37 +527,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 					'id'   => 'cc_woo_customer_data_settings',
 				],
 			]
-		);
-
-		return $settings;
-	}
-
-	/**
-	 * Get the Abandoned Carts settings.
-	 *
-	 * @since  2019-10-24
-	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 *
-	 * @return array
-	 */
-	private function get_abandoned_carts_settings() {
-		$settings = [
-			[
-				'title' => esc_html__( 'Abandoned Cart Settings', 'cc-woo' ),
-				'id'    => 'cc_woo_abandoned_cart_settings',
-				'type'  => 'title',
-			],
-			[
-				'title' => '',
-				'type'  => 'title',
-				'desc'  => esc_html__( 'Settings for the Abandoned Carts functionality, namely its REST API endpoint.', 'cc-woo' ),
-			],
-		];
-
-		$rest_endpoints_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\RestEndpoints();
-
-		$settings[] = array_merge( $settings,
-			$rest_endpoints_field->get_form_field()
 		);
 
 		return $settings;
