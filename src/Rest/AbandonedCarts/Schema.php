@@ -16,29 +16,29 @@ namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
  */
 class Schema {
 
-    /**
-     * Get the query params for Abandoned Carts.
-     *
-     * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-     * @since  2019-11-13
-     *
+	/**
+	 * Get the query params for Abandoned Carts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  2019-11-13
+	 *
 	 * @return array
-     * */
-    public static function get_collection_params() {
-       return [
-           'page'     => [],
-           'per_page' => [],
-           'date_min' => [],
-           'date_max' => [],
-       ];
+	 * */
+	public static function get_collection_params() {
+	   return [
+		   'page'     => [],
+		   'per_page' => [],
+		   'date_min' => [],
+		   'date_max' => [],
+	   ];
    }
 
 	/**
 	 * Get the Abandoned Cart's schema for public consumption.
-     *
+	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-     * @since  2019-11-13
-     *
+	 * @since  2019-11-13
+	 *
 	 * @return array
 	 */
 	public static function get_public_item_schema() {
