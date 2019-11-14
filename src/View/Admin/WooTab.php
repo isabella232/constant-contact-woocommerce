@@ -569,20 +569,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		];
 
 		$rest_endpoints_field = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\RestEndpoints();
-		$secret_key_field     = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\ApiSecretKey();
-		$server_info_field    = new \WebDevStudios\CCForWoo\View\Admin\Field\AbandonedCarts\ServerInfo();
 
 		$settings[] = array_merge( $settings,
 			$rest_endpoints_field->get_form_field()
-		);
-
-		$settings[] = array_merge( $settings,
-			$secret_key_field->get_form_field()
-		);
-
-		$settings[] = array_merge(
-			$settings,
-			$server_info_field->get_form_field()
 		);
 
 		return $settings;

@@ -7,7 +7,7 @@
  * @since   2019-10-16
  */
 
-namespace WebDevStudios\CCForWoo\Rest\V1\Endpoints;
+namespace WebDevStudios\CCForWoo\Rest\Endpoints;
 
 use WP_REST_Server;
 use WP_REST_Request;
@@ -17,7 +17,7 @@ use WC_Product;
 
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
-use WebDevStudios\CCForWoo\Rest\V1\Registrar;
+use WebDevStudios\CCForWoo\Rest\Registrar;
 
 /**
  * Class AbandonedCarts
@@ -55,7 +55,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			Registrar::$namespace, '/' . $this->rest_base,
+			'wc-' . $this->rest_base,
 			[
 				[
 					'methods'  => WP_REST_Server::READABLE,
