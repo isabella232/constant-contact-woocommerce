@@ -76,120 +76,7 @@ class Schema {
 							'type'        => 'array',
 							'context'     => [ 'view' ],
 							'readonly'    => true,
-							'properties' => [
-								[
-									'key' => [
-										'description' => esc_html__( 'Unique WooCommerce-generated key identifying the cart in the database. This differs from the parent-level cart_hash property.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_id' => [
-										'description' => esc_html__( 'The WooCommerce product ID.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'variation_id' => [
-										'description' => esc_html__( 'The WooCommerce product variation ID, if applicable.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'variation' => [
-										'description' => esc_html__( 'Object representation of any applicable variations, where keys are variation names and values are the actual variation selection.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'quantity' => [
-										'description' => esc_html__( 'Item quantity.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'data_hash' => [
-										'description' => esc_html__( 'MD5 hash of cart items to determine if contents are modified.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_tax_data' => [
-										'description' => esc_html__( 'Line subtotal tax and total tax data.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-										'properties'  => [
-											'subtotal' => [
-												'description' => esc_html__( 'Line subtotal tax data.', 'cc-woo' ),
-												'type'        => 'string',
-												'context'     => [ 'view' ],
-												'readonly'    => true,
-											],
-											'total' => [
-												'description' => esc_html__( 'Line total tax data.', 'cc-woo' ),
-												'type'        => 'string',
-												'context'     => [ 'view' ],
-												'readonly'    => true,
-											],
-										]
-									],
-									'line_subtotal' => [
-										'description' => esc_html__( 'Line subtotal.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_subtotal_tax' => [
-										'description' => esc_html__( 'Line subtotal tax.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_total' => [
-										'description' => esc_html__( 'Line total.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_tax' => [
-										'description' => esc_html__( 'Line total tax.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'data' => [
-										'description' => esc_html__( 'Misc. product data in key-value pairs.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_title' => [
-										'description' => esc_html__( 'The product title.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_sku' => [
-										'description' => esc_html__( 'The product SKU.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_permalink' => [
-										'description' => esc_html__( 'Permalink to the product page.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_image_url' => [
-										'description' => esc_html__( 'URL to the full-size featured image for the product if one exists.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									]
-								]
-							]
+							'properties' => self::get_products_properties(),
 						],
 						'coupons' => [
 							'description' => esc_html__( '', 'cc-woo' ),
@@ -259,6 +146,121 @@ class Schema {
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
+			]
+		];
+	}
+
+	public static function get_products_properties() {
+		return [
+			'key' => [
+				'description' => esc_html__( 'Unique WooCommerce-generated key identifying the cart in the database. This differs from the parent-level cart_hash property.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'product_id' => [
+				'description' => esc_html__( 'The WooCommerce product ID.', 'cc-woo' ),
+				'type'        => 'integer',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'variation_id' => [
+				'description' => esc_html__( 'The WooCommerce product variation ID, if applicable.', 'cc-woo' ),
+				'type'        => 'integer',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'variation' => [
+				'description' => esc_html__( 'Object representation of any applicable variations, where keys are variation names and values are the actual variation selection.', 'cc-woo' ),
+				'type'        => 'object',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'quantity' => [
+				'description' => esc_html__( 'Item quantity.', 'cc-woo' ),
+				'type'        => 'integer',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'data_hash' => [
+				'description' => esc_html__( 'MD5 hash of cart items to determine if contents are modified.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'line_tax_data' => [
+				'description' => esc_html__( 'Line subtotal tax and total tax data.', 'cc-woo' ),
+				'type'        => 'object',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+				'properties'  => [
+					'subtotal' => [
+						'description' => esc_html__( 'Line subtotal tax data.', 'cc-woo' ),
+						'type'        => 'string',
+						'context'     => [ 'view' ],
+						'readonly'    => true,
+					],
+					'total' => [
+						'description' => esc_html__( 'Line total tax data.', 'cc-woo' ),
+						'type'        => 'string',
+						'context'     => [ 'view' ],
+						'readonly'    => true,
+					],
+				]
+			],
+			'line_subtotal' => [
+				'description' => esc_html__( 'Line subtotal.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'line_subtotal_tax' => [
+				'description' => esc_html__( 'Line subtotal tax.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'line_total' => [
+				'description' => esc_html__( 'Line total.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'line_tax' => [
+				'description' => esc_html__( 'Line total tax.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'data' => [
+				'description' => esc_html__( 'Misc. product data in key-value pairs.', 'cc-woo' ),
+				'type'        => 'object',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'product_title' => [
+				'description' => esc_html__( 'The product title.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'product_sku' => [
+				'description' => esc_html__( 'The product SKU.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'product_permalink' => [
+				'description' => esc_html__( 'Permalink to the product page.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
+			],
+			'product_image_url' => [
+				'description' => esc_html__( 'URL to the full-size featured image for the product if one exists.', 'cc-woo' ),
+				'type'        => 'string',
+				'context'     => [ 'view' ],
+				'readonly'    => true,
 			]
 		];
 	}
