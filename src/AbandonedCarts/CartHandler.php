@@ -242,7 +242,7 @@ class CartHandler extends Service {
 				$user_id,
 				$customer_data['billing']['email'],
 				maybe_serialize( [
-					'products'        => WC()->cart->get_cart(),
+					'products'        => array_values( WC()->cart->get_cart() ),
 					'coupons'         => WC()->cart->get_applied_coupons(),
 					'customer'        => $customer_data,
 					'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],

@@ -1,32 +1,31 @@
 <?php
 /**
- * REST API endpoint for collection of Abandoned Carts.
+ * Controller for wc/cc-woo/abandoned-carts endpoint.
  *
- * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Rest\V1
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
 
-namespace WebDevStudios\CCForWoo\Rest\V1\Endpoints;
+namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
 
 use WP_REST_Server;
 use WP_REST_Request;
 use WP_REST_Controller;
 use WP_REST_Response;
+use WP_Error;
 use WC_Product;
 
 use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
-use WebDevStudios\CCForWoo\Rest\V1\Registrar;
+use WebDevStudios\CCForWoo\Rest\Registrar;
 
 /**
- * Class AbandonedCarts
+ * Class AbandonedCarts\Controller
  *
- * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\Rest\V1
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
-class AbandonedCarts extends WP_REST_Controller {
+class Controller extends WP_REST_Controller {
 
 	/**
 	 * This endpoint's rest base.
@@ -55,15 +54,35 @@ class AbandonedCarts extends WP_REST_Controller {
 	 */
 	public function register_routes() {
 		register_rest_route(
-			Registrar::$namespace, '/' . $this->rest_base,
+			Registrar::$namespace,
+			'/' . $this->rest_base,
 			[
 				[
-					'methods'  => WP_REST_Server::READABLE,
-					'callback' => [ $this, 'get_items' ],
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => [ $this, 'get_items' ],
+					'permission_callback' => [ $this, 'get_items_permissions_check' ],
+					'args'                => Schema::get_collection_params(),
 				],
-				'schema' => null,
+				'schema' => [ '\WebDevStudios\CCForWoo\Rest\AbandonedCarts\Schema', 'get_public_item_schema' ],
 			]
 		);
+	}
+
+	/**
+	 * Check whether a given request has permission to show abandoned carts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since 2019-11-12
+	 *
+	 * @param  WP_REST_Request $request Full details about the request.
+	 * @return WP_Error|boolean
+	 */
+	public function get_items_permissions_check( $request ) {
+		if ( ! wc_rest_check_manager_permissions( 'settings', 'read' ) ) {
+			return new WP_Error( 'cc-woo-rest-not-allowed', esc_html__( 'Sorry, you cannot list resources.', 'cc-woo' ), [ 'status' => rest_authorization_required_code() ] );
+		}
+
+		return true;
 	}
 
 	/**
@@ -188,7 +207,7 @@ class AbandonedCarts extends WP_REST_Controller {
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL
 
-		return $this->prepare_cart_data_for_api( $data );
+		return $this->prepare_cart_data_for_api_response( $data );
 	}
 
 	/**
@@ -230,7 +249,7 @@ class AbandonedCarts extends WP_REST_Controller {
 	 * @param array $data The carts whose fields need preparation.
 	 * @return array
 	 */
-	private function prepare_cart_data_for_api( array $data ) {
+	private function prepare_cart_data_for_api_response( array $data ) {
 		foreach ( $data as $cart ) {
 			$cart->cart_contents     = maybe_unserialize( $cart->cart_contents );
 			$cart->cart_contents     = $this->get_additional_product_fields( $cart->cart_contents );
