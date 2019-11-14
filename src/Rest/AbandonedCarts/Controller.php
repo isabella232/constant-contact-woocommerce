@@ -195,7 +195,7 @@ class Controller extends WP_REST_Controller {
 					cart_updated_ts,
 					cart_created,
 					cart_created_ts,
-					HEX(cart_hash) as cart_hash
+					cart_hash
 				FROM {$table_name}
 				{$dates_where}
 				ORDER BY cart_updated_ts

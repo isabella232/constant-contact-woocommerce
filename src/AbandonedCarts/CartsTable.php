@@ -25,7 +25,7 @@ class CartsTable extends Service {
 	 *
 	 * @since 2019-10-09
 	 */
-	const DB_VERSION = '1.3';
+	const DB_VERSION = '1.4';
 
 	/**
 	 * Option name for abandoned carts db version.
@@ -71,7 +71,7 @@ class CartsTable extends Service {
 			cart_updated_ts int(11) unsigned NOT NULL DEFAULT 0,
 			cart_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
-			cart_hash binary(16) NOT NULL DEFAULT 0,
+			cart_hash char(32) NOT NULL DEFAULT '',
 			PRIMARY KEY (cart_id),
 			UNIQUE KEY cart_hash (cart_hash)
 		) {$wpdb->get_charset_collate()}";
@@ -95,6 +95,14 @@ class CartsTable extends Service {
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
+
+			// Update `cart_hash` field for all records in versions older than 1.4.
+			if ( floatval( self::DB_VERSION_OPTION_NAME ) < 1.4 ) {
+				$wpdb->query(
+					"UPDATE {$table_name}
+					SET cart_hash = HEX(cart_hash)"
+				);
+			}
 
 			// Any data updates would be performed here.
 			update_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
