@@ -1,8 +1,7 @@
 <?php
 /**
- * REST API endpoint for collection of Abandoned Carts.
+ * Controller for wc/cc-woo/abandoned-carts endpoint.
  *
- * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
@@ -23,7 +22,6 @@ use WebDevStudios\CCForWoo\Rest\Registrar;
 /**
  * Class AbandonedCarts\Controller
  *
- * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
  * @since   2019-10-16
  */
@@ -63,9 +61,9 @@ class Controller extends WP_REST_Controller {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => [ $this, 'get_items' ],
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
-					'args'                => $this->get_collection_params(),
+					'args'                => Schema::get_collection_params(),
 				],
-				'schema' => [ $this, 'get_public_item_schema' ],
+				'schema' => [ '\WebDevStudios\CCForWoo\Rest\AbandonedCarts\Schema', 'get_public_item_schema' ],
 			]
 		);
 	}
@@ -340,249 +338,6 @@ class Controller extends WP_REST_Controller {
 	 */
 	private function get_product_image_url( WC_Product $wc_product ) : string {
 		return wp_get_attachment_url( $wc_product->get_image_id() );
-	}
-
-	/**
-	 * Get the Abandoned Cart's schema for public consumption.
-	 *
-	 * @return array
-	 */
-	public function get_item_schema() {
-		return [
-			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'cc_woo_abandoned_cart',
-			'type'       => 'object',
-			'properties' => [
-				'cart_id' => [
-					'description' => esc_html__( 'Database ID for the abandoned cart.', 'cc-woo' ),
-					'type'        => 'integer',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'user_id' => [
-					'description' => esc_html__( 'WordPress user ID of the user the cart belongs to; defaults to 0 if a guest or non-logged-in user.', 'cc-woo' ),
-					'type'        => 'integer',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'user_email' => [
-					'description' => esc_html__( 'The billing email the user entered at checkout before abandoning it. Note that this may be different than the email address the user has in their WordPress user profile.', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_contents' => [
-					'description' => esc_html__( 'Object representation of the cart that was abandoned, and its contents, coupon codes, and billing data.', 'cc-woo' ),
-					'type'        => 'object',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-					'properties' => [
-						'products' => [
-							'description' => esc_html__( 'Key-value listing of products in the cart. Keys are unique WooCommerce-generated keys identifying the cart in the database; values are objects representing the items in the cart.', 'cc-woo' ),
-							'type'        => 'array',
-							'context'     => [ 'view' ],
-							'readonly'    => true,
-							'properties' => [
-								[
-									'key' => [
-										'description' => esc_html__( 'Unique WooCommerce-generated key identifying the cart in the database. This differs from the parent-level cart_hash property.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_id' => [
-										'description' => esc_html__( 'The WooCommerce product ID.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'variation_id' => [
-										'description' => esc_html__( 'The WooCommerce product variation ID, if applicable.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'variation' => [
-										'description' => esc_html__( 'Object representation of any applicable variations, where keys are variation names and values are the actual variation selection.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'quantity' => [
-										'description' => esc_html__( 'Item quantity.', 'cc-woo' ),
-										'type'        => 'integer',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'data_hash' => [
-										'description' => esc_html__( 'MD5 hash of cart items to determine if contents are modified.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_tax_data' => [
-										'description' => esc_html__( 'Line subtotal tax and total tax data.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-										'properties'  => [
-											'subtotal' => [
-												'description' => esc_html__( 'Line subtotal tax data.', 'cc-woo' ),
-												'type'        => 'string',
-												'context'     => [ 'view' ],
-												'readonly'    => true,
-											],
-											'total' => [
-												'description' => esc_html__( 'Line total tax data.', 'cc-woo' ),
-												'type'        => 'string',
-												'context'     => [ 'view' ],
-												'readonly'    => true,
-											],
-										]
-									],
-									'line_subtotal' => [
-										'description' => esc_html__( 'Line subtotal.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_subtotal_tax' => [
-										'description' => esc_html__( 'Line subtotal tax.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_total' => [
-										'description' => esc_html__( 'Line total.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'line_tax' => [
-										'description' => esc_html__( 'Line total tax.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'data' => [
-										'description' => esc_html__( 'Misc. product data in key-value pairs.', 'cc-woo' ),
-										'type'        => 'object',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_title' => [
-										'description' => esc_html__( 'The product title.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_sku' => [
-										'description' => esc_html__( 'The product SKU.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_permalink' => [
-										'description' => esc_html__( 'Permalink to the product page.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									],
-									'product_image_url' => [
-										'description' => esc_html__( 'URL to the full-size featured image for the product if one exists.', 'cc-woo' ),
-										'type'        => 'string',
-										'context'     => [ 'view' ],
-										'readonly'    => true,
-									]
-								]
-							]
-						],
-						'coupons' => [
-							'description' => esc_html__( '', 'cc-woo' ),
-							'type'        => 'string',
-							'context'     => [ 'view' ],
-							'readonly'    => true,
-						],
-					],
-				],
-				'cart_updated' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_updated_ts' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_created' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_created_ts' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_hash' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_subtotal' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_total' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_subtotal_tax' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_total_tax' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-				'cart_recovery_url' => [
-					'description' => esc_html__( '', 'cc-woo' ),
-					'type'        => 'string',
-					'context'     => [ 'view' ],
-					'readonly'    => true,
-				],
-			]
-		];
-
-		return $this->add_additional_fields_schema( $schema );
-	}
-
-	/**
-	 * Get the query params for Abandoned Carts.
-	 *
-	 * @return array
-	 */
-	public function get_collection_params() {
-		return [
-			'page'     => [],
-			'per_page' => [],
-			'date_min' => [],
-			'date_max' => [],
-		];
 	}
 
 }
