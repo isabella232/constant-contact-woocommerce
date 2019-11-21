@@ -13,7 +13,6 @@ use WP_REST_Request;
 use WP_REST_Controller;
 use WP_REST_Response;
 use WP_Error;
-use WC_Product;
 
 use WebDevStudios\CCForWoo\Rest\Registrar;
 
@@ -93,7 +92,7 @@ class Controller extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 		$response = [
-            'current_version' => \WebDevStudios\CCForWoo\Plugin::PLUGIN_VERSION,
+			'current_version' => \WebDevStudios\CCForWoo\Plugin::PLUGIN_VERSION,
 		];
 
 		return new WP_REST_Response( $response, 200 );
