@@ -38,7 +38,7 @@ class Controller extends WP_REST_Controller {
 	 * Constructor.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-11-21
+	 * @since  2019-11-21
 	 */
 	public function __construct() {
 		$this->rest_base = 'plugin-version';
@@ -48,7 +48,7 @@ class Controller extends WP_REST_Controller {
 	 * Register the Plugin Version route.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-11-21
+	 * @since  2019-11-21
 	 */
 	public function register_routes() {
 		register_rest_route(
@@ -69,7 +69,7 @@ class Controller extends WP_REST_Controller {
 	 * Check whether a given request has permission to show plugin version.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-11-21
+	 * @since  2019-11-21
 	 *
 	 * @param  WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
@@ -86,9 +86,9 @@ class Controller extends WP_REST_Controller {
 	 * Register the Plugin Version endpoint.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-11-21
+	 * @since  2019-11-21
 	 *
-	 * @param WP_REST_Request $request The REST request.
+	 * @param  WP_REST_Request $request The REST request.
 	 * @return array
 	 */
 	public function get_item( $request ) {
