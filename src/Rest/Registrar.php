@@ -9,7 +9,9 @@
 
 namespace WebDevStudios\CCForWoo\Rest;
 
-use WebDevStudios\CCForWoo\Rest\AbandonedCarts\Controller as AbandonedCartsController;
+use WebDevStudios\CCForWoo\Rest\AbandonedCarts\Controller as AbandonedCarts;
+use WebDevStudios\CCForWoo\Rest\PluginVersion\Controller as PluginVersion;
+
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
@@ -47,7 +49,8 @@ class Registrar extends Service {
 	 * @since  2019-11-13
 	 */
 	public function init_rest_endpoints() {
-		( new AbandonedCartsController() )->register_routes();
+		( new AbandonedCarts() )->register_routes();
+		( new PluginVersion() )->register_routes();
 	}
 }
 
