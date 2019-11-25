@@ -67,7 +67,7 @@ final class Plugin extends ServiceRegistrar {
 	/**
 	 * Services to register.
 	 *
-	 * @since 2019-03-13
+	 * @since 0.0.1
 	 * @var array
 	 */
 	protected $services = [
@@ -174,11 +174,11 @@ final class Plugin extends ServiceRegistrar {
 	 * Register the plugin's hooks with WordPress.
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-12
+	 * @since  0.0.1
 	 */
 	public function register_hooks() {
 		add_action( 'plugins_loaded', [ $this, 'check_for_required_dependencies' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'register_admin_scripts' ] );
+		add_action( 'wp_enqueue_scripts', [ $this, 'register_scripts' ] );
 
 		register_activation_hook( $this->plugin_file, [ $this, 'do_activation_process' ] );
 		register_deactivation_hook( $this->plugin_file, [ $this, 'do_deactivation_process' ] );
@@ -232,21 +232,10 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
-		$this->create_initial_secret_key();
 		$this->create_abandoned_carts_table();
 		$this->create_abandoned_carts_expiration_check();
 
 		flush_rewrite_rules();
-	}
-
-	/**
-	 * Create a secret key on plugin activation so JWT tokens can used in the Abandoned Carts REST API.
-	 *
-	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-29
-	 */
-	private function create_initial_secret_key() {
-		update_option( 'cc_woo_abandoned_carts_secret_key', wp_generate_password( 64, true, true ) );
 	}
 
 	/**
@@ -304,13 +293,12 @@ final class Plugin extends ServiceRegistrar {
 	}
 
 	/**
-	 * Registers admin scripts.
+	 * Registers public scripts.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-24
+	 * @since 1.2.0
 	 */
-	public function register_admin_scripts() {
-		wp_register_script( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.js', [], self::PLUGIN_VERSION, false );
-		wp_register_style( 'cc-woo-admin', plugin_dir_url( $this->get_plugin_file() ) . '/app/admin.css', [], self::PLUGIN_VERSION, false );
+	public function register_scripts() {
+		wp_register_script( 'cc-woo-public', trailingslashit( plugin_dir_url( $this->get_plugin_file() ) ) . 'app/bundle.js', [ 'wp-util' ], self::PLUGIN_VERSION, false );
 	}
 }

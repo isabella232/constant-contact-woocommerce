@@ -31,11 +31,51 @@ class CartHandler extends Service {
 	 * @since  2019-10-11
 	 */
 	public function register_hooks() {
+		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
 		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_cart_data' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'cc_woo_check_expired_carts', [ $this, 'delete_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
+
+		add_action( 'wp_ajax_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
+		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
+	}
+
+	/**
+	 * Load front-end scripts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  1.2.0
+	 */
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'cc-woo-public' );
+	}
+
+	/**
+	 * AJAX handler for attempting to capture guest checkouts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  1.2.0
+	 */
+	public function maybe_capture_guest_checkout() {
+		$data = filter_input_array( INPUT_POST, [
+			'nonce' => FILTER_SANITIZE_STRING,
+			'email' => FILTER_SANITIZE_EMAIL,
+		] );
+
+		if ( empty( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'woocommerce-process_checkout' ) ) {
+			wp_send_json_error( esc_html__( 'Invalid nonce.', 'cc-woo' ) );
+		}
+
+		if ( ! filter_var( $data['email'], FILTER_VALIDATE_EMAIL ) ) {
+			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
+		}
+
+		$session = WC()->session->get_session_cookie();
+
+		// @TODO handle this data to store cart based on session's "user id".
+		wp_send_json_success( [ 'session' => $session ] );
 	}
 
 	/**
