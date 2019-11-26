@@ -64,7 +64,7 @@ class CartsTable extends Service {
 
 		$sql = "CREATE TABLE {$table_name} (
 			cart_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-			user_id char(32) NOT NULL,
+			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			user_email varchar(200) NOT NULL DEFAULT '',
 			cart_contents longtext NOT NULL,
 			cart_updated datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -73,7 +73,6 @@ class CartsTable extends Service {
 			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
 			cart_hash char(32) NOT NULL DEFAULT '',
 			PRIMARY KEY (cart_id),
-			UNIQUE KEY user_id (user_id),
 			UNIQUE KEY cart_hash (cart_hash)
 		) {$wpdb->get_charset_collate()}";
 

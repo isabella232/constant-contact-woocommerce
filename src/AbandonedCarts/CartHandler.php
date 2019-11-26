@@ -274,7 +274,7 @@ class CartHandler extends Service {
 					`cart_created_ts`,
 					`cart_hash`
 				) VALUES (
-					%s,
+					%d,
 					%s,
 					%s,
 					%s,
