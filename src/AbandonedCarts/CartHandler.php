@@ -4,7 +4,7 @@
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-11
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\AbandonedCarts;
@@ -20,7 +20,7 @@ use DateInterval;
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-11
+ * @since   1.2.0
  */
 class CartHandler extends Service {
 
@@ -28,7 +28,7 @@ class CartHandler extends Service {
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
@@ -72,17 +72,16 @@ class CartHandler extends Service {
 			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
 		}
 
-		$session = WC()->session->get_session_cookie();
+		$this->update_cart_data( $data['email'] );
 
-		// @TODO handle this data to store cart based on session's "user id".
-		wp_send_json_success( [ 'session' => $session ] );
+		wp_send_json_success();
 	}
 
 	/**
 	 * Either call an update of cart data which will be saved or remove cart data based on what template we arrive at.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  string $template_name Current template file name.
 	 * @param  string $template_path Current template path.
 	 * @param  string $located       Full local path to current template file.
@@ -104,10 +103,12 @@ class CartHandler extends Service {
 	 * Update current cart session data in db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
+	 * @since  1.2.0
+	 *
+	 * @param string $billing_email Optional, default empty. A billing email to specify.
 	 * @return void
 	 */
-	public function update_cart_data() {
+	public function update_cart_data( $billing_email = '' ) {
 		$user_id       = get_current_user_id();
 		$customer_data = [
 			'billing'  => [],
@@ -115,7 +116,8 @@ class CartHandler extends Service {
 		];
 
 		// Get saved customer data if exists. If guest user, blank customer data will be generated.
-		$customer                  = new WC_Customer( $user_id );
+		$customer = new WC_Customer( $user_id );
+
 		$customer_data['billing']  = $customer->get_billing();
 		$customer_data['shipping'] = $customer->get_shipping();
 
@@ -126,8 +128,10 @@ class CartHandler extends Service {
 		// Check if submission attempted.
 		if ( isset( $_POST['billing_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.
-			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
-			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
+			array_walk( $customer_data['billing'], [ $this, 'amalgamate_customer_data' ], 'billing' );
+			array_walk( $customer_data['shipping'], [ $this, 'amalgamate_customer_data' ], 'shipping' );
+		} else if ( ! empty( $billing_email ) ) {
+			$customer_data['billing']['email'] = $billing_email;
 		} else {
 			// Retrieve cart data for current user, if exists.
 			$cart_data = $this::get_cart_data(
@@ -162,15 +166,15 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Merge database and posted customer data.
+	 * Array_walk callback that amalgamates Customer data fields from db and from session.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @param  string $value  Value of posted array item.
 	 * @param  string $key    Key of posted array item.
 	 * @param  string $type   Type of array (billing or shipping).
 	 */
-	protected function process_customer_data( &$value, $key, $type ) {
+	protected function amalgamate_customer_data( &$value, $key, $type ) {
 		$posted = WC()->checkout()->get_posted_data();
 		$value  = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
@@ -179,7 +183,7 @@ class CartHandler extends Service {
 	 * Retrieve specific user's cart data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-16
+	 * @since  1.2.0
 	 * @param  string $select        Field to return.
 	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
 	 * @param  array  $where_values  Array of WHERE clause values.
@@ -211,7 +215,7 @@ class CartHandler extends Service {
 	 * Helper function to retrieve cart contents based on cart hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  int $cart_id ID of abandoned cart.
 	 * @return string       Hash key string of abandoned cart.
 	 */
@@ -229,7 +233,7 @@ class CartHandler extends Service {
 	 * Helper function to retrieve cart contents based on cart hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  string $cart_hash Cart key hash string.
 	 * @return array             Cart contents.
 	 */
@@ -247,7 +251,7 @@ class CartHandler extends Service {
 	 * Save current cart data to db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @param  int   $user_id       Current user ID.
 	 * @param  array $customer_data Customer billing and shipping data.
 	 */
@@ -270,7 +274,7 @@ class CartHandler extends Service {
 					`cart_created_ts`,
 					`cart_hash`
 				) VALUES (
-					%d,
+					%s,
 					%s,
 					%s,
 					%s,
@@ -300,7 +304,7 @@ class CartHandler extends Service {
 	 * Remove current cart session data from db upon successful order submission.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  WC_Order $order Newly submitted order object.
 	 * @return void
 	 */
@@ -316,7 +320,7 @@ class CartHandler extends Service {
 	 * Helper function to remove cart session data from db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  int    $user_id    ID of cart owner.
 	 * @param  string $user_email Email of cart owner.
 	 */
@@ -341,7 +345,7 @@ class CartHandler extends Service {
 	 * Delete expired carts.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 */
 	public function delete_expired_carts() {
 		global $wpdb;

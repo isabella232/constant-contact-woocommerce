@@ -4,7 +4,7 @@
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Api
- * @since   2019-10-11
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\AbandonedCarts;
@@ -16,7 +16,7 @@ use WebDevStudios\OopsWP\Structure\Service;
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Database
- * @since   2019-10-11
+ * @since   1.2.0
  */
 class CartRecovery extends Service {
 
@@ -24,7 +24,7 @@ class CartRecovery extends Service {
 	 * Current cart hash key string.
 	 *
 	 * @var string
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 */
 	protected $cart_hash = '';
 
@@ -32,7 +32,7 @@ class CartRecovery extends Service {
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function register_hooks() {
@@ -50,7 +50,7 @@ class CartRecovery extends Service {
 	 * Generate cart recovery URL.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  int $cart_id ID of abandoned cart.
 	 * @return string       Cart recovery URL on successful retrieval (void on failure).
 	 */
@@ -66,7 +66,7 @@ class CartRecovery extends Service {
 	 * Recovery saved cart from hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @return void
 	 */
 	public function recover_cart() {
@@ -108,7 +108,7 @@ class CartRecovery extends Service {
 	 * Recover products from saved cart data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  array $products Array of product data.
 	 */
 	protected function recover_products( $products ) {
@@ -151,7 +151,7 @@ class CartRecovery extends Service {
 	 * Recover and apply customer billing and shipping info from saved cart data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  array  $customer_info Array of customer billing and shipping info.
 	 * @param  string $type          Type of customer info to recover (billing or shipping).
 	 */
