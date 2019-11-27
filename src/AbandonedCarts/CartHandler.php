@@ -42,6 +42,7 @@ class CartHandler extends Service {
 		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
 	}
 
+
 	/**
 	 * Load front-end scripts.
 	 *
@@ -102,10 +103,13 @@ class CartHandler extends Service {
 	/**
 	 * Update current cart session data in db.
 	 *
+	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this,
+	 * as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
+	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param string $billing_email Optional, default empty. A billing email to specify.
+	 * @param mixed $billing_email Optional, default empty. A billing email to specify.
 	 * @return void
 	 */
 	public function update_cart_data( $billing_email = '' ) {
@@ -128,9 +132,9 @@ class CartHandler extends Service {
 		// Check if submission attempted.
 		if ( isset( $_POST['billing_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.
-			array_walk( $customer_data['billing'], [ $this, 'amalgamate_customer_data' ], 'billing' );
-			array_walk( $customer_data['shipping'], [ $this, 'amalgamate_customer_data' ], 'shipping' );
-		} else if ( ! empty( $billing_email ) ) {
+			array_walk( $customer_data['billing'], [ $this, 'merge_customer_data' ], 'billing' );
+			array_walk( $customer_data['shipping'], [ $this, 'merge_customer_data' ], 'shipping' );
+		} else if ( ! empty( $billing_email ) && is_string( $billing_email ) ) {
 			$customer_data['billing']['email'] = $billing_email;
 		} else {
 			// Retrieve cart data for current user, if exists.
@@ -166,7 +170,7 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Array_walk callback that amalgamates Customer data fields from db and from session.
+	 * Array_walk callback that merges Customer data fields with data from db or session.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -174,7 +178,7 @@ class CartHandler extends Service {
 	 * @param  string $key    Key of posted array item.
 	 * @param  string $type   Type of array (billing or shipping).
 	 */
-	protected function amalgamate_customer_data( &$value, $key, $type ) {
+	protected function merge_customer_data( &$value, $key, $type ) {
 		$posted = WC()->checkout()->get_posted_data();
 		$value  = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
