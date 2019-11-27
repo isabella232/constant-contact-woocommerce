@@ -50,6 +50,10 @@ class CartHandler extends Service {
 	 * @since  1.2.0
 	 */
 	public function enqueue_scripts() {
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
 		wp_enqueue_script( 'cc-woo-public' );
 	}
 
