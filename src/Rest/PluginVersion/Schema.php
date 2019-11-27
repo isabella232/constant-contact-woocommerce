@@ -3,7 +3,7 @@
  * Schema for wc/cc-woo/plugin-version endpoint.
  *
  * @package WebDevStudios\CCForWoo\Rest\PluginVersion
- * @since   2019-11-21
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\Rest\PluginVersion;
@@ -12,7 +12,7 @@ namespace WebDevStudios\CCForWoo\Rest\PluginVersion;
  * Class PluginVersion\Schema
  *
  * @package WebDevStudios\CCForWoo\Rest\PluginVersion
- * @since   2019-11-21
+ * @since   1.2.0
  */
 class Schema {
 
@@ -20,7 +20,7 @@ class Schema {
 	 * Get the Plugin Version's schema for public consumption.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-21
+	 * @since  1.2.0
 	 *
 	 * @return array
 	 */

@@ -67,12 +67,6 @@ export default class GuestCartCapture {
             data: {
                 nonce: this.els.wcCheckoutNonce.value,
                 email: emailAddr
-            },
-            success: response => {
-                console.log( response );
-            },
-            error: response => {
-                console.log( response );
             }
         } );
     }
