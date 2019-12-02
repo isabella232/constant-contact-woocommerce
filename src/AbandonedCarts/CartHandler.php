@@ -4,7 +4,7 @@
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-11
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\AbandonedCarts;
@@ -20,7 +20,7 @@ use DateInterval;
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-11
+ * @since   1.2.0
  */
 class CartHandler extends Service {
 
@@ -28,21 +28,65 @@ class CartHandler extends Service {
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 */
 	public function register_hooks() {
+		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
 		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_cart_data' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
 		add_action( 'cc_woo_check_expired_carts', [ $this, 'delete_expired_carts' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
 		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
+
+		add_action( 'wp_ajax_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
+		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
+	}
+
+
+	/**
+	 * Load front-end scripts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  1.2.0
+	 */
+	public function enqueue_scripts() {
+		if ( is_user_logged_in() ) {
+			return;
+		}
+
+		wp_enqueue_script( 'cc-woo-public' );
+	}
+
+	/**
+	 * AJAX handler for attempting to capture guest checkouts.
+	 *
+	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
+	 * @since  1.2.0
+	 */
+	public function maybe_capture_guest_checkout() {
+		$data = filter_input_array( INPUT_POST, [
+			'nonce' => FILTER_SANITIZE_STRING,
+			'email' => FILTER_SANITIZE_EMAIL,
+		] );
+
+		if ( empty( $data['nonce'] ) || ! wp_verify_nonce( $data['nonce'], 'woocommerce-process_checkout' ) ) {
+			wp_send_json_error( esc_html__( 'Invalid nonce.', 'cc-woo' ) );
+		}
+
+		if ( ! filter_var( $data['email'], FILTER_VALIDATE_EMAIL ) ) {
+			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
+		}
+
+		$this->update_cart_data( $data['email'] );
+
+		wp_send_json_success();
 	}
 
 	/**
 	 * Either call an update of cart data which will be saved or remove cart data based on what template we arrive at.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  string $template_name Current template file name.
 	 * @param  string $template_path Current template path.
 	 * @param  string $located       Full local path to current template file.
@@ -63,11 +107,16 @@ class CartHandler extends Service {
 	/**
 	 * Update current cart session data in db.
 	 *
+	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this,
+	 * as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
+	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
+	 * @since  1.2.0
+	 *
+	 * @param mixed $billing_email Optional, default empty. A billing email to specify.
 	 * @return void
 	 */
-	public function update_cart_data() {
+	public function update_cart_data( $billing_email = '' ) {
 		$user_id       = get_current_user_id();
 		$customer_data = [
 			'billing'  => [],
@@ -75,7 +124,8 @@ class CartHandler extends Service {
 		];
 
 		// Get saved customer data if exists. If guest user, blank customer data will be generated.
-		$customer                  = new WC_Customer( $user_id );
+		$customer = new WC_Customer( $user_id );
+
 		$customer_data['billing']  = $customer->get_billing();
 		$customer_data['shipping'] = $customer->get_shipping();
 
@@ -86,8 +136,10 @@ class CartHandler extends Service {
 		// Check if submission attempted.
 		if ( isset( $_POST['billing_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
 			// Update customer data from posted data.
-			array_walk( $customer_data['billing'], [ $this, 'process_customer_data' ], 'billing' );
-			array_walk( $customer_data['shipping'], [ $this, 'process_customer_data' ], 'shipping' );
+			array_walk( $customer_data['billing'], [ $this, 'merge_customer_data' ], 'billing' );
+			array_walk( $customer_data['shipping'], [ $this, 'merge_customer_data' ], 'shipping' );
+		} else if ( ! empty( $billing_email ) && is_string( $billing_email ) ) {
+			$customer_data['billing']['email'] = $billing_email;
 		} else {
 			// Retrieve cart data for current user, if exists.
 			$cart_data = $this::get_cart_data(
@@ -122,15 +174,15 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Merge database and posted customer data.
+	 * Array_walk callback that merges Customer data fields with data from db or session.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @param  string $value  Value of posted array item.
 	 * @param  string $key    Key of posted array item.
 	 * @param  string $type   Type of array (billing or shipping).
 	 */
-	protected function process_customer_data( &$value, $key, $type ) {
+	protected function merge_customer_data( &$value, $key, $type ) {
 		$posted = WC()->checkout()->get_posted_data();
 		$value  = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
@@ -139,7 +191,7 @@ class CartHandler extends Service {
 	 * Retrieve specific user's cart data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-16
+	 * @since  1.2.0
 	 * @param  string $select        Field to return.
 	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
 	 * @param  array  $where_values  Array of WHERE clause values.
@@ -171,7 +223,7 @@ class CartHandler extends Service {
 	 * Helper function to retrieve cart contents based on cart hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  int $cart_id ID of abandoned cart.
 	 * @return string       Hash key string of abandoned cart.
 	 */
@@ -189,7 +241,7 @@ class CartHandler extends Service {
 	 * Helper function to retrieve cart contents based on cart hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-17
+	 * @since  1.2.0
 	 * @param  string $cart_hash Cart key hash string.
 	 * @return array             Cart contents.
 	 */
@@ -207,7 +259,7 @@ class CartHandler extends Service {
 	 * Save current cart data to db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 * @param  int   $user_id       Current user ID.
 	 * @param  array $customer_data Customer billing and shipping data.
 	 */
@@ -260,7 +312,7 @@ class CartHandler extends Service {
 	 * Remove current cart session data from db upon successful order submission.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  WC_Order $order Newly submitted order object.
 	 * @return void
 	 */
@@ -276,7 +328,7 @@ class CartHandler extends Service {
 	 * Helper function to remove cart session data from db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 * @param  int    $user_id    ID of cart owner.
 	 * @param  string $user_email Email of cart owner.
 	 */
@@ -301,7 +353,7 @@ class CartHandler extends Service {
 	 * Delete expired carts.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-11
+	 * @since  1.2.0
 	 */
 	public function delete_expired_carts() {
 		global $wpdb;

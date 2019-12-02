@@ -4,7 +4,7 @@
  *
  * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Rest
- * @since   2019-11-13
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\Rest;
@@ -19,14 +19,14 @@ use WebDevStudios\OopsWP\Structure\Service;
  *
  * @author  George Gecewicz <george.gecewicz@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Rest
- * @since   2019-11-13
+ * @since   1.2.0
  */
 class Registrar extends Service {
 
 	/**
 	 * Namespace for the endpoints this registrar registers.
 	 *
-	 * @since 2019-10-16
+	 * @since 1.2.0
 	 *
 	 * @var string
 	 */
@@ -36,7 +36,7 @@ class Registrar extends Service {
 	 * Register hooks.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-13
+	 * @since  1.2.0
 	 */
 	public function register_hooks() {
 		add_action( 'rest_api_init', [ $this, 'init_rest_endpoints' ] );
@@ -46,7 +46,7 @@ class Registrar extends Service {
 	 * Initialize REST endpoints.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-13
+	 * @since  1.2.0
 	 */
 	public function init_rest_endpoints() {
 		( new AbandonedCarts() )->register_routes();

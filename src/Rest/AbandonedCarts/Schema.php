@@ -3,7 +3,7 @@
  * Schema for wc/cc-woo/abandoned-carts endpoint.
  *
  * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
- * @since   2019-11-13
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
@@ -12,7 +12,7 @@ namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
  * Class AbandonedCarts\Schema
  *
  * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
- * @since   2019-11-13
+ * @since   1.2.0
  */
 class Schema {
 
@@ -20,7 +20,7 @@ class Schema {
 	 * Get the query params for Abandoned Carts.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-13
+	 * @since  1.2.0
 	 *
 	 * @return array
 	 */
@@ -54,7 +54,7 @@ class Schema {
 	 * Get the Abandoned Cart's schema for public consumption.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-13
+	 * @since  1.2.0
 	 *
 	 * @return array
 	 */
@@ -171,7 +171,7 @@ class Schema {
 	 * Get properties for individual Products definition in Schema.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since  2019-11-13
+	 * @since  1.2.0
 	 *
 	 * @return array
 	 */

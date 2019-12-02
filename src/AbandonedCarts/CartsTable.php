@@ -4,7 +4,7 @@
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-09
+ * @since   1.2.0
  */
 
 namespace WebDevStudios\CCForWoo\AbandonedCarts;
@@ -16,28 +16,28 @@ use WebDevStudios\OopsWP\Structure\Service;
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\AbandonedCarts
- * @since   2019-10-09
+ * @since   1.2.0
  */
 class CartsTable extends Service {
 
 	/**
 	 * Current version of abandoned carts table.
 	 *
-	 * @since 2019-10-09
+	 * @since 1.2.0
 	 */
 	const DB_VERSION = '1.4';
 
 	/**
 	 * Option name for abandoned carts db version.
 	 *
-	 * @since 2019-10-09
+	 * @since 1.2.0
 	 */
 	const DB_VERSION_OPTION_NAME = 'cc_abandoned_carts_db_version';
 
 	/**
 	 * Abandoned carts table name.
 	 *
-	 * @since 2019-10-09
+	 * @since 1.2.0
 	 */
 	const TABLE_NAME = 'cc_abandoned_carts';
 
@@ -45,7 +45,7 @@ class CartsTable extends Service {
 	 * Register hooks with WordPress.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-09
+	 * @since  1.2.0
 	 */
 	public function register_hooks() {
 		add_action( 'admin_init', [ $this, 'update_db_check' ] );
@@ -55,7 +55,7 @@ class CartsTable extends Service {
 	 * Create abandoned carts table.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
+	 * @since  1.2.0
 	 */
 	public function create_table() {
 		global $wpdb;
@@ -86,7 +86,7 @@ class CartsTable extends Service {
 	 * Update abandoned carts table.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-15
+	 * @since  1.2.0
 	 */
 	protected function update_table() {
 		global $wpdb;
@@ -114,7 +114,7 @@ class CartsTable extends Service {
 	 * Check if table exists and is up-to-date.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
+	 * @since  1.2.0
 	 */
 	public function update_db_check() {
 		if ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
@@ -127,7 +127,7 @@ class CartsTable extends Service {
 	 * A simple utility for grabbing the full table name, including the WPDB table prefix.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  2019-10-10
+	 * @since  1.2.0
 	 *
 	 * @return string
 	 */
