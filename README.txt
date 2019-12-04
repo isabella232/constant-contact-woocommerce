@@ -1,11 +1,11 @@
 === Constant Contact + WooCommerce ===
-Contributors: constantcontact, znowebdev, jmichaelward, webdevstudios
+Contributors: constantcontact, webdevstudios, znowebdev, jmichaelward, ggwicz, ravedev
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
-Tested up to: 5.2.3
-Stable tag: 1.1.0
+Tested up to: 5.3.0
+Stable tag: 1.2.0
 Requires PHP: 7.2
-WC tested up to: 3.5.6
+WC tested up to: 3.8.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -35,8 +35,13 @@ With Constant Contact you can:
 
 == Changelog ==
 
+= 1.2.0 =
+
+* New - Introduced the "abandoned carts" feature, where abandoned carts are captured and stored in the database for further action.
+* New — Introduced new authenticated REST API endpoints that list abandoned carts.
+
 = 1.1.0 =
 
-* Added: Campaign ID data inclusion for purchased orders originating from your mailing campaigns.
-* Fixed: compatibility issue with phone numbers and PHP 7.3
-* Updated: Wording in our WooCommerce tab.
+* New - Added Campaign ID data inclusion for purchased orders originating from your mailing campaigns.
+* Fix - Fixed compatibility issue with phone numbers and PHP 7.3
+* Tweak - Updated wording in our WooCommerce tab.
