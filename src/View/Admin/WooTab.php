@@ -147,6 +147,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function register_hooks() {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
+		add_action( "woocommerce_settings_{$this->id}", [ $this, 'enqueue_scripts' ] );
 
 		// Output settings sections.
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
@@ -186,7 +187,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function get_sections() {
 		$sections = [
 			''                                      => esc_html__( 'Store Information', 'cc-woo' ),
-			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' )
+			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' ),
 		];
 
 		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
@@ -281,8 +282,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		$groups[] = [
 			'id'          => 'cc_woo',
 			'label'       => esc_html__( 'Constant Contact WooCommerce', 'cc-woo' ),
-			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.',
-				'cc-woo' ),
+			'description' => esc_html__( 'This endpoint provides information for the Constant Contact for WooCommerce plugin.', 'cc-woo' ),
 		];
 
 		return $groups;
@@ -497,7 +497,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'title' => '',
 				'type'  => 'title',
 				'desc'  => esc_html__( "Start marketing to your customers right away by importing all your contacts now.\n\nDo you want to import your current contacts? By selecting yes below, you agree you have permission to market to your current contacts.", 'cc-woo' ),
-			]
+			],
 		];
 
 		$historical_import_field = new \WebDevStudios\CCForWoo\View\Admin\Field\ImportHistoricalData();
@@ -704,8 +704,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			return;
 		}
 
-		// translators: placeholder is the field's title.
 		$this->errors[ $field['id'] ] = sprintf(
+			/* Translators: Placeholder is the field's title. */
 			esc_html__( 'The "%s" field is required to connect to Constant Contact.', 'cc-woo' ),
 			$field['title']
 		);
