@@ -12,26 +12,34 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 Add products to your emails and sync your contacts.
 
 == Description ==
-About Constant Contact
 
-Constant Contact makes it easy to connect with your customers, grow your business, and watch big-time results pour in—in
-real time. Our modern, mobile-optimized templates and drag-and-drop editor make it easy to insert your products, customize,
-and send targeted emails that engage your customers on every device.
+Constant Contact is built to simplify the complex and confusing task of marketing your idea, even if you’re a beginner. And our award-winning team of marketing advisors is there for every customer, every step of the way, offering live, real-time marketing advice on the phone or online anytime you get stuck. Whether it’s creating great-looking email marketing campaigns, building an awesome website with ease, creating a beautiful logo for your brand, running Google Ads to get more website traffic, or finding new customers on social media, we’ve got all the tools, features, and expert guidance you need to help you succeed - all in one place.
 
-Unleash the power of your business—and drive more revenue—by integrating Constant Contact with WooCommerce today.
+**Unleash the power of your business — and drive more revenue — by integrating Constant Contact with WooCommerce today.**
+
+https://youtu.be/vn_GFcBCspc
 
 With Constant Contact you can:
-- Drag and drop products from your store into any email and customize the details.
-- Automatically import WooCommere contacts into your Constant Contact account.
-- Send the right message with pre-segmented lists including:
---- All WooCommerce contacts who opt in to receive email marketing
---- Recent Customers: Purchased within 30 days
---- First-time Customers: Purchased once
---- Repeat Customers: Made more than one purchase
---- Lapsed Customers: Have not made a purchase in more than 120 days
---- Prospects: Have not made a purchase yet
-- Send automated welcome emails and behavior based trigger emails
-- Find new customers with Facebook and Instagram ads
+
+* Easily connect WooCommerce to your Constant Contact account and sync contacts automatically.
+* Drag and drop a product(s) from your WooCommerce catalog and insert into your email in seconds.
+* Target the right customer/prospect with the right message with pre-defined segments based on your customers’ purchasing behavior:
+
+ * All WooCommerce contacts who opt in to receive email emarketing
+ * Recent Customers: Purchased within 30 days
+ * First-time Customers: Purchased once
+ * Repeat Customers: Made more than one purchase
+ * Lapsed Customers: Have not made a purchase in more than 120 days
+ * Prospects: Have not made a purchase yet
+* Bring customers back to your online store with automated, targeted emails.
+* Find new customers with our social marketing and advertising tools to expand your reach.
+
+== Screenshots ==
+
+1. Drag the WooCommerce action block directly into your email.
+2. Edit the details of your product.
+3. Pre-filtered segmented lists.
+4. Syncing status for contacts.
 
 == Changelog ==
 
