@@ -147,7 +147,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function register_hooks() {
 		add_filter( 'woocommerce_settings_tabs_array', [ $this, 'add_settings_page' ], 99 );
 		add_action( "woocommerce_settings_{$this->id}", [ $this, 'output' ] );
-		add_action( "woocommerce_settings_{$this->id}", [ $this, 'enqueue_scripts' ] );
 
 		// Output settings sections.
 		add_action( "woocommerce_sections_{$this->id}", [ $this, 'output_sections' ] );
