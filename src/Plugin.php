@@ -21,7 +21,7 @@ use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
-use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
+use WebDevStudios\CCForWoo\AbandonedCarts\CheckoutsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\CartRecovery;
 use WebDevStudios\CCForWoo\Rest\Registrar as RestRegistrar;
 
@@ -76,7 +76,7 @@ final class Plugin extends ServiceRegistrar {
 		Disconnect::class,
 		MenuItem::class,
 		CartHandler::class,
-		CartsTable::class,
+		CheckoutsTable::class,
 		CartRecovery::class,
 		RestRegistrar::class,
 	];
@@ -245,7 +245,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @since 2019-10-24
 	 */
 	private function create_abandoned_carts_table() {
-		( new CartsTable() )->create_table();
+		( new CheckoutsTable() )->create_table();
 	}
 
 	/**

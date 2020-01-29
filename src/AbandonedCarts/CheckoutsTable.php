@@ -1,45 +1,45 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
- * Class to handle creation of abandoned carts table.
+ * Class to handle creation of abandoned checkouts table.
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\AbandonedCheckouts
  * @since   1.2.0
  */
 
-namespace WebDevStudios\CCForWoo\AbandonedCarts;
+namespace WebDevStudios\CCForWoo\AbandonedCheckouts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
- * Class CartsTable
+ * Class CheckoutsTable
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\AbandonedCheckouts
  * @since   1.2.0
  */
-class CartsTable extends Service {
+class CheckoutsTable extends Service {
 
 	/**
-	 * Current version of abandoned carts table.
+	 * Current version of abandoned checkouts table.
 	 *
 	 * @since 1.2.0
 	 */
-	const DB_VERSION = '1.4';
+	const DB_VERSION = '2.0';
 
 	/**
-	 * Option name for abandoned carts db version.
+	 * Option name for abandoned checkouts db version.
 	 *
 	 * @since 1.2.0
 	 */
-	const DB_VERSION_OPTION_NAME = 'cc_abandoned_carts_db_version';
+	const DB_VERSION_OPTION_NAME = 'cc_abandoned_checkouts_db_version';
 
 	/**
-	 * Abandoned carts table name.
+	 * Abandoned checkouts table name.
 	 *
 	 * @since 1.2.0
 	 */
-	const TABLE_NAME = 'cc_abandoned_carts';
+	const TABLE_NAME = 'cc_abandoned_checkouts';
 
 	/**
 	 * Register hooks with WordPress.
@@ -52,7 +52,7 @@ class CartsTable extends Service {
 	}
 
 	/**
-	 * Create abandoned carts table.
+	 * Create abandoned checkouts table.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -63,17 +63,17 @@ class CartsTable extends Service {
 		$table_name = self::get_table_name();
 
 		$sql = "CREATE TABLE {$table_name} (
-			cart_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			checkout_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			user_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			user_email varchar(200) NOT NULL DEFAULT '',
-			cart_contents longtext NOT NULL,
-			cart_updated datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			cart_updated_ts int(11) unsigned NOT NULL DEFAULT 0,
-			cart_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-			cart_created_ts int(11) unsigned NOT NULL DEFAULT 0,
-			cart_hash char(32) NOT NULL DEFAULT '',
-			PRIMARY KEY (cart_id),
-			UNIQUE KEY cart_hash (cart_hash)
+			checkout_contents longtext NOT NULL,
+			checkout_updated datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			checkout_updated_ts int(11) unsigned NOT NULL DEFAULT 0,
+			checkout_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+			checkout_created_ts int(11) unsigned NOT NULL DEFAULT 0,
+			checkout_uuid char(32) NOT NULL DEFAULT '',
+			PRIMARY KEY (checkout_id),
+			UNIQUE KEY checkout_uuid (checkout_uuid)
 		) {$wpdb->get_charset_collate()}";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
@@ -83,7 +83,7 @@ class CartsTable extends Service {
 	}
 
 	/**
-	 * Update abandoned carts table.
+	 * Update abandoned checkouts table.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -96,12 +96,12 @@ class CartsTable extends Service {
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
 
-			// Update `cart_hash` field for all records in versions older than 1.4.
-			if ( floatval( self::DB_VERSION_OPTION_NAME ) < 1.4 ) {
+			// Remove all abandoned checkouts for versions older than 2.0.
+			if ( floatval( get_site_option( self::DB_VERSION_OPTION_NAME ) ) < 2.0 ) {
 				$wpdb->query(
-					"UPDATE {$table_name}
-					SET cart_hash = HEX(cart_hash)"
+					"DROP TABLE {$table_name}"
 				);
+				$this->create_table();
 			}
 
 			// Any data updates would be performed here.
@@ -117,8 +117,13 @@ class CartsTable extends Service {
 	 * @since  1.2.0
 	 */
 	public function update_db_check() {
-		if ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
+		if ( ! get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
+
+			// Fresh install: create table.
 			$this->create_table();
+		} else if ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
+
+			// Updated install: update table.
 			$this->update_table();
 		}
 	}

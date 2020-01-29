@@ -200,7 +200,7 @@ class CartHandler extends Service {
 	public static function get_cart_data( $select, $where, $where_values ) {
 		global $wpdb;
 
-		$table_name = CartsTable::get_table_name();
+		$table_name = CheckoutsTable::get_table_name();
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
 
 		// Construct query to return cart data.
@@ -267,7 +267,7 @@ class CartHandler extends Service {
 		global $wpdb;
 
 		$current_time = current_time( 'mysql', 1 );
-		$table_name   = CartsTable::get_table_name();
+		$table_name   = CheckoutsTable::get_table_name();
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		$wpdb->query(
@@ -337,7 +337,7 @@ class CartHandler extends Service {
 
 		// Delete current cart data.
 		$wpdb->delete(
-			CartsTable::get_table_name(),
+			CheckoutsTable::get_table_name(),
 			[
 				'user_id'    => $user_id,
 				'user_email' => $user_email,
@@ -358,8 +358,8 @@ class CartHandler extends Service {
 	public function delete_expired_carts() {
 		global $wpdb;
 
-		// Delete all carts at least 30 days old.
-		$table_name = CartsTable::get_table_name();
+		// Delete all checkouts at least 30 days old.
+		$table_name = CheckoutsTable::get_table_name();
 
 		$wpdb->query(
 			$wpdb->prepare(

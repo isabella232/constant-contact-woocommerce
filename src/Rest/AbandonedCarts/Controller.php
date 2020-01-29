@@ -15,7 +15,7 @@ use WP_REST_Response;
 use WP_Error;
 use WC_Product;
 
-use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
+use WebDevStudios\CCForWoo\AbandonedCarts\CheckoutsTable;
 use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
 use WebDevStudios\CCForWoo\Rest\Registrar;
 
@@ -180,7 +180,7 @@ class Controller extends WP_REST_Controller {
 	private function get_cart_data( int $per_page, int $offset, string $date_min, string $date_max ) : array {
 		global $wpdb;
 
-		$table_name  = CartsTable::get_table_name();
+		$table_name  = CheckoutsTable::get_table_name();
 		$dates_where = $this->get_dates_where( $date_min, $date_max );
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
