@@ -43,6 +43,8 @@ class CheckoutHandler extends Service {
 
 		add_action( 'wp_ajax_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
 		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
+
+		add_action( 'woocommerce_checkout_create_order', [ $this, 'clear_purchased_data' ], 10, 2 );
 	}
 
 
@@ -103,11 +105,6 @@ class CheckoutHandler extends Service {
 		// If checkout page displayed, save checkout data.
 		if ( 'checkout/form-checkout.php' === $template_name ) {
 			$this->update_checkout_data();
-		}
-
-		// If thankyou page displayed, clear checkout data.
-		if ( isset( $args['order'] ) && 'checkout/thankyou.php' === $template_name ) {
-			$this->clear_purchased_data( $args['order'] );
 		}
 	}
 
@@ -271,15 +268,18 @@ class CheckoutHandler extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param  WC_Order $order Newly submitted order object.
+	 * @param  WC_Order $order Newly created order object.
+	 * @param  array    $data  Posted data.
 	 * @return void
 	 */
-	public function clear_purchased_data( $order ) {
+	public function clear_purchased_data( WC_Order $order, array $data ) {
 		if ( empty( $order ) ) {
 			return;
 		}
 
+		$order->update_meta_data( '_checkout_uuid', WC()->session->get( 'checkout_uuid' ) );
 		$this->remove_checkout_data();
+		WC()->session->__unset( 'checkout_uuid' );
 	}
 
 	/**
