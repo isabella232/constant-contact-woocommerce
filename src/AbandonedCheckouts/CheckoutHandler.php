@@ -154,20 +154,19 @@ class CheckoutHandler extends Service {
 
 		$table_name = CheckoutsTable::get_table_name();
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
+		$where      = empty( $where ) ? 1 : $where;
 
 		// Construct query to return checkout data.
 		// phpcs:disable -- Disabling a number of sniffs that erroneously flag following block of code.
 		// $where often includes placeholders for replacement via $wpdb->prepare(). $where_values provides those values.
-		return maybe_unserialize(
-			$wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT {$select}
-					FROM {$table_name}
-					WHERE {$where}
-					ORDER BY {$order_by} {$order}
-					{$limit}",
-					array_merge( $where_args, $limit_args )
-				)
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT {$select}
+				FROM {$table_name}
+				WHERE {$where}
+				ORDER BY {$order_by} {$order}
+				{$limit}",
+				array_merge( $where_args, $limit_args )
 			)
 		);
 		// phpcs:enable
@@ -183,13 +182,19 @@ class CheckoutHandler extends Service {
 	 * @return array                 Checkout contents.
 	 */
 	public static function get_checkout_contents( $checkout_uuid ) {
-		return self::get_checkout_data(
+		$checkout = self::get_checkout_data(
 			'checkout_contents',
 			'checkout_uuid = %s',
 			[
 				$checkout_uuid,
 			]
 		);
+
+		if ( empty( $checkout ) ) {
+			return [];
+		}
+
+		return maybe_unserialize( array_shift( $checkout )->checkout_contents );
 	}
 
 	/**
@@ -203,6 +208,12 @@ class CheckoutHandler extends Service {
 	 */
 	protected function save_checkout_data( string $billing_email = '' ) {
 		global $wpdb;
+
+		$billing_email = ! empty( $billing_email ) ? $billing_email : WC()->checkout->get_value( 'billing_email' );
+
+		if ( empty( $billing_email ) ) {
+			return;
+		}
 
 		// Check for existing checkout session.
 		if ( ! WC()->session->get( 'checkout_uuid' ) ) {
@@ -241,7 +252,7 @@ class CheckoutHandler extends Service {
 					%s
 				) ON DUPLICATE KEY UPDATE `user_id` = VALUES(`user_id`), `user_email` = VALUES(`user_email`), `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
 				get_current_user_id(),
-				! empty( $billing_email ) ? $billing_email : WC()->checkout->get_value( 'billing_email' ),
+				$billing_email,
 				maybe_serialize( [
 					'products'        => array_values( WC()->cart->get_cart() ),
 					'coupons'         => WC()->cart->get_applied_coupons(),
