@@ -16,6 +16,7 @@ use WP_Error;
 use WC_Product;
 
 use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutsTable;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutHandler;
 use WebDevStudios\CCForWoo\Rest\Registrar;
 
 /**
@@ -96,15 +97,21 @@ class Controller extends WP_REST_Controller {
 	public function get_items( $request ) {
 		global $wpdb;
 
-		$params   = $request->get_query_params();
-		$page     = $this->get_page_param( $params );
-		$per_page = $this->get_per_page_param( $params );
-		$date_min = $this->get_date_min_param( $params );
-		$date_max = $this->get_date_max_param( $params );
-		$offset   = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
+		$params      = $request->get_query_params();
+		$page        = $this->get_page_param( $params );
+		$per_page    = $this->get_per_page_param( $params );
+		$offset      = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
+		$date_min    = $this->get_date_min_param( $params );
+		$date_max    = $this->get_date_max_param( $params );
+		$dates_where = $this->get_dates_where( $date_min, $date_max );
+		$select      = '*';
+		$order_by    = 'checkout_updated_ts';
+		$order       = 'DESC';
+		$limit       = 'LIMIT %d OFFSET %d';
+		$limit_args  = [ $per_page, $offset ];
 
 		$response = [
-			'checkouts'         => $this->get_checkout_data( $per_page, $offset, $date_min, $date_max ),
+			'checkouts'         => $this->prepare_checkout_data_for_api_response( CheckoutHandler::get_checkout_data( $select, $dates_where['predicates'] ?? '', $dates_where['args'] ?? [], $order_by, $order, $limit, $limit_args ) ),
 			'currency_code' => $this->get_currency_code(),
 			'page'          => $page,
 		];
@@ -165,78 +172,39 @@ class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get an array of checkout data.
-	 *
-	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-16
-	 *
-	 * @param int    $per_page The per_page value from the REST request.
-	 * @param int    $offset The offset for use in SQL query, based on page number specified in REST request.
-	 * @param string $date_min The oldest created_at date to get results from.
-	 * @param string $date_max The most recent created_at date to get results from.
-	 * @return array
-	 */
-	private function get_checkout_data( int $per_page, int $offset, string $date_min, string $date_max ) : array {
-		global $wpdb;
-
-		$table_name  = CheckoutsTable::get_table_name();
-		$dates_where = $this->get_dates_where( $date_min, $date_max );
-
-		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
-		$data = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT
-					checkout_id,
-					user_id,
-					user_email,
-					checkout_contents,
-					checkout_updated,
-					checkout_updated_ts,
-					checkout_created,
-					checkout_created_ts,
-					checkout_hash
-				FROM {$table_name}
-				{$dates_where}
-				ORDER BY checkout_updated_ts
-				DESC
-				LIMIT %d OFFSET %d",
-				$per_page,
-				$offset
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL
-
-		return $this->prepare_checkout_data_for_api_response( $data );
-	}
-
-	/**
 	 * Gets the WHERE clause for passing date_min and date_max values via SQL.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-28
 	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since NEXT - Updated to fit CheckoutHandler::get_checkout_data setup for WHERE clause.
+	 *
 	 * @param string $date_min The oldest created_at date to get results from.
 	 * @param string $date_max The most recent created_at date to get results from.
-	 * @return string
+	 * @return array           Array of WHERE clause predicates and arguments.
 	 */
-	private function get_dates_where( string $date_min, string $date_max ) : string {
-		if ( ! empty( $date_min ) && empty( $date_max ) ) {
-			return "WHERE checkout_created >= '$date_min'";
-		}
-
-		if ( empty( $date_min ) && ! empty( $date_max ) ) {
-			return "WHERE checkout_created <= '$date_max'";
-		}
-
-		if ( ! empty( $date_min ) && ! empty( $date_max ) ) {
-			return "WHERE checkout_created >= '$date_min' AND checkout_created <= '$date_max'";
-		}
-
+	private function get_dates_where( string $date_min, string $date_max ) : array {
 		if ( empty( $date_min ) && empty( $date_max ) ) {
-			return '';
+			return [];
 		}
 
-		return '';
+		$where = [
+			'predicates' => [],
+			'args'       => [],
+		];
+
+		if ( ! empty( $date_min ) ) {
+			$where['predicates'][] = 'checkout_created >= %s';
+			$where['args'][]       = $date_min;
+		}
+
+		if ( ! empty( $date_max ) ) {
+			$where['predicates'][] = 'checkout_created <= %s';
+			$where['args'][]       = $date_max;
+		}
+
+		return $where;
 	}
 
 	/**
@@ -256,7 +224,7 @@ class Controller extends WP_REST_Controller {
 			$checkout->checkout_total        = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_total' );
 			$checkout->checkout_subtotal_tax = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_subtotal_tax' );
 			$checkout->checkout_total_tax    = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_tax' );
-			$checkout->checkout_recovery_url = $this->get_checkout_recovery_url( $checkout->checkout_hash );
+			$checkout->checkout_recovery_url = $this->get_checkout_recovery_url( $checkout->checkout_uuid );
 		}
 
 		return $data;
@@ -300,11 +268,11 @@ class Controller extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param string $checkout_hash The checkout hash.
+	 * @param string $checkout_uuid The checkout UUID.
 	 * @return string
 	 */
-	private function get_checkout_recovery_url( string $checkout_hash ) : string {
-		return add_query_arg( 'recover-checkout', $checkout_hash, home_url() );
+	private function get_checkout_recovery_url( string $checkout_uuid ) : string {
+		return add_query_arg( 'recover-checkout', $checkout_uuid, home_url() );
 	}
 
 	/**
