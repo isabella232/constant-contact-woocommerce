@@ -264,9 +264,21 @@ class CheckoutHandler extends Service {
 	 * @since  1.2.0
 	 * @param  int   $user_id       Current user ID.
 	 * @param  array $customer_data Customer billing and shipping data.
+	 * @return void
 	 */
 	protected function save_checkout_data( $user_id, $customer_data ) {
 		global $wpdb;
+
+		// Check for existing checkout session.
+		if ( ! WC()->session->get( 'checkout_uuid' ) ) {
+
+			// Only create session if currently on checkout page.
+			if ( ! is_checkout() ) {
+				return;
+			}
+
+			WC()->session->set( 'checkout_uuid', wp_generate_uuid4() );
+		}
 
 		$current_time = current_time( 'mysql', 1 );
 		$table_name   = CheckoutsTable::get_table_name();
@@ -282,7 +294,7 @@ class CheckoutHandler extends Service {
 					`checkout_updated_ts`,
 					`checkout_created`,
 					`checkout_created_ts`,
-					`checkout_hash`
+					`checkout_uuid`
 				) VALUES (
 					%d,
 					%s,
@@ -291,8 +303,8 @@ class CheckoutHandler extends Service {
 					%d,
 					%s,
 					%d,
-					MD5(CONCAT(user_id, user_email))
-				) ON DUPLICATE KEY UPDATE `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
+					%s
+				) ON DUPLICATE KEY UPDATE `user_id` = VALUES(`user_email`), `user_email` = VALUES(`user_email`), `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
 				$user_id,
 				$customer_data['billing']['email'],
 				maybe_serialize( [
@@ -304,7 +316,8 @@ class CheckoutHandler extends Service {
 				$current_time,
 				strtotime( $current_time ),
 				$current_time,
-				strtotime( $current_time )
+				strtotime( $current_time ),
+				WC()->session->get( 'checkout_uuid' )
 			)
 		);
 		// phpcs:enable
