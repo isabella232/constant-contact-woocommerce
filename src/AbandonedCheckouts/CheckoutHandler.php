@@ -126,12 +126,7 @@ class CheckoutHandler extends Service {
 		// Reset billing email if not string.
 		$billing_email = is_string( $billing_email ) ? $billing_email : '';
 
-		// Delete saved checkout if cart emptied; update otherwise.
-		if ( false === WC()->cart->is_empty() ) {
-			$this->save_checkout_data( $billing_email );
-		} else {
-			$this->remove_checkout_data();
-		}
+		$this->save_checkout_data( $billing_email );
 	}
 
 	/**
@@ -209,7 +204,10 @@ class CheckoutHandler extends Service {
 	protected function save_checkout_data( string $billing_email = '' ) {
 		global $wpdb;
 
-		$billing_email = ! empty( $billing_email ) ? $billing_email : WC()->checkout->get_value( 'billing_email' );
+		// Get current user email.
+		$session_customer      = WC()->session->get( 'customer' );
+		$session_billing_email = is_array( $session_customer ) && key_exists( 'email', $session_customer ) ? $session_customer['email'] : '';
+		$billing_email         = is_email( $billing_email ) ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' );
 
 		if ( empty( $billing_email ) ) {
 			return;
