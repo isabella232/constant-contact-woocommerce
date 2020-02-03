@@ -32,11 +32,14 @@ class CheckoutHandler extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
+
 		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_checkout_data' ], 10, 4 );
 		add_action( 'woocommerce_checkout_process', [ $this, 'update_checkout_data' ] );
-		add_action( 'cc_woo_check_expired_checkouts', [ $this, 'delete_expired_checkouts' ] );
+		add_action( 'woocommerce_checkout_updated', [ $this, 'update_checkout_data' ] );
 		add_action( 'woocommerce_calculate_totals', [ $this, 'update_checkout_data' ] );
-		add_action( 'woocommerce_checkout_item_removed', [ $this, 'update_checkout_data' ] );
+		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_checkout_data' ] );
+
+		add_action( 'cc_woo_check_expired_checkouts', [ $this, 'delete_expired_checkouts' ] );
 
 		add_action( 'wp_ajax_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
 		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
@@ -88,6 +91,7 @@ class CheckoutHandler extends Service {
 	 * Either call an update of checkout data which will be saved or remove checkout data based on what template we arrive at.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 *
 	 * @since  1.2.0
 	 * @param  string $template_name Current template file name.
 	 * @param  string $template_path Current template path.
@@ -95,6 +99,7 @@ class CheckoutHandler extends Service {
 	 * @param  array  $args          Template args.
 	 */
 	public function save_or_clear_checkout_data( $template_name, $template_path, $located, $args ) {
+
 		// If checkout page displayed, save checkout data.
 		if ( 'checkout/form-checkout.php' === $template_name ) {
 			$this->update_checkout_data();
@@ -109,84 +114,24 @@ class CheckoutHandler extends Service {
 	/**
 	 * Update current checkout session data in db.
 	 *
-	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this,
-	 * as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
+	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this, as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param mixed $billing_email Optional, default empty. A billing email to specify.
-	 * @return void
+	 * @param  mixed $billing_email Manually set customer billing email if provided.
 	 */
 	public function update_checkout_data( $billing_email = '' ) {
-		$user_id       = get_current_user_id();
-		$customer_data = [
-			'billing'  => [],
-			'shipping' => [],
-		];
 
-		// Get saved customer data if exists. If guest user, blank customer data will be generated.
-		$customer = new WC_Customer( $user_id );
-
-		$customer_data['billing']  = $customer->get_billing();
-		$customer_data['shipping'] = $customer->get_shipping();
-
-		// Update customer data from user session data.
-		$customer_data['billing']  = array_merge( $customer_data['billing'], WC()->customer->get_billing() );
-		$customer_data['shipping'] = array_merge( $customer_data['shipping'], WC()->customer->get_shipping() );
-
-		// Check if submission attempted.
-		if ( isset( $_POST['billing_email'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- Okay use of $_POST data.
-			// Update customer data from posted data.
-			array_walk( $customer_data['billing'], [ $this, 'merge_customer_data' ], 'billing' );
-			array_walk( $customer_data['shipping'], [ $this, 'merge_customer_data' ], 'shipping' );
-		} else if ( ! empty( $billing_email ) && is_string( $billing_email ) ) {
-			$customer_data['billing']['email'] = $billing_email;
-		} else {
-			// Retrieve checkout data for current user, if exists.
-			$checkout_data = $this::get_checkout_data(
-				'checkout_contents',
-				[
-					'user_id = %d',
-					'user_email = %s',
-				],
-				[
-					$user_id,
-					WC()->checkout->get_value( 'billing_email' ),
-				]
-			);
-
-			if ( null !== $checkout_data && ! empty( $checkout_data['customer'] ) ) {
-				// Update customer data from saved checkout data.
-				$customer_data['billing']  = array_merge( $customer_data['billing'], $checkout_data['customer']['billing'] );
-				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $checkout_data['customer']['shipping'] );
-			}
-		}
-
-		if ( empty( $customer_data['billing']['email'] ) ) {
-			return;
-		}
+		// Reset billing email if not string.
+		$billing_email = is_string( $billing_email ) ? $billing_email : '';
 
 		// Delete saved checkout if cart emptied; update otherwise.
 		if ( false === WC()->cart->is_empty() ) {
-			$this->save_checkout_data( $user_id, $customer_data );
+			$this->save_checkout_data( $billing_email );
 		} else {
-			$this->remove_checkout_data( $user_id, $customer_data['billing']['email'] );
+			$this->remove_checkout_data();
 		}
-	}
-
-	/**
-	 * Array_walk callback that merges Customer data fields with data from db or session.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  1.2.0
-	 * @param  string $value  Value of posted array item.
-	 * @param  string $key    Key of posted array item.
-	 * @param  string $type   Type of array (billing or shipping).
-	 */
-	protected function merge_customer_data( &$value, $key, $type ) {
-		$posted = WC()->checkout()->get_posted_data();
-		$value  = isset( $posted[ "{$type}_{$key}" ] ) ? $posted[ "{$type}_{$key}" ] : $value;
 	}
 
 	/**
@@ -194,12 +139,17 @@ class CheckoutHandler extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  string $select        Field to return.
-	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
-	 * @param  array  $where_values  Array of WHERE clause values.
-	 * @return string Checkout data.
+	 *
+	 * @param  string $select     Field to return.
+	 * @param  mixed  $where      String or array of WHERE clause predicates, using placeholders for values.
+	 * @param  array  $where_args Array of WHERE clause arguments.
+	 * @param  string $order_by   Order by column.
+	 * @param  string $order      Order (ASC/DESC).
+	 * @param  string $limit      LIMIT clause.
+	 * @param  array  $limit_args Array of LIMIT clause arguments.
+	 * @return mixed              Checkout data if exists, else null.
 	 */
-	public static function get_checkout_data( $select, $where, $where_values ) {
+	public static function get_checkout_data( string $select, $where, array $where_args, string $order_by = 'checkout_updated_ts', string $order = 'DESC', string $limit = '', array $limit_args = [] ) {
 		global $wpdb;
 
 		$table_name = CheckoutsTable::get_table_name();
@@ -213,8 +163,10 @@ class CheckoutHandler extends Service {
 				$wpdb->prepare(
 					"SELECT {$select}
 					FROM {$table_name}
-					WHERE {$where}",
-					$where_values
+					WHERE {$where}
+					ORDER BY {$order_by} {$order}
+					{$limit}",
+					array_merge( $where_args, $limit_args )
 				)
 			)
 		);
@@ -222,37 +174,20 @@ class CheckoutHandler extends Service {
 	}
 
 	/**
-	 * Helper function to retrieve checkout contents based on checkout hash key.
+	 * Helper function to retrieve checkout contents based on checkout UUID.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  1.2.0
-	 * @param  int $checkout_id ID of abandoned checkout.
-	 * @return string           Hash key string of abandoned checkout.
-	 */
-	public static function get_checkout_hash( int $checkout_id ) {
-		return self::get_checkout_data(
-			'checkout_hash',
-			'checkout_id = %d',
-			[
-				intval( $checkout_id ),
-			]
-		);
-	}
-
-	/**
-	 * Helper function to retrieve checkout contents based on checkout hash key.
 	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  string $checkout_hash Checkout key hash string.
-	 * @return array             Checkout contents.
+	 * @param  string $checkout_uuid Checkout UUID.
+	 * @return array                 Checkout contents.
 	 */
-	public static function get_checkout_contents( $checkout_hash ) {
+	public static function get_checkout_contents( $checkout_uuid ) {
 		return self::get_checkout_data(
 			'checkout_contents',
-			'checkout_hash = %s',
+			'checkout_uuid = %s',
 			[
-				$checkout_hash,
+				$checkout_uuid,
 			]
 		);
 	}
@@ -262,11 +197,11 @@ class CheckoutHandler extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  int   $user_id       Current user ID.
-	 * @param  array $customer_data Customer billing and shipping data.
+	 *
+	 * @param  string $billing_email Manually set customer billing email if provided.
 	 * @return void
 	 */
-	protected function save_checkout_data( $user_id, $customer_data ) {
+	protected function save_checkout_data( string $billing_email = '' ) {
 		global $wpdb;
 
 		// Check for existing checkout session.
@@ -304,14 +239,12 @@ class CheckoutHandler extends Service {
 					%s,
 					%d,
 					%s
-				) ON DUPLICATE KEY UPDATE `user_id` = VALUES(`user_email`), `user_email` = VALUES(`user_email`), `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
-				$user_id,
-				$customer_data['billing']['email'],
+				) ON DUPLICATE KEY UPDATE `user_id` = VALUES(`user_id`), `user_email` = VALUES(`user_email`), `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
+				get_current_user_id(),
+				! empty( $billing_email ) ? $billing_email : WC()->checkout->get_value( 'billing_email' ),
 				maybe_serialize( [
 					'products'        => array_values( WC()->cart->get_cart() ),
 					'coupons'         => WC()->cart->get_applied_coupons(),
-					'customer'        => $customer_data,
-					'shipping_method' => WC()->checkout()->get_posted_data()['shipping_method'],
 				] ),
 				$current_time,
 				strtotime( $current_time ),
@@ -328,6 +261,7 @@ class CheckoutHandler extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
+	 *
 	 * @param  WC_Order $order Newly submitted order object.
 	 * @return void
 	 */
@@ -336,7 +270,7 @@ class CheckoutHandler extends Service {
 			return;
 		}
 
-		$this->remove_checkout_data( $order->get_user_id(), $order->get_billing_email() );
+		$this->remove_checkout_data();
 	}
 
 	/**
@@ -344,21 +278,17 @@ class CheckoutHandler extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  int    $user_id    ID of checkout owner.
-	 * @param  string $user_email Email of checkout owner.
 	 */
-	protected function remove_checkout_data( $user_id, $user_email ) {
+	protected function remove_checkout_data() {
 		global $wpdb;
 
 		// Delete current checkout data.
 		$wpdb->delete(
 			CheckoutsTable::get_table_name(),
 			[
-				'user_id'    => $user_id,
-				'user_email' => $user_email,
+				'checkout_uuid' => WC()->session->get( 'checkout_uuid' ),
 			],
 			[
-				'%d',
 				'%s',
 			]
 		);
