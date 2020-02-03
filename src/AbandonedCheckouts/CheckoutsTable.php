@@ -91,18 +91,24 @@ class CheckoutsTable extends Service {
 	protected function update_table() {
 		global $wpdb;
 
-		$table_name = self::get_table_name();
+		$table_name     = self::get_table_name();
+		$old_table_name = 'wp_cc_abandoned_carts';
+
+		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$old_table_name}'" ) ) {
+
+			// Clear old "abandoned carts" data prior to 2.0 switch to "checkouts".
+			$wpdb->query(
+				"DROP TABLE {$old_table_name}"
+			);
+			$this->create_table();
+
+			delete_option( 'cc_abandoned_carts_db_version' );
+		}
+		// phpcs:enable
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) ) {
-
-			// Remove all abandoned checkouts for versions older than 2.0.
-			if ( floatval( get_site_option( self::DB_VERSION_OPTION_NAME ) ) < 2.0 ) {
-				$wpdb->query(
-					"DROP TABLE {$table_name}"
-				);
-				$this->create_table();
-			}
 
 			// Any data updates would be performed here.
 			update_option( self::DB_VERSION_OPTION_NAME, self::DB_VERSION );
