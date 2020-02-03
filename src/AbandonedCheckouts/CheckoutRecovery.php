@@ -1,32 +1,32 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
- * Class to handle recovery of abandoned carts via URL.
+ * Class to handle recovery of abandoned checkouts via URL.
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Api
  * @since   1.2.0
  */
 
-namespace WebDevStudios\CCForWoo\AbandonedCarts;
+namespace WebDevStudios\CCForWoo\AbandonedCheckouts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 
 /**
- * Class CartRecovery
+ * Class CheckoutRecovery
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Database
  * @since   1.2.0
  */
-class CartRecovery extends Service {
+class CheckoutRecovery extends Service {
 
 	/**
-	 * Current cart hash key string.
+	 * Current checkout hash key string.
 	 *
 	 * @var string
 	 * @since  1.2.0
 	 */
-	protected $cart_hash = '';
+	protected $checkout_hash = '';
 
 	/**
 	 * Register hooks with WordPress.
@@ -36,76 +36,76 @@ class CartRecovery extends Service {
 	 * @return void
 	 */
 	public function register_hooks() {
-		// Sanitize cart hash key string.
-		$this->cart_hash = filter_input( INPUT_GET, 'recover-cart', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
+		// Sanitize checkout hash key string.
+		$this->checkout_hash = filter_input( INPUT_GET, 'recover-checkout', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
 
-		if ( empty( $this->cart_hash ) ) {
+		if ( empty( $this->checkout_hash ) ) {
 			return;
 		}
 
-		add_action( 'wp_loaded', [ $this, 'recover_cart' ] );
+		add_action( 'wp_loaded', [ $this, 'recover_checkout' ] );
 	}
 
 	/**
-	 * Generate cart recovery URL.
+	 * Generate checkout recovery URL.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  int $cart_id ID of abandoned cart.
-	 * @return string       Cart recovery URL on successful retrieval (void on failure).
+	 * @param  int $checkout_id ID of abandoned checkout.
+	 * @return string           Checkout recovery URL on successful retrieval (void on failure).
 	 */
-	public function get_cart_url( int $cart_id ) {
+	public function get_checkout_url( int $checkout_id ) {
 		return add_query_arg(
-			'recover-cart',
-			CartHandler::get_cart_hash( $cart_id ),
+			'recover-checkout',
+			CheckoutHandler::get_checkout_hash( $checkout_id ),
 			get_site_url()
 		);
 	}
 
 	/**
-	 * Recovery saved cart from hash key.
+	 * Recovery saved checkout from hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 * @return void
 	 */
-	public function recover_cart() {
-		// Clear current cart contents.
+	public function recover_checkout() {
+		// Clear current checkout contents.
 		WC()->cart->empty_cart();
 
-		// Get saved cart contents.
-		$cart_contents = CartHandler::get_cart_contents( $this->cart_hash );
+		// Get saved checkout contents.
+		$checkout_contents = CheckoutHandler::get_checkout_contents( $this->checkout_hash );
 
-		if ( null === $cart_contents ) {
+		if ( null === $checkout_contents ) {
 			return;
 		}
 
 		// Recover saved products.
-		$this->recover_products( $cart_contents['products'] );
+		$this->recover_products( $checkout_contents['products'] );
 
 		// Apply coupons.
-		foreach ( $cart_contents['coupons'] as $coupon ) {
+		foreach ( $checkout_contents['coupons'] as $coupon ) {
 			WC()->cart->apply_coupon( $coupon );
 		}
 
 		// Update customer info.
-		$this->recover_customer_info( $cart_contents['customer'], 'billing' );
-		$this->recover_customer_info( $cart_contents['customer'], 'shipping' );
+		$this->recover_customer_info( $checkout_contents['customer'], 'billing' );
+		$this->recover_customer_info( $checkout_contents['customer'], 'shipping' );
 
 		// Apply shipping method.
-		WC()->session->set( 'chosen_shipping_methods', $cart_contents['shipping_method'] );
+		WC()->session->set( 'chosen_shipping_methods', $checkout_contents['shipping_method'] );
 
 		// Update totals.
 		WC()->cart->calculate_totals();
 		WC()->cart->calculate_shipping();
 
-		// Redirect to cart page.
+		// Redirect to checkout page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		exit();
 	}
 
 	/**
-	 * Recover products from saved cart data.
+	 * Recover products from saved checkout data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -148,7 +148,7 @@ class CartRecovery extends Service {
 	}
 
 	/**
-	 * Recover and apply customer billing and shipping info from saved cart data.
+	 * Recover and apply customer billing and shipping info from saved checkout data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0

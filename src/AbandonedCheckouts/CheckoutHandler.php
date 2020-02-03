@@ -1,13 +1,13 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
- * Class to listen to WooCommerce checkouts and possibly store carts that are "abandoned".
+ * Class to listen to WooCommerce checkouts and possibly store checkouts that are "abandoned".
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\AbandonedCheckouts
  * @since   1.2.0
  */
 
-namespace WebDevStudios\CCForWoo\AbandonedCarts;
+namespace WebDevStudios\CCForWoo\AbandonedCheckouts;
 
 use WebDevStudios\OopsWP\Structure\Service;
 use WC_Customer;
@@ -16,13 +16,13 @@ use DateTime;
 use DateInterval;
 
 /**
- * Class CartHandler
+ * Class CheckoutHandler
  *
  * @author  Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
- * @package WebDevStudios\CCForWoo\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\AbandonedCheckouts
  * @since   1.2.0
  */
-class CartHandler extends Service {
+class CheckoutHandler extends Service {
 
 	/**
 	 * Register hooks with WordPress.
@@ -32,14 +32,14 @@ class CartHandler extends Service {
 	 */
 	public function register_hooks() {
 		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
-		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_cart_data' ], 10, 4 );
-		add_action( 'woocommerce_checkout_process', [ $this, 'update_cart_data' ] );
-		add_action( 'cc_woo_check_expired_carts', [ $this, 'delete_expired_carts' ] );
-		add_action( 'woocommerce_calculate_totals', [ $this, 'update_cart_data' ] );
-		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_cart_data' ] );
+		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_checkout_data' ], 10, 4 );
+		add_action( 'woocommerce_checkout_process', [ $this, 'update_checkout_data' ] );
+		add_action( 'cc_woo_check_expired_checkouts', [ $this, 'delete_expired_checkouts' ] );
+		add_action( 'woocommerce_calculate_totals', [ $this, 'update_checkout_data' ] );
+		add_action( 'woocommerce_checkout_item_removed', [ $this, 'update_checkout_data' ] );
 
-		add_action( 'wp_ajax_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
-		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_carts_capture_guest_cart', [ $this, 'maybe_capture_guest_checkout' ] );
+		add_action( 'wp_ajax_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
+		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
 	}
 
 
@@ -48,6 +48,8 @@ class CartHandler extends Service {
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since  1.2.0
+	 *
+	 * @return void
 	 */
 	public function enqueue_scripts() {
 		if ( is_user_logged_in() ) {
@@ -77,13 +79,13 @@ class CartHandler extends Service {
 			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
 		}
 
-		$this->update_cart_data( $data['email'] );
+		$this->update_checkout_data( $data['email'] );
 
 		wp_send_json_success();
 	}
 
 	/**
-	 * Either call an update of cart data which will be saved or remove cart data based on what template we arrive at.
+	 * Either call an update of checkout data which will be saved or remove checkout data based on what template we arrive at.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -92,20 +94,20 @@ class CartHandler extends Service {
 	 * @param  string $located       Full local path to current template file.
 	 * @param  array  $args          Template args.
 	 */
-	public function save_or_clear_cart_data( $template_name, $template_path, $located, $args ) {
-		// If checkout page displayed, save cart data.
+	public function save_or_clear_checkout_data( $template_name, $template_path, $located, $args ) {
+		// If checkout page displayed, save checkout data.
 		if ( 'checkout/form-checkout.php' === $template_name ) {
-			$this->update_cart_data();
+			$this->update_checkout_data();
 		}
 
-		// If thankyou page displayed, clear cart data.
+		// If thankyou page displayed, clear checkout data.
 		if ( isset( $args['order'] ) && 'checkout/thankyou.php' === $template_name ) {
 			$this->clear_purchased_data( $args['order'] );
 		}
 	}
 
 	/**
-	 * Update current cart session data in db.
+	 * Update current checkout session data in db.
 	 *
 	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this,
 	 * as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
@@ -116,7 +118,7 @@ class CartHandler extends Service {
 	 * @param mixed $billing_email Optional, default empty. A billing email to specify.
 	 * @return void
 	 */
-	public function update_cart_data( $billing_email = '' ) {
+	public function update_checkout_data( $billing_email = '' ) {
 		$user_id       = get_current_user_id();
 		$customer_data = [
 			'billing'  => [],
@@ -141,9 +143,9 @@ class CartHandler extends Service {
 		} else if ( ! empty( $billing_email ) && is_string( $billing_email ) ) {
 			$customer_data['billing']['email'] = $billing_email;
 		} else {
-			// Retrieve cart data for current user, if exists.
-			$cart_data = $this::get_cart_data(
-				'cart_contents',
+			// Retrieve checkout data for current user, if exists.
+			$checkout_data = $this::get_checkout_data(
+				'checkout_contents',
 				[
 					'user_id = %d',
 					'user_email = %s',
@@ -154,10 +156,10 @@ class CartHandler extends Service {
 				]
 			);
 
-			if ( null !== $cart_data && ! empty( $cart_data['customer'] ) ) {
-				// Update customer data from saved cart data.
-				$customer_data['billing']  = array_merge( $customer_data['billing'], $cart_data['customer']['billing'] );
-				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $cart_data['customer']['shipping'] );
+			if ( null !== $checkout_data && ! empty( $checkout_data['customer'] ) ) {
+				// Update customer data from saved checkout data.
+				$customer_data['billing']  = array_merge( $customer_data['billing'], $checkout_data['customer']['billing'] );
+				$customer_data['shipping'] = array_merge( $customer_data['shipping'], $checkout_data['customer']['shipping'] );
 			}
 		}
 
@@ -165,11 +167,11 @@ class CartHandler extends Service {
 			return;
 		}
 
-		// Delete saved cart if cart emptied; update otherwise.
+		// Delete saved checkout if cart emptied; update otherwise.
 		if ( false === WC()->cart->is_empty() ) {
-			$this->save_cart_data( $user_id, $customer_data );
+			$this->save_checkout_data( $user_id, $customer_data );
 		} else {
-			$this->remove_cart_data( $user_id, $customer_data['billing']['email'] );
+			$this->remove_checkout_data( $user_id, $customer_data['billing']['email'] );
 		}
 	}
 
@@ -188,22 +190,22 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Retrieve specific user's cart data.
+	 * Retrieve specific user's checkout data.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 * @param  string $select        Field to return.
 	 * @param  mixed  $where         String or array of WHERE clause predicates, using placeholders for values.
 	 * @param  array  $where_values  Array of WHERE clause values.
-	 * @return string Cart data.
+	 * @return string Checkout data.
 	 */
-	public static function get_cart_data( $select, $where, $where_values ) {
+	public static function get_checkout_data( $select, $where, $where_values ) {
 		global $wpdb;
 
 		$table_name = CheckoutsTable::get_table_name();
 		$where      = is_array( $where ) ? implode( ' AND ', $where ) : $where;
 
-		// Construct query to return cart data.
+		// Construct query to return checkout data.
 		// phpcs:disable -- Disabling a number of sniffs that erroneously flag following block of code.
 		// $where often includes placeholders for replacement via $wpdb->prepare(). $where_values provides those values.
 		return maybe_unserialize(
@@ -220,50 +222,50 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Helper function to retrieve cart contents based on cart hash key.
+	 * Helper function to retrieve checkout contents based on checkout hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  int $cart_id ID of abandoned cart.
-	 * @return string       Hash key string of abandoned cart.
+	 * @param  int $checkout_id ID of abandoned checkout.
+	 * @return string           Hash key string of abandoned checkout.
 	 */
-	public static function get_cart_hash( int $cart_id ) {
-		return self::get_cart_data(
-			'cart_hash',
-			'cart_id = %d',
+	public static function get_checkout_hash( int $checkout_id ) {
+		return self::get_checkout_data(
+			'checkout_hash',
+			'checkout_id = %d',
 			[
-				intval( $cart_id ),
+				intval( $checkout_id ),
 			]
 		);
 	}
 
 	/**
-	 * Helper function to retrieve cart contents based on cart hash key.
+	 * Helper function to retrieve checkout contents based on checkout hash key.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  string $cart_hash Cart key hash string.
-	 * @return array             Cart contents.
+	 * @param  string $checkout_hash Checkout key hash string.
+	 * @return array             Checkout contents.
 	 */
-	public static function get_cart_contents( $cart_hash ) {
-		return self::get_cart_data(
-			'cart_contents',
-			'cart_hash = %s',
+	public static function get_checkout_contents( $checkout_hash ) {
+		return self::get_checkout_data(
+			'checkout_contents',
+			'checkout_hash = %s',
 			[
-				$cart_hash,
+				$checkout_hash,
 			]
 		);
 	}
 
 	/**
-	 * Save current cart data to db.
+	 * Save current checkout data to db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 * @param  int   $user_id       Current user ID.
 	 * @param  array $customer_data Customer billing and shipping data.
 	 */
-	protected function save_cart_data( $user_id, $customer_data ) {
+	protected function save_checkout_data( $user_id, $customer_data ) {
 		global $wpdb;
 
 		$current_time = current_time( 'mysql', 1 );
@@ -275,12 +277,12 @@ class CartHandler extends Service {
 				"INSERT INTO {$table_name} (
 					`user_id`,
 					`user_email`,
-					`cart_contents`,
-					`cart_updated`,
-					`cart_updated_ts`,
-					`cart_created`,
-					`cart_created_ts`,
-					`cart_hash`
+					`checkout_contents`,
+					`checkout_updated`,
+					`checkout_updated_ts`,
+					`checkout_created`,
+					`checkout_created_ts`,
+					`checkout_hash`
 				) VALUES (
 					%d,
 					%s,
@@ -290,7 +292,7 @@ class CartHandler extends Service {
 					%s,
 					%d,
 					MD5(CONCAT(user_id, user_email))
-				) ON DUPLICATE KEY UPDATE `cart_updated` = VALUES(`cart_updated`), `cart_updated_ts` = VALUES(`cart_updated_ts`), `cart_contents` = VALUES(`cart_contents`)",
+				) ON DUPLICATE KEY UPDATE `checkout_updated` = VALUES(`checkout_updated`), `checkout_updated_ts` = VALUES(`checkout_updated_ts`), `checkout_contents` = VALUES(`checkout_contents`)",
 				$user_id,
 				$customer_data['billing']['email'],
 				maybe_serialize( [
@@ -309,7 +311,7 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Remove current cart session data from db upon successful order submission.
+	 * Remove current checkout session data from db upon successful order submission.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
@@ -321,21 +323,21 @@ class CartHandler extends Service {
 			return;
 		}
 
-		$this->remove_cart_data( $order->get_user_id(), $order->get_billing_email() );
+		$this->remove_checkout_data( $order->get_user_id(), $order->get_billing_email() );
 	}
 
 	/**
-	 * Helper function to remove cart session data from db.
+	 * Helper function to remove checkout session data from db.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 * @param  int    $user_id    ID of cart owner.
-	 * @param  string $user_email Email of cart owner.
+	 * @param  int    $user_id    ID of checkout owner.
+	 * @param  string $user_email Email of checkout owner.
 	 */
-	protected function remove_cart_data( $user_id, $user_email ) {
+	protected function remove_checkout_data( $user_id, $user_email ) {
 		global $wpdb;
 
-		// Delete current cart data.
+		// Delete current checkout data.
 		$wpdb->delete(
 			CheckoutsTable::get_table_name(),
 			[
@@ -350,12 +352,12 @@ class CartHandler extends Service {
 	}
 
 	/**
-	 * Delete expired carts.
+	 * Delete expired checkouts.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 */
-	public function delete_expired_carts() {
+	public function delete_expired_checkouts() {
 		global $wpdb;
 
 		// Delete all checkouts at least 30 days old.
@@ -365,7 +367,7 @@ class CartHandler extends Service {
 			$wpdb->prepare(
 				// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 				"DELETE FROM {$table_name}
-				WHERE `cart_updated_ts` <= %s",
+				WHERE `checkout_updated_ts` <= %s",
 				// phpcs:enable
 				( new DateTime() )->sub( new DateInterval( 'P30D' ) )->format( 'U' )
 			)
