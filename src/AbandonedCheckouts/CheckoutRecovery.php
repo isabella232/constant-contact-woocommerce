@@ -21,12 +21,12 @@ use WebDevStudios\OopsWP\Structure\Service;
 class CheckoutRecovery extends Service {
 
 	/**
-	 * Current checkout hash key string.
+	 * Current checkout UUID.
 	 *
 	 * @var string
 	 * @since  1.2.0
 	 */
-	protected $checkout_hash = '';
+	protected $checkout_uuid = '';
 
 	/**
 	 * Register hooks with WordPress.
@@ -36,10 +36,10 @@ class CheckoutRecovery extends Service {
 	 * @return void
 	 */
 	public function register_hooks() {
-		// Sanitize checkout hash key string.
-		$this->checkout_hash = filter_input( INPUT_GET, 'recover-checkout', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
+		// Sanitize checkout UUID.
+		$this->checkout_uuid = filter_input( INPUT_GET, 'recover-checkout', FILTER_SANITIZE_STRING, FILTER_FLAG_NO_ENCODE_QUOTES );
 
-		if ( empty( $this->checkout_hash ) ) {
+		if ( empty( $this->checkout_uuid ) ) {
 			return;
 		}
 
@@ -47,34 +47,22 @@ class CheckoutRecovery extends Service {
 	}
 
 	/**
-	 * Generate checkout recovery URL.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  1.2.0
-	 * @param  int $checkout_id ID of abandoned checkout.
-	 * @return string           Checkout recovery URL on successful retrieval (void on failure).
-	 */
-	public function get_checkout_url( int $checkout_id ) {
-		return add_query_arg(
-			'recover-checkout',
-			CheckoutHandler::get_checkout_hash( $checkout_id ),
-			get_site_url()
-		);
-	}
-
-	/**
-	 * Recovery saved checkout from hash key.
+	 * Recovery saved checkout from UUID.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 * @return void
 	 */
 	public function recover_checkout() {
+
+		// Set checkout session UUID.
+		WC()->session->set( 'checkout_uuid', $this->checkout_uuid );
+
 		// Clear current checkout contents.
 		WC()->cart->empty_cart();
 
 		// Get saved checkout contents.
-		$checkout_contents = CheckoutHandler::get_checkout_contents( $this->checkout_hash );
+		$checkout_contents = CheckoutHandler::get_checkout_contents( $this->checkout_uuid );
 
 		if ( null === $checkout_contents ) {
 			return;
@@ -88,16 +76,8 @@ class CheckoutRecovery extends Service {
 			WC()->cart->apply_coupon( $coupon );
 		}
 
-		// Update customer info.
-		$this->recover_customer_info( $checkout_contents['customer'], 'billing' );
-		$this->recover_customer_info( $checkout_contents['customer'], 'shipping' );
-
-		// Apply shipping method.
-		WC()->session->set( 'chosen_shipping_methods', $checkout_contents['shipping_method'] );
-
 		// Update totals.
 		WC()->cart->calculate_totals();
-		WC()->cart->calculate_shipping();
 
 		// Redirect to checkout page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
