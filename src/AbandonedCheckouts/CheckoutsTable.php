@@ -71,7 +71,7 @@ class CheckoutsTable extends Service {
 			checkout_updated_ts int(11) unsigned NOT NULL DEFAULT 0,
 			checkout_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
 			checkout_created_ts int(11) unsigned NOT NULL DEFAULT 0,
-			checkout_uuid char(32) NOT NULL DEFAULT '',
+			checkout_uuid varchar(36) NOT NULL DEFAULT '',
 			PRIMARY KEY (checkout_id),
 			UNIQUE KEY checkout_uuid (checkout_uuid)
 		) {$wpdb->get_charset_collate()}";
