@@ -290,7 +290,7 @@ class CheckoutHandler extends Service {
 			return;
 		}
 
-		$order->update_meta_data( '_checkout_uuid', WC()->session->get( 'checkout_uuid' ) );
+		$order->update_meta_data( 'cc_woo_checkout_uuid', WC()->session->get( 'checkout_uuid' ) );
 		$this->remove_checkout_data();
 		WC()->session->__unset( 'checkout_uuid' );
 	}
