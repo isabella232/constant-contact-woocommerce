@@ -169,19 +169,27 @@ class CheckoutHandler extends Service {
 	 * @return array                 Checkout contents.
 	 */
 	public static function get_checkout_contents( $checkout_uuid ) {
-		$checkout = self::get_checkout_data(
-			'checkout_contents',
-			'checkout_uuid = %s',
-			[
-				$checkout_uuid,
-			]
-		);
+		$checkout = self::get_checkout_data( 'checkout_contents', 'checkout_uuid = %s', [ $checkout_uuid ] );
 
 		if ( empty( $checkout ) ) {
 			return [];
 		}
 
 		return maybe_unserialize( array_shift( $checkout )->checkout_contents );
+	}
+
+	/**
+	 * Helper function to retrieve checkout UUID for current user.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 *
+	 * @since  NEXT
+	 * @return string Checkout UUID if exists, else empty string.
+	 */
+	public static function get_checkout_uuid_by_user() {
+		$checkout = self::get_checkout_data( 'checkout_uuid', 'user_id = %d', [ get_current_user_id() ] );
+
+		return ( empty( $checkout ) ? '' : array_shift( $checkout )->checkout_uuid );
 	}
 
 	/**
@@ -202,20 +210,28 @@ class CheckoutHandler extends Service {
 		$session_billing_email = is_array( $session_customer ) && key_exists( 'email', $session_customer ) ? $session_customer['email'] : '';
 		$billing_email         = $billing_email ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' ) ?: WC()->session->get( 'billing_email' );
 		$is_checkout           = $is_checkout ?: is_checkout();
+		$checkout_uuid         = WC()->session->get( 'checkout_uuid' );
 
 		if ( empty( $billing_email ) ) {
 			return;
 		}
 
 		// Check for existing checkout session.
-		if ( ! WC()->session->get( 'checkout_uuid' ) ) {
+		if ( ! $checkout_uuid ) {
 
-			// Only create session if currently on checkout page.
-			if ( ! $is_checkout ) {
+			// Retrieve existing checkout UUID for registered users only.
+			if ( is_user_logged_in() ) {
+				$existing_uuid = $this->get_checkout_uuid_by_user();
+			}
+
+			// Only create session if currently on checkout page or if current user has an existing session saved.
+			if ( ! $is_checkout && ! isset( $existing_uuid ) ) {
 				return;
 			}
 
-			WC()->session->set( 'checkout_uuid', wp_generate_uuid4() );
+			$checkout_uuid = $existing_uuid ?? wp_generate_uuid4();
+
+			WC()->session->set( 'checkout_uuid', $checkout_uuid );
 		}
 
 		$current_time = current_time( 'mysql', 1 );
@@ -253,7 +269,7 @@ class CheckoutHandler extends Service {
 				strtotime( $current_time ),
 				$current_time,
 				strtotime( $current_time ),
-				WC()->session->get( 'checkout_uuid' )
+				$checkout_uuid
 			)
 		);
 		// phpcs:enable
