@@ -84,6 +84,7 @@ class CheckoutHandler extends Service {
 			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
 		}
 
+		WC()->session->set( 'billing_email', $data['email'] );
 		$this->update_checkout_data( $data['email'], true );
 
 		wp_send_json_success();
@@ -206,7 +207,7 @@ class CheckoutHandler extends Service {
 		// Get current user email.
 		$session_customer      = WC()->session->get( 'customer' );
 		$session_billing_email = is_array( $session_customer ) && key_exists( 'email', $session_customer ) ? $session_customer['email'] : '';
-		$billing_email         = $billing_email ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' );
+		$billing_email         = $billing_email ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' ) ?: WC()->session->get( 'billing_email' );
 		$is_checkout           = $is_checkout ?: is_checkout();
 
 		if ( empty( $billing_email ) ) {
