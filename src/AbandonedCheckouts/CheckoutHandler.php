@@ -84,7 +84,7 @@ class CheckoutHandler extends Service {
 			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
 		}
 
-		$this->update_checkout_data( $data['email'] );
+		$this->update_checkout_data( $data['email'], true );
 
 		wp_send_json_success();
 	}
@@ -116,14 +116,15 @@ class CheckoutHandler extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param  mixed $billing_email Manually set customer billing email if provided.
+	 * @param  mixed   $billing_email Manually set customer billing email if provided.
+	 * @param  boolean $is_checkout   Manually mark current page as checkout if necessary (e.g., coming from ajax callback).
 	 */
-	public function update_checkout_data( $billing_email = '' ) {
+	public function update_checkout_data( $billing_email = '', bool $is_checkout = false ) {
 
 		// Reset billing email if not string.
 		$billing_email = is_string( $billing_email ) ? $billing_email : '';
 
-		$this->save_checkout_data( $billing_email );
+		$this->save_checkout_data( $billing_email, $is_checkout );
 	}
 
 	/**
@@ -195,16 +196,18 @@ class CheckoutHandler extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param  string $billing_email Manually set customer billing email if provided.
+	 * @param  string  $billing_email Manually set customer billing email if provided.
+	 * @param  boolean $is_checkout   Manually mark current page as checkout if necessary (e.g., coming from ajax callback).
 	 * @return void
 	 */
-	protected function save_checkout_data( string $billing_email = '' ) {
+	protected function save_checkout_data( string $billing_email = '', bool $is_checkout = false ) {
 		global $wpdb;
 
 		// Get current user email.
 		$session_customer      = WC()->session->get( 'customer' );
 		$session_billing_email = is_array( $session_customer ) && key_exists( 'email', $session_customer ) ? $session_customer['email'] : '';
-		$billing_email         = is_email( $billing_email ) ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' );
+		$billing_email         = $billing_email ?: $session_billing_email ?: WC()->checkout->get_value( 'billing_email' );
+		$is_checkout           = $is_checkout ?: is_checkout();
 
 		if ( empty( $billing_email ) ) {
 			return;
@@ -214,7 +217,7 @@ class CheckoutHandler extends Service {
 		if ( ! WC()->session->get( 'checkout_uuid' ) ) {
 
 			// Only create session if currently on checkout page.
-			if ( ! is_checkout() ) {
+			if ( ! $is_checkout ) {
 				return;
 			}
 
