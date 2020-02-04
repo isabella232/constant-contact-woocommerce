@@ -34,10 +34,8 @@ class CheckoutHandler extends Service {
 		add_action( 'woocommerce_before_checkout_form', [ $this, 'enqueue_scripts' ] );
 
 		add_action( 'woocommerce_after_template_part', [ $this, 'save_or_clear_checkout_data' ], 10, 4 );
-		add_action( 'woocommerce_checkout_process', [ $this, 'update_checkout_data' ] );
-		add_action( 'woocommerce_checkout_updated', [ $this, 'update_checkout_data' ] );
-		add_action( 'woocommerce_calculate_totals', [ $this, 'update_checkout_data' ] );
-		add_action( 'woocommerce_cart_item_removed', [ $this, 'update_checkout_data' ] );
+		add_action( 'woocommerce_cart_updated', [ $this, 'update_checkout_data' ] );
+		add_action( 'woocommerce_set_cart_cookies', [ $this, 'update_checkout_data' ] );
 
 		add_action( 'cc_woo_check_expired_checkouts', [ $this, 'delete_expired_checkouts' ] );
 
@@ -80,12 +78,14 @@ class CheckoutHandler extends Service {
 			wp_send_json_error( esc_html__( 'Invalid nonce.', 'cc-woo' ) );
 		}
 
-		if ( ! filter_var( $data['email'], FILTER_VALIDATE_EMAIL ) ) {
+		$email = filter_var( $data['email'], FILTER_VALIDATE_EMAIL );
+
+		if ( ! $email ) {
 			wp_send_json_error( esc_html__( 'Invalid email.', 'cc-woo' ) );
 		}
 
-		WC()->session->set( 'billing_email', $data['email'] );
-		$this->update_checkout_data( $data['email'], true );
+		WC()->session->set( 'billing_email', $email );
+		$this->save_checkout_data( $email, true );
 
 		wp_send_json_success();
 	}
@@ -105,27 +105,20 @@ class CheckoutHandler extends Service {
 
 		// If checkout page displayed, save checkout data.
 		if ( 'checkout/form-checkout.php' === $template_name ) {
-			$this->update_checkout_data();
+			$this->save_checkout_data();
 		}
 	}
 
 	/**
-	 * Update current checkout session data in db.
+	 * Helper function to update current checkout session data in db.
 	 *
-	 * Param type "mixed" is specified for $billing_email param here because we cannot type hint this, as some Woo hooks that this is a callback to will pass unused objects and other data as first param.
+	 * Used to strip unneeded params from callbacks.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
-	 *
-	 * @param  mixed   $billing_email Manually set customer billing email if provided.
-	 * @param  boolean $is_checkout   Manually mark current page as checkout if necessary (e.g., coming from ajax callback).
 	 */
-	public function update_checkout_data( $billing_email = '', bool $is_checkout = false ) {
-
-		// Reset billing email if not string.
-		$billing_email = is_string( $billing_email ) ? $billing_email : '';
-
-		$this->save_checkout_data( $billing_email, $is_checkout );
+	public function update_checkout_data() {
+		$this->save_checkout_data();
 	}
 
 	/**
