@@ -25,7 +25,7 @@ class CheckoutsTable extends Service {
 	 *
 	 * @since 1.2.0
 	 */
-	const DB_VERSION = '2.0';
+	const DB_VERSION = '2.1';
 
 	/**
 	 * Option name for abandoned checkouts db version.
@@ -92,7 +92,7 @@ class CheckoutsTable extends Service {
 		global $wpdb;
 
 		$table_name     = self::get_table_name();
-		$old_table_name = 'wp_cc_abandoned_carts';
+		$old_table_name = "{$wpdb->prefix}cc_abandoned_carts";
 
 		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '{$old_table_name}'" ) ) {
