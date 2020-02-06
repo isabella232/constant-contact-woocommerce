@@ -235,7 +235,7 @@ class CheckoutHandler extends Service {
 				return;
 			}
 
-			$checkout_uuid = $existing_uuid ?: wp_generate_uuid4();
+			$checkout_uuid = isset( $existing_uuid ) && ! empty( $existing_uuid ) ? $existing_uuid : wp_generate_uuid4();
 
 			WC()->session->set( 'checkout_uuid', $checkout_uuid );
 		}
