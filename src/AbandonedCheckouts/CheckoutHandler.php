@@ -42,7 +42,7 @@ class CheckoutHandler extends Service {
 		add_action( 'wp_ajax_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
 		add_action( 'wp_ajax_nopriv_cc_woo_abandoned_checkouts_capture_guest_checkout', [ $this, 'maybe_capture_guest_checkout' ] );
 
-		add_action( 'woocommerce_checkout_create_order', [ $this, 'clear_purchased_data' ], 10, 2 );
+		add_action( 'woocommerce_checkout_order_processed', [ $this, 'clear_purchased_data' ], 10, 3 );
 	}
 
 
@@ -219,6 +219,12 @@ class CheckoutHandler extends Service {
 		// Check for existing checkout session.
 		if ( ! $checkout_uuid ) {
 
+			// Only create session if cart is not empty.
+			// This is to avoid re-creating checkout UUID during checkout process.
+			if ( $is_checkout && empty( WC()->cart->get_cart() ) ) {
+				return;
+			}
+
 			// Retrieve existing checkout UUID for registered users only.
 			if ( is_user_logged_in() ) {
 				$existing_uuid = $this->get_checkout_uuid_by_user();
@@ -281,11 +287,12 @@ class CheckoutHandler extends Service {
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.2.0
 	 *
-	 * @param  WC_Order $order Newly created order object.
-	 * @param  array    $data  Posted data.
+	 * @param  int      $order_id Newly created order ID.
+	 * @param  array    $data     Posted data.
+	 * @param  WC_Order $order    Newly created order object.
 	 * @return void
 	 */
-	public function clear_purchased_data( WC_Order $order, array $data ) {
+	public function clear_purchased_data( int $order_id, array $data, WC_Order $order ) {
 		if ( empty( $order ) ) {
 			return;
 		}
