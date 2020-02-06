@@ -127,7 +127,7 @@ class CheckoutsTable extends Service {
 
 			// Fresh install: create table.
 			$this->create_table();
-		} else if ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
+		} elseif ( self::DB_VERSION !== get_site_option( self::DB_VERSION_OPTION_NAME ) ) {
 
 			// Updated install: update table.
 			$this->update_table();
