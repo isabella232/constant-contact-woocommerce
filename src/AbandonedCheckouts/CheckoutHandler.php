@@ -225,11 +225,11 @@ class CheckoutHandler extends Service {
 			}
 
 			// Only create session if currently on checkout page or if current user has an existing session saved.
-			if ( ! $is_checkout && ! isset( $existing_uuid ) ) {
+			if ( ! $is_checkout && empty( $existing_uuid ) ) {
 				return;
 			}
 
-			$checkout_uuid = $existing_uuid ?? wp_generate_uuid4();
+			$checkout_uuid = $existing_uuid ?: wp_generate_uuid4();
 
 			WC()->session->set( 'checkout_uuid', $checkout_uuid );
 		}
