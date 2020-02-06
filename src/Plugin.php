@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
  * Constant Contact + WooCommerce
  *
@@ -20,9 +20,9 @@ use WebDevStudios\CCForWoo\Meta\ConnectionStatus;
 use WebDevStudios\CCForWoo\Api\KeyManager;
 use WebDevStudios\CCForWoo\WebHook\Disconnect;
 use WebDevStudios\CCForWoo\View\Admin\MenuItem;
-use WebDevStudios\CCForWoo\AbandonedCarts\CartHandler;
-use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
-use WebDevStudios\CCForWoo\AbandonedCarts\CartRecovery;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutHandler;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutsTable;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutRecovery;
 use WebDevStudios\CCForWoo\Rest\Registrar as RestRegistrar;
 
 /**
@@ -75,9 +75,9 @@ final class Plugin extends ServiceRegistrar {
 		KeyManager::class,
 		Disconnect::class,
 		MenuItem::class,
-		CartHandler::class,
-		CartsTable::class,
-		CartRecovery::class,
+		CheckoutHandler::class,
+		CheckoutsTable::class,
+		CheckoutRecovery::class,
 		RestRegistrar::class,
 	];
 
@@ -232,42 +232,42 @@ final class Plugin extends ServiceRegistrar {
 	public function do_activation_process() {
 		$this->maybe_activate_woocommerce();
 
-		$this->create_abandoned_carts_table();
-		$this->create_abandoned_carts_expiration_check();
+		$this->create_abandoned_checkouts_table();
+		$this->create_abandoned_checkouts_expiration_check();
 
 		flush_rewrite_rules();
 	}
 
 	/**
-	 * Creates the database table for Abandoned Carts.
+	 * Creates the database table for Abandoned Checkouts.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since 2019-10-24
 	 */
-	private function create_abandoned_carts_table() {
-		( new CartsTable() )->create_table();
+	private function create_abandoned_checkouts_table() {
+		( new CheckoutsTable() )->create_table();
 	}
 
 	/**
-	 * Schedules the daily check for abandoned carts that have sat in the DB longer than 30 days (by default...).
+	 * Schedules the daily check for abandoned checkouts that have sat in the DB longer than 30 days (by default...).
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-24
 	 */
-	private function create_abandoned_carts_expiration_check() {
-		if ( ! wp_next_scheduled( 'cc_woo_check_expired_carts' ) ) {
-			wp_schedule_event( strtotime( 'today' ), 'daily', 'cc_woo_check_expired_carts' );
+	private function create_abandoned_checkouts_expiration_check() {
+		if ( ! wp_next_scheduled( 'cc_woo_check_expired_checkouts' ) ) {
+			wp_schedule_event( strtotime( 'today' ), 'daily', 'cc_woo_check_expired_checkouts' );
 		}
 	}
 
 	/**
-	 * Removes the scheduled daily check for expired abandoned carts.
+	 * Removes the scheduled daily check for expired abandoned checkouts.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-24
 	 */
-	private function clear_abandoned_carts_expiration_check() {
-		wp_clear_scheduled_hook( 'cc_woo_check_expired_carts' );
+	private function clear_abandoned_checkouts_expiration_check() {
+		wp_clear_scheduled_hook( 'cc_woo_check_expired_checkouts' );
 	}
 
 	/**
@@ -283,7 +283,7 @@ final class Plugin extends ServiceRegistrar {
 	public function do_deactivation_process() {
 		do_action( 'wc_ctct_disconnect' );
 
-		$this->clear_abandoned_carts_expiration_check();
+		$this->clear_abandoned_checkouts_expiration_check();
 
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;

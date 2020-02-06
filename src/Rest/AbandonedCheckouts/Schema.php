@@ -1,23 +1,23 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
- * Schema for wc/cc-woo/abandoned-carts endpoint.
+ * Schema for wc/cc-woo/abandoned-checkouts endpoint.
  *
- * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCheckouts
  * @since   1.2.0
  */
 
-namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
+namespace WebDevStudios\CCForWoo\Rest\AbandonedCheckouts;
 
 /**
- * Class AbandonedCarts\Schema
+ * Class AbandonedCheckouts\Schema
  *
- * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCheckouts
  * @since   1.2.0
  */
 class Schema {
 
 	/**
-	 * Get the query params for Abandoned Carts.
+	 * Get the query params for Abandoned Checkouts.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since  1.2.0
@@ -32,18 +32,18 @@ class Schema {
 				'type'        => 'integer',
 		   ],
 		   'per_page' => [
-				'description' => esc_html__( 'How many abandoned carts to show per page.', 'woocommerce' ),
+				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'woocommerce' ),
 				'required'    => false,
 				'type'        => 'integer',
 				'default'     => 10,
 			],
 		   'date_min' => [
-				'description' => esc_html__( 'Filters results to only show abandoned carts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
 				'required'    => false,
 				'type'        => 'string',
 			],
 			'date_max' => [
-				'description' => esc_html__( 'Filters results to only show abandoned carts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
 				'required'    => false,
 				'type'        => 'string',
 			],
@@ -51,7 +51,7 @@ class Schema {
 	}
 
 	/**
-	 * Get the Abandoned Cart's schema for public consumption.
+	 * Get the Abandoned Checkout's schema for public consumption.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since  1.2.0
@@ -61,17 +61,17 @@ class Schema {
 	public static function get_public_item_schema() {
 		return [
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'cc_woo_abandoned_cart',
+			'title'      => 'cc_woo_abandoned_checkout',
 			'type'       => 'object',
 			'properties' => [
-				'cart_id' => [
-					'description' => esc_html__( 'Database ID for the abandoned cart.', 'cc-woo' ),
+				'checkout_id' => [
+					'description' => esc_html__( 'Database ID for the abandoned checkout.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
 				'user_id' => [
-					'description' => esc_html__( 'WordPress user ID of the user the cart belongs to; defaults to 0 if a guest or non-logged-in user.', 'cc-woo' ),
+					'description' => esc_html__( 'WordPress user ID of the user the checkout belongs to; defaults to 0 if a guest or non-logged-in user.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
@@ -82,8 +82,8 @@ class Schema {
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_contents' => [
-					'description' => esc_html__( 'Object representation of the cart that was abandoned, and its contents, coupon codes, and billing data.', 'cc-woo' ),
+				'checkout_contents' => [
+					'description' => esc_html__( 'Object representation of the checkout that was abandoned, and its contents, coupon codes, and billing data.', 'cc-woo' ),
 					'type'        => 'object',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
@@ -103,32 +103,32 @@ class Schema {
 						],
 					],
 				],
-				'cart_updated' => [
-					'description' => esc_html__( 'The MySQL-format datetime of when the cart was last updated, in GMT+0 time zone.', 'cc-woo' ),
+				'checkout_updated' => [
+					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_updated_ts' => [
-					'description' => esc_html__( 'Unix timestamp of when the cart was last updated, in GMT+0 time zone.', 'cc-woo' ),
+				'checkout_updated_ts' => [
+					'description' => esc_html__( 'Unix timestamp of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_created' => [
-					'description' => esc_html__( 'The MySQL-format datetime of when the cart was first created, in GMT+0 time zone.', 'cc-woo' ),
+				'checkout_created' => [
+					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_created_ts' => [
-					'description' => esc_html__( 'Unix timestamp of when the cart was first created, in GMT+0 time zone.', 'cc-woo' ),
+				'checkout_created_ts' => [
+					'description' => esc_html__( 'Unix timestamp of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_hash' => [
-					'description' => esc_html__( 'MD5 hash of cart\'s user ID and email address.', 'cc-woo' ),
+				'checkout_hash' => [
+					'description' => esc_html__( 'MD5 hash of checkout\'s user ID and email address.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
@@ -157,8 +157,8 @@ class Schema {
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_recovery_url' => [
-					'description' => esc_html__( 'Recovery URL that recreates cart the cart for checkout when visited.', 'cc-woo' ),
+				'checkout_recovery_url' => [
+					'description' => esc_html__( 'Recovery URL that recreates the cart for checkout when visited.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,

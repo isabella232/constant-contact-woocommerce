@@ -1,12 +1,12 @@
-<?php
+<?php // phpcs:ignore -- Class name okay, PSR-4.
 /**
- * Controller for wc/cc-woo/abandoned-carts endpoint.
+ * Controller for wc/cc-woo/abandoned-checkouts endpoint.
  *
- * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCheckouts
  * @since   2019-10-16
  */
 
-namespace WebDevStudios\CCForWoo\Rest\AbandonedCarts;
+namespace WebDevStudios\CCForWoo\Rest\AbandonedCheckouts;
 
 use WP_REST_Server;
 use WP_REST_Request;
@@ -15,14 +15,14 @@ use WP_REST_Response;
 use WP_Error;
 use WC_Product;
 
-use WebDevStudios\CCForWoo\AbandonedCarts\CartsTable;
-use WebDevStudios\CCForWoo\AbandonedCarts\Cart;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutsTable;
+use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutHandler;
 use WebDevStudios\CCForWoo\Rest\Registrar;
 
 /**
- * Class AbandonedCarts\Controller
+ * Class AbandonedCheckouts\Controller
  *
- * @package WebDevStudios\CCForWoo\Rest\AbandonedCarts
+ * @package WebDevStudios\CCForWoo\Rest\AbandonedCheckouts
  * @since   2019-10-16
  */
 class Controller extends WP_REST_Controller {
@@ -43,11 +43,11 @@ class Controller extends WP_REST_Controller {
 	 * @since 2019-10-16
 	 */
 	public function __construct() {
-		$this->rest_base = 'abandoned-carts';
+		$this->rest_base = 'abandoned-checkouts';
 	}
 
 	/**
-	 * Register the Abandoned Carts route.
+	 * Register the Abandoned Checkouts route.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
@@ -63,13 +63,13 @@ class Controller extends WP_REST_Controller {
 					'permission_callback' => [ $this, 'get_items_permissions_check' ],
 					'args'                => Schema::get_collection_params(),
 				],
-				'schema' => [ '\WebDevStudios\CCForWoo\Rest\AbandonedCarts\Schema', 'get_public_item_schema' ],
+				'schema' => [ '\WebDevStudios\CCForWoo\Rest\AbandonedCheckouts\Schema', 'get_public_item_schema' ],
 			]
 		);
 	}
 
 	/**
-	 * Check whether a given request has permission to show abandoned carts.
+	 * Check whether a given request has permission to show abandoned checkouts.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-11-12
@@ -86,7 +86,7 @@ class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Register the Abandoned Carts endpoint.
+	 * Register the Abandoned Checkouts endpoint.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-16
@@ -97,15 +97,21 @@ class Controller extends WP_REST_Controller {
 	public function get_items( $request ) {
 		global $wpdb;
 
-		$params   = $request->get_query_params();
-		$page     = $this->get_page_param( $params );
-		$per_page = $this->get_per_page_param( $params );
-		$date_min = $this->get_date_min_param( $params );
-		$date_max = $this->get_date_max_param( $params );
-		$offset   = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
+		$params      = $request->get_query_params();
+		$page        = $this->get_page_param( $params );
+		$per_page    = $this->get_per_page_param( $params );
+		$offset      = 1 === $page ? 0 : ( $page - 1 ) * $per_page;
+		$date_min    = $this->get_date_min_param( $params );
+		$date_max    = $this->get_date_max_param( $params );
+		$dates_where = $this->get_dates_where( $date_min, $date_max );
+		$select      = '*';
+		$order_by    = 'checkout_updated_ts';
+		$order       = 'DESC';
+		$limit       = 'LIMIT %d OFFSET %d';
+		$limit_args  = [ $per_page, $offset ];
 
 		$response = [
-			'carts'         => $this->get_cart_data( $per_page, $offset, $date_min, $date_max ),
+			'checkouts'         => $this->prepare_checkout_data_for_api_response( CheckoutHandler::get_checkout_data( $select, $dates_where['predicates'] ?? '', $dates_where['args'] ?? [], $order_by, $order, $limit, $limit_args ) ),
 			'currency_code' => $this->get_currency_code(),
 			'page'          => $page,
 		];
@@ -166,98 +172,59 @@ class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Get an array of cart data.
-	 *
-	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
-	 * @since 2019-10-16
-	 *
-	 * @param int    $per_page The per_page value from the REST request.
-	 * @param int    $offset The offset for use in SQL query, based on page number specified in REST request.
-	 * @param string $date_min The oldest created_at date to get results from.
-	 * @param string $date_max The most recent created_at date to get results from.
-	 * @return array
-	 */
-	private function get_cart_data( int $per_page, int $offset, string $date_min, string $date_max ) : array {
-		global $wpdb;
-
-		$table_name  = CartsTable::get_table_name();
-		$dates_where = $this->get_dates_where( $date_min, $date_max );
-
-		// phpcs:disable WordPress.DB.PreparedSQL -- Okay use of unprepared variable for table name in SQL.
-		$data = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT
-					cart_id,
-					user_id,
-					user_email,
-					cart_contents,
-					cart_updated,
-					cart_updated_ts,
-					cart_created,
-					cart_created_ts,
-					cart_hash
-				FROM {$table_name}
-				{$dates_where}
-				ORDER BY cart_updated_ts
-				DESC
-				LIMIT %d OFFSET %d",
-				$per_page,
-				$offset
-			)
-		);
-		// phpcs:enable WordPress.DB.PreparedSQL
-
-		return $this->prepare_cart_data_for_api_response( $data );
-	}
-
-	/**
 	 * Gets the WHERE clause for passing date_min and date_max values via SQL.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-28
 	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since NEXT - Updated to fit CheckoutHandler::get_checkout_data setup for WHERE clause.
+	 *
 	 * @param string $date_min The oldest created_at date to get results from.
 	 * @param string $date_max The most recent created_at date to get results from.
-	 * @return string
+	 * @return array           Array of WHERE clause predicates and arguments.
 	 */
-	private function get_dates_where( string $date_min, string $date_max ) : string {
-		if ( ! empty( $date_min ) && empty( $date_max ) ) {
-			return "WHERE cart_created >= '$date_min'";
-		}
-
-		if ( empty( $date_min ) && ! empty( $date_max ) ) {
-			return "WHERE cart_created <= '$date_max'";
-		}
-
-		if ( ! empty( $date_min ) && ! empty( $date_max ) ) {
-			return "WHERE cart_created >= '$date_min' AND cart_created <= '$date_max'";
-		}
-
+	private function get_dates_where( string $date_min, string $date_max ) : array {
 		if ( empty( $date_min ) && empty( $date_max ) ) {
-			return '';
+			return [];
 		}
 
-		return '';
+		$where = [
+			'predicates' => [],
+			'args'       => [],
+		];
+
+		if ( ! empty( $date_min ) ) {
+			$where['predicates'][] = 'checkout_created >= %s';
+			$where['args'][]       = $date_min;
+		}
+
+		if ( ! empty( $date_max ) ) {
+			$where['predicates'][] = 'checkout_created <= %s';
+			$where['args'][]       = $date_max;
+		}
+
+		return $where;
 	}
 
 	/**
-	 * Adds and modifies fields in individual carts before displaying them in the API response.
+	 * Adds and modifies fields in individual checkouts before displaying them in the API response.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array $data The carts whose fields need preparation.
+	 * @param array $data The checkouts whose fields need preparation.
 	 * @return array
 	 */
-	private function prepare_cart_data_for_api_response( array $data ) {
-		foreach ( $data as $cart ) {
-			$cart->cart_contents     = maybe_unserialize( $cart->cart_contents );
-			$cart->cart_contents     = $this->get_additional_product_fields( $cart->cart_contents );
-			$cart->cart_subtotal     = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_subtotal' );
-			$cart->cart_total        = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_total' );
-			$cart->cart_subtotal_tax = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_subtotal_tax' );
-			$cart->cart_total_tax    = $this->get_cart_sum_for_product_field( $cart->cart_contents, 'line_tax' );
-			$cart->cart_recovery_url = $this->get_cart_recovery_url( $cart->cart_hash );
+	private function prepare_checkout_data_for_api_response( array $data ) {
+		foreach ( $data as $checkout ) {
+			$checkout->checkout_contents     = maybe_unserialize( $checkout->checkout_contents );
+			$checkout->checkout_contents     = $this->get_additional_product_fields( $checkout->checkout_contents );
+			$checkout->checkout_subtotal     = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_subtotal' );
+			$checkout->checkout_total        = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_total' );
+			$checkout->checkout_subtotal_tax = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_subtotal_tax' );
+			$checkout->checkout_total_tax    = $this->get_checkout_sum_for_product_field( $checkout->checkout_contents, 'line_tax' );
+			$checkout->checkout_recovery_url = $this->get_checkout_recovery_url( $checkout->checkout_uuid );
 		}
 
 		return $data;
@@ -276,17 +243,17 @@ class Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * Looks at the value of the specified field in each product in the cart, and gets the sum of those values.
+	 * Looks at the value of the specified field in each product in the checkout, and gets the sum of those values.
 	 *
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array  $cart_contents The cart contents, whose products have the line items we want for calculating the sum.
+	 * @param array  $checkout_contents The checkout contents, whose products have the line items we want for calculating the sum.
 	 * @param string $field_name Name of the product field to get.
 	 * @return string
 	 */
-	private function get_cart_sum_for_product_field( array $cart_contents, string $field_name ) : string {
-		$line_items = wp_list_pluck( $cart_contents['products'], $field_name );
+	private function get_checkout_sum_for_product_field( array $checkout_contents, string $field_name ) : string {
+		$line_items = wp_list_pluck( $checkout_contents['products'], $field_name );
 
 		if ( empty( $line_items ) || ! is_array( $line_items ) ) {
 			return html_entity_decode( wp_strip_all_tags( wc_price( 0 ) ) );
@@ -301,11 +268,11 @@ class Controller extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param string $cart_hash The cart hash.
+	 * @param string $checkout_uuid The checkout UUID.
 	 * @return string
 	 */
-	private function get_cart_recovery_url( string $cart_hash ) : string {
-		return add_query_arg( 'recover-cart', $cart_hash, home_url() );
+	private function get_checkout_recovery_url( string $checkout_uuid ) : string {
+		return add_query_arg( 'recover-checkout', $checkout_uuid, home_url() );
 	}
 
 	/**
@@ -314,20 +281,20 @@ class Controller extends WP_REST_Controller {
 	 * @author George Gecewicz <george.gecewicz@webdevstudios.com>
 	 * @since 2019-10-23
 	 *
-	 * @param array $cart_contents The original cart contents.
-	 * @return array The modified cart contents.
+	 * @param array $checkout_contents The original checkout contents.
+	 * @return array The modified checkout contents.
 	 */
-	private function get_additional_product_fields( array $cart_contents ) : array {
-		foreach ( $cart_contents['products'] as $n => $product ) {
+	private function get_additional_product_fields( array $checkout_contents ) : array {
+		foreach ( $checkout_contents['products'] as $n => $product ) {
 			$wc_product = wc_get_product( $product['product_id'] );
 
-			$cart_contents['products'][ $n ]['product_title']     = $wc_product->get_title();
-			$cart_contents['products'][ $n ]['product_sku']       = $wc_product->get_sku();
-			$cart_contents['products'][ $n ]['product_permalink'] = $wc_product->get_permalink();
-			$cart_contents['products'][ $n ]['product_image_url'] = $this->get_product_image_url( $wc_product );
+			$checkout_contents['products'][ $n ]['product_title']     = $wc_product->get_title();
+			$checkout_contents['products'][ $n ]['product_sku']       = $wc_product->get_sku();
+			$checkout_contents['products'][ $n ]['product_permalink'] = $wc_product->get_permalink();
+			$checkout_contents['products'][ $n ]['product_image_url'] = $this->get_product_image_url( $wc_product );
 		}
 
-		return $cart_contents;
+		return $checkout_contents;
 	}
 
 	/**
