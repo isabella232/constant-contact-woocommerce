@@ -126,21 +126,4 @@ class CheckoutRecovery extends Service {
 			);
 		}
 	}
-
-	/**
-	 * Recover and apply customer billing and shipping info from saved checkout data.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  1.2.0
-	 * @param  array  $customer_info Array of customer billing and shipping info.
-	 * @param  string $type          Type of customer info to recover (billing or shipping).
-	 */
-	protected function recover_customer_info( $customer_info, string $type ) {
-		foreach ( $customer_info[ $type ] as $key => $value ) {
-			call_user_func(
-				[ WC()->customer, "set_{$type}_{$key}" ],
-				$value
-			);
-		}
-	}
 }
