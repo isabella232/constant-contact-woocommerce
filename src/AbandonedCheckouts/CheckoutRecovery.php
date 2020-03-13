@@ -76,12 +76,36 @@ class CheckoutRecovery extends Service {
 			WC()->cart->apply_coupon( $coupon );
 		}
 
+		// Maybe recover checkout email.
+		$this->maybe_recover_checkout_email();
+
 		// Update totals.
 		WC()->cart->calculate_totals();
 
 		// Redirect to checkout page.
 		wp_safe_redirect( wc_get_page_permalink( 'cart' ) );
 		exit();
+	}
+
+
+	/**
+	 * Recover checkout email address if guest user and no email is set.
+	 *
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  NEXT
+	 *
+	 * @return void
+	 */
+	protected function maybe_recover_checkout_email() : void {
+		$checkout_email = CheckoutHandler::get_checkout_data( 'user_email', 'checkout_uuid = %s', [ $this->checkout_uuid ] );
+		$checkout_email = empty( $checkout_email ) ? '' : array_shift( $checkout_email )->user_email;
+
+		if ( is_user_logged_in() || ! empty( WC()->session->get( 'billing_email' ) ) || empty( $checkout_email ) ) {
+			return;
+		}
+
+		WC()->session->set( 'billing_email', $checkout_email );
+		WC()->customer->set_billing_email( $checkout_email );
 	}
 
 	/**
@@ -123,23 +147,6 @@ class CheckoutRecovery extends Service {
 					( count( $products ) - count( $products_added ) )
 				),
 				'error'
-			);
-		}
-	}
-
-	/**
-	 * Recover and apply customer billing and shipping info from saved checkout data.
-	 *
-	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  1.2.0
-	 * @param  array  $customer_info Array of customer billing and shipping info.
-	 * @param  string $type          Type of customer info to recover (billing or shipping).
-	 */
-	protected function recover_customer_info( $customer_info, string $type ) {
-		foreach ( $customer_info[ $type ] as $key => $value ) {
-			call_user_func(
-				[ WC()->customer, "set_{$type}_{$key}" ],
-				$value
 			);
 		}
 	}
