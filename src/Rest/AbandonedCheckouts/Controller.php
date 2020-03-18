@@ -178,7 +178,7 @@ class Controller extends WP_REST_Controller {
 	 * @since 2019-10-28
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since NEXT - Updated to fit CheckoutHandler::get_checkout_data setup for WHERE clause.
+	 * @since 1.2.1 - Updated to fit CheckoutHandler::get_checkout_data setup for WHERE clause.
 	 *
 	 * @param string $date_min The oldest created_at date to get results from.
 	 * @param string $date_max The most recent created_at date to get results from.
