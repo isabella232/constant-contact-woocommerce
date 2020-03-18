@@ -183,7 +183,7 @@ class CheckoutHandler extends Service {
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 *
-	 * @since  NEXT
+	 * @since  1.3.0
 	 * @return string Checkout UUID if exists, else empty string.
 	 */
 	public static function get_checkout_uuid_by_user() {

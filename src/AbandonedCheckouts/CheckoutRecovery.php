@@ -92,7 +92,7 @@ class CheckoutRecovery extends Service {
 	 * Recover checkout email address if guest user and no email is set.
 	 *
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  NEXT
+	 * @since  1.3.0
 	 *
 	 * @return void
 	 */
