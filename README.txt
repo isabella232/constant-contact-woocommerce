@@ -3,7 +3,7 @@ Contributors: constantcontact, webdevstudios, znowebdev, jmichaelward, ggwicz, r
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
 Tested up to: 5.3.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 7.2
 WC tested up to: 3.8.1
 License: GPLv3
