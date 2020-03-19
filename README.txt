@@ -5,7 +5,6 @@ Requires at least: 5.2.2
 Tested up to: 5.3.0
 Stable tag: 1.3.0-1
 Requires PHP: 7.2
-WC tested up to: 3.8.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
