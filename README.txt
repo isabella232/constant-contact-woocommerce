@@ -2,10 +2,9 @@
 Contributors: constantcontact, webdevstudios, znowebdev, jmichaelward, ggwicz, ravedev
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
-Tested up to: 5.3.0
-Stable tag: 1.2.0
+Tested up to: 5.4.0
+Stable tag: 1.3.0
 Requires PHP: 7.2
-WC tested up to: 3.8.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,6 +41,11 @@ With Constant Contact you can:
 4. Syncing status for contacts.
 
 == Changelog ==
+
+= 1.3.0 =
+
+* Updated - Revised abandoned cart functionality to instead be abandoned checkouts
+* Fix - Fixed callback warning about WooTab and enqueue_scripts
 
 = 1.2.0 =
 

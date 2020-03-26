@@ -1,12 +1,12 @@
 import validateEmail from 'filter-validate-email';
 
 /**
- * GuestCartCapture.
+ * GuestCheckoutCapture.
  *
  * @package WebDevStudios\CCForWoo
  * @since   1.2.0
  */
-export default class GuestCartCapture {
+export default class GuestCheckoutCapture {
 
     /**
      * @constructor
@@ -49,21 +49,21 @@ export default class GuestCartCapture {
     bindEvents() {
         this.els.billingEmail.addEventListener( 'focusout', e => {
             if ( validateEmail( e.target.value ) ) {
-                this.maybeCaptureGuestCart( e.target.value );
+                this.maybeCaptureGuestCheckout( e.target.value );
             }
         } );
     }
 
     /**
-     * Captures guest cart if billing email is valid.
+     * Captures guest checkout if billing email is valid.
      *
      * @author George Gecewicz <george.gecewicz@webdevstudios.com>
      * @since 1.2.0
      *
      * @param {string} emailAddr Billing email address entered by user.
      */
-    maybeCaptureGuestCart( emailAddr ) {
-        wp.ajax.send( 'cc_woo_abandoned_carts_capture_guest_cart', {
+    maybeCaptureGuestCheckout( emailAddr ) {
+        wp.ajax.send( 'cc_woo_abandoned_checkouts_capture_guest_checkout', {
             data: {
                 nonce: this.els.wcCheckoutNonce.value,
                 email: emailAddr
