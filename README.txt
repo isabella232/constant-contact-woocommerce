@@ -42,6 +42,11 @@ With Constant Contact you can:
 
 == Changelog ==
 
+= 1.3.0 =
+
+* Updated - Revised abandoned cart functionality to instead be abandoned checkouts
+* Fix - Fixed callback warning about WooTab and enqueue_scripts
+
 = 1.2.0 =
 
 * New - Introduced the "abandoned carts" feature, where abandoned carts are captured and stored in the database for further action.
