@@ -32,6 +32,7 @@ With Constant Contact you can:
  * Prospects: Have not made a purchase yet
 * Bring customers back to your online store with automated, targeted emails.
 * Find new customers with our social marketing and advertising tools to expand your reach.
+* Automatically send a customized branded abandoned cart email to customers who left items in their cart and track resulting revenue.
 
 == Screenshots ==
 
