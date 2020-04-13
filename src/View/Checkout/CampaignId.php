@@ -10,6 +10,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Checkout;
 
+use \WC_Order;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
 /**
@@ -37,7 +38,7 @@ class CampaignId implements Hookable {
 	 */
 	public function register_hooks() {
 		add_action( 'init', [ $this, 'save_campaign_id' ], 11 );
-		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'save_user_campaign_id_to_order' ] );
+		add_action( 'woocommerce_checkout_create_order', [ $this, 'save_user_campaign_id_to_order' ] );
 	}
 
 	/**
@@ -47,16 +48,20 @@ class CampaignId implements Hookable {
 	 *
 	 * @author Michael Beckwith <michael@webdevstudios.com>
 	 * @since  2019-08-22
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  NEXT Changed hook to `woocommerce_checkout_create_order` and changed "save order meta" function.
+	 * 
+	 * @param  WC_Order $order WC Order instance.
 	 * @return void
 	 */
-	public function save_user_campaign_id_to_order( $order_id ) {
+	public function save_user_campaign_id_to_order( WC_Order $order ) {
 		$preference = $this->get_stored_campaign_id();
 
 		if ( empty( $preference ) ) {
 			return;
 		}
 
-		add_post_meta( $order_id, self::CUSTOMER_CAMPAIGN_ID_KEY, $preference, true );
+		$order->update_meta_data( self::CUSTOMER_CAMPAIGN_ID_KEY, $preference );
 	}
 
 	/**
