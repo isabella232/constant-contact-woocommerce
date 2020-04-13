@@ -11,6 +11,7 @@
 
 namespace WebDevStudios\CCForWoo\View\Checkout;
 
+use \WC_Order;
 use WebDevStudios\CCForWoo\Utility\NonceVerification;
 use WebDevStudios\OopsWP\Utility\Hookable;
 
@@ -63,7 +64,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 		add_action( 'woocommerce_after_checkout_billing_form', [ $this, 'add_field_to_billing_form' ] );
 		add_action( 'woocommerce_checkout_update_user_meta', [ $this, 'save_user_preference' ] );
 		add_action( 'woocommerce_created_customer', [ $this, 'save_user_preference' ] );
-		add_action( 'woocommerce_checkout_update_order_meta', [ $this, 'save_user_preference_to_order' ] );
+		add_action( 'woocommerce_checkout_create_order', [ $this, 'save_user_preference_to_order' ] );
 	}
 
 	/**
@@ -150,16 +151,20 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-18
+	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
+	 * @since  NEXT Changed hook to `woocommerce_checkout_create_order` and changed "save order meta" function.
+	 *
+	 * @param  WC_Order $order WC Order instance.
 	 * @return void
 	 */
-	public function save_user_preference_to_order( $order_id ) {
+	public function save_user_preference_to_order( WC_Order $order ) {
 		$preference = $this->get_submitted_customer_preference();
 
 		if ( empty( $preference ) ) {
 			return;
 		}
 
-		add_post_meta( $order_id, self::CUSTOMER_PREFERENCE_META_FIELD, $preference, true );
+		$order->update_meta_data( self::CUSTOMER_PREFERENCE_META_FIELD, $preference );
 	}
 
 	/**
