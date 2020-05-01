@@ -3,7 +3,7 @@ Contributors: constantcontact, webdevstudios, znowebdev, jmichaelward, ggwicz, r
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
 Tested up to: 5.4.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 Requires PHP: 7.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -42,6 +42,11 @@ With Constant Contact you can:
 4. Syncing status for contacts.
 
 == Changelog ==
+
+= 1.3.1 =
+
+* Tweak - Change `CampaignId::save_user_campaign_id_to_order` and `NewsletterPreferenceCheckbox::save_user_preference_to_order` methods to fire on `woocommerce_checkout_create_order` hook.
+* Tweak - Replace `add_post_meta` usage with `$order->update_meta_data` in `CampaignId::save_user_campaign_id_to_order` and `NewsletterPreferenceCheckbox::save_user_preference_to_order` methods.
 
 = 1.3.0 =
 
