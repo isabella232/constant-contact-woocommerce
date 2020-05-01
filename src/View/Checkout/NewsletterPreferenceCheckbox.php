@@ -152,7 +152,7 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-18
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
-	 * @since  NEXT Changed hook to `woocommerce_checkout_create_order` and changed "save order meta" function.
+	 * @since  1.3.1 Changed hook to `woocommerce_checkout_create_order` and changed "save order meta" function.
 	 *
 	 * @param  WC_Order $order WC Order instance.
 	 * @return void
