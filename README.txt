@@ -43,6 +43,11 @@ With Constant Contact you can:
 
 == Changelog ==
 
+= 1.3.1 =
+
+* Tweak - Change `CampaignId::save_user_campaign_id_to_order` and `NewsletterPreferenceCheckbox::save_user_preference_to_order` methods to fire on `woocommerce_checkout_create_order` hook.
+* Tweak - Replace `add_post_meta` usage with `$order->update_meta_data` in `CampaignId::save_user_campaign_id_to_order` and `NewsletterPreferenceCheckbox::save_user_preference_to_order` methods.
+
 = 1.3.0 =
 
 * Updated - Revised abandoned cart functionality to instead be abandoned checkouts
