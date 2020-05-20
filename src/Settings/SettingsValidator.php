@@ -12,6 +12,7 @@
 namespace WebDevStudios\CCForWoo\Settings;
 
 use WebDevStudios\CCForWoo\Utility\Validatable;
+use WC_Validation;
 
 /**
  * Class SettingsValidator
@@ -94,21 +95,15 @@ class SettingsValidator implements Validatable {
 	/**
 	 * Verify that the phone number is valid.
 	 *
-	 * @since 2019-03-08
+	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
+	 *
+	 * @uses   WC_Validation::is_phone()
+	 *
 	 * @return bool
 	 */
-	private function has_valid_phone() {
-		$phone_number = $this->settings->get_phone_number();
-
-		if ( '+' === substr( $phone_number, 0, 1 ) ) {
-			$phone_number = substr( $phone_number, 1 );
-		}
-
-		preg_match( '/^[\d\-()]/', $phone_number, $matches );
-		preg_match( '/[^\d\-()]/', $phone_number, $invalid_matches );
-
-		return ! empty( $matches[0] ) && empty( $invalid_matches );
+	private function has_valid_phone(): bool {
+		return WC_Validation::is_phone( $this->settings->get_phone_number() );
 	}
 
 	/**
