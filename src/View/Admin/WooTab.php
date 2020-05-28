@@ -711,7 +711,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	}
 
 	/**
-	 * Sanitize the phone number to only include digits, -, and (, )
+	 * Sanitize incoming phone number.
 	 *
 	 * @since  2019-03-08
 	 * @author Zach Owen <zach@webdevstudios>
@@ -721,7 +721,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function sanitize_phone_number( $value ) {
-		return is_scalar( $value ) ? preg_replace( '/[^\d\-()+]+/', '', $value ) : '';
+		return wc_sanitize_phone_number( $value );
 	}
 
 	/**
