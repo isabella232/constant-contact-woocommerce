@@ -103,7 +103,9 @@ class SettingsValidator implements Validatable {
 	 * @return bool
 	 */
 	private function has_valid_phone(): bool {
-		return WC_Validation::is_phone( $this->settings->get_phone_number() );
+		return ! empty( $this->settings->get_phone_number() )
+			? WC_Validation::is_phone( $this->settings->get_phone_number() )
+			: false;
 	}
 
 	/**
