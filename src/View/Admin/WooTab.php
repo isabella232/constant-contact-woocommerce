@@ -836,6 +836,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	public function save() {
 		parent::save();
 
+		// Prevent redirect to customer_data_import screen if we don't meet connection requirements.
+		if ( ! $this->meets_connect_requirements() ) {
+			return;
+		}
+
 		if ( $this->connection->is_connected() || $this->has_active_settings_section() ) {
 			return;
 		}
