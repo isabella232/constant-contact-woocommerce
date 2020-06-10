@@ -41,6 +41,27 @@ With Constant Contact you can:
 3. Pre-filtered segmented lists.
 4. Syncing status for contacts.
 
+== Frequently Asked Questions ==
+
+#### Overall WooCommerce and Constant Contact Guide
+[https://knowledgebase.constantcontact.com/guides/KnowledgeBase/34383-Guide-Constant-Contact-and-WooCommerce?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/guides/KnowledgeBase/34383-Guide-Constant-Contact-and-WooCommerce?q=woocommerce*&lang=en_US)
+
+#### How to Sync Contacts between WooCommerce and Constant Contact
+[https://knowledgebase.constantcontact.com/articles/KnowledgeBase/33143-Sync-Contacts-Between-Your-WooCommerce-Store-and-Constant-Contact?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/33143-Sync-Contacts-Between-Your-WooCommerce-Store-and-Constant-Contact?q=woocommerce*&lang=en_US)
+
+#### How to use the Product Block to insert WooCommerce Products to an Email
+[https://knowledgebase.constantcontact.com/articles/KnowledgeBase/33144-Add-Products-from-a-WooCommerce-Store-to-an-Email?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/33144-Add-Products-from-a-WooCommerce-Store-to-an-Email?q=woocommerce*&lang=en_US)
+
+#### How to Create an Automated Abandoned Cart Reminder Email for WooCommerce
+Customers
+[https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36890-Create-an-Automated-Abandoned-Cart-Reminder-Email-for-WooCommerce-Customers?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36890-Create-an-Automated-Abandoned-Cart-Reminder-Email-for-WooCommerce-Customers?q=woocommerce*&lang=en_US)
+
+#### VIDEO Tutorial: Create an Automated WooCommerce Abandoned Cart Email
+[https://knowledgebase.constantcontact.com/tutorials/KnowledgeBase/37409-Tutorial-Create-an-Automated-WooCommerce-Abandoned-Cart-Email?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/tutorials/KnowledgeBase/37409-Tutorial-Create-an-Automated-WooCommerce-Abandoned-Cart-Email?q=woocommerce*&lang=en_US)
+
+#### View WooCommerce Sales and Recovered Revenue Reporting
+[https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36892-View-Recovered-Revenue-from-the-WooCommerce-Abandoned-Cart-Reminder-Email?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36892-View-Recovered-Revenue-from-the-WooCommerce-Abandoned-Cart-Reminder-Email?q=woocommerce*&lang=en_US)
+
 == Changelog ==
 
 = 1.3.1 =
