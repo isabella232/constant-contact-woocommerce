@@ -721,7 +721,11 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return string
 	 */
 	public function sanitize_phone_number( $value ) {
-		return wc_sanitize_phone_number( $value );
+		if ( function_exists( 'wc_sanitize_phone_number' ) ) {
+			return wc_sanitize_phone_number( $value );
+		}
+
+		return preg_replace( '/[^\d+]/', '', $value );
 	}
 
 	/**
