@@ -3,7 +3,7 @@ Contributors: constantcontact, webdevstudios, znowebdev, jmichaelward, ggwicz, r
 Tags: capture, contacts, constant contact, constant contact form, constant contact newsletter, constant contact official, contact forms, email, form, forms, marketing, mobile, newsletter, opt-in, plugin, signup, subscribe, subscription, widget
 Requires at least: 5.2.2
 Tested up to: 5.4.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 7.2
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -63,6 +63,12 @@ Customers
 [https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36892-View-Recovered-Revenue-from-the-WooCommerce-Abandoned-Cart-Reminder-Email?q=woocommerce*&lang=en_US](https://knowledgebase.constantcontact.com/articles/KnowledgeBase/36892-View-Recovered-Revenue-from-the-WooCommerce-Abandoned-Cart-Reminder-Email?q=woocommerce*&lang=en_US)
 
 == Changelog ==
+
+= 1.3.2 =
+
+* Updated - Add links to documentation in README Frequently Asked Questions.
+* Updated - Use WooCommerce's WC_Validation::is_phone() for Phone Number setting validation.
+* Updated - Use WooCommerce's wc_sanitize_phone_number() for Phone Number setting sanitization.
 
 = 1.3.1 =
 
