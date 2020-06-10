@@ -64,6 +64,12 @@ Customers
 
 == Changelog ==
 
+= 1.3.2 =
+
+* Updated - Add links to documentation in README Frequently Asked Questions.
+* Updated - Use WooCommerce's WC_Validation::is_phone() for Phone Number setting validation.
+* Updated - Use WooCommerce's wc_sanitize_phone_number() for Phone Number setting sanitization.
+
 = 1.3.1 =
 
 * Tweak - Change `CampaignId::save_user_campaign_id_to_order` and `NewsletterPreferenceCheckbox::save_user_preference_to_order` methods to fire on `woocommerce_checkout_create_order` hook.
