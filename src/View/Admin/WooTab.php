@@ -306,7 +306,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		foreach ( $fields as $field ) {
-			$field['option_key'] = $field['option_key'] ?? $field['id'];
+			$field['option_key'] = $field['option_key'] ?? $field['id'] ?? '';
 			$settings[]          = $field;
 		}
 
