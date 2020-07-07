@@ -237,7 +237,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_filtered_settings( array $settings ) {
-		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] );
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' );
 	}
 
 	/**
@@ -250,7 +250,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_default_settings_options() {
 		$settings = [];
 
-		switch ( $GLOBALS['current_section'] ) {
+		switch ( $GLOBALS['current_section'] ?? '' ) {
 			case '':
 			default:
 				$settings = $this->get_store_information_settings();
@@ -891,6 +891,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function has_active_settings_section() : bool {
-		return ! empty( $GLOBALS['current_section'] );
+		return ! empty( $GLOBALS['current_section'] ?? '' );
 	}
 }
