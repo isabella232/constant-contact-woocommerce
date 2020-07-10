@@ -27,23 +27,23 @@ class Schema {
 	public static function get_collection_params() {
 	   return [
 		   'page' => [
-				'description' => esc_html__( 'Current page of paginated results.', 'woocommerce' ),
+				'description' => esc_html__( 'Current page of paginated results.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
 		   ],
 		   'per_page' => [
-				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'woocommerce' ),
+				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
 				'default'     => 10,
 			],
 		   'date_min' => [
-				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'string',
 			],
 			'date_max' => [
-				'description' => esc_html__( 'Filters results to only show abandoned checkouts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'string',
 			],

@@ -37,8 +37,8 @@ class MenuItem extends Service {
 	public function add_cc_woo_admin_submenu() {
 		add_submenu_page(
 			'woocommerce',
-			esc_html__( 'Constant Contact', 'ccwoo' ),
-			esc_html__( 'Constant Contact', 'ccwoo' ),
+			esc_html__( 'Constant Contact', 'cc-woo' ),
+			esc_html__( 'Constant Contact', 'cc-woo' ),
 			'manage_woocommerce',
 			'cc-woo-settings',
 			[ $this, 'redirect_to_cc_woo' ]
@@ -53,8 +53,8 @@ class MenuItem extends Service {
 	 */
 	public function add_cc_woo_admin_menu() {
 		add_menu_page(
-			esc_html__( 'Constant Contact', 'ccwoo' ),
-			esc_html__( 'Constant Contact', 'ccwoo' ),
+			esc_html__( 'Constant Contact', 'cc-woo' ),
+			esc_html__( 'Constant Contact', 'cc-woo' ),
 			'manage_woocommerce',
 			'cc-woo-settings',
 			[ $this, 'redirect_to_cc_woo' ],
