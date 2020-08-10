@@ -24,7 +24,11 @@
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^7",
-		"10up/wp_mock": "dev-master"
+		"10up/wp_mock": "dev-master",
+		"wp-coding-standards/wpcs": "2.1.0",
+		"squizlabs/php_codesniffer": "3.3.1",
+		"webdevstudios/php-coding-standards": "1.0.0",
+		"dealerdirect/phpcodesniffer-composer-installer": "0.5.0"
 	},
 	"require": {
 		"webdevstudios/oops-wp": "^0.1",
