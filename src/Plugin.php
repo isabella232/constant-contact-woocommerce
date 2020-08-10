@@ -104,7 +104,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @throws Exception If the plugin isn't active, throw an Exception.
 	 */
 	private function deactivate( $reason ) {
-		unset( $_GET['activate'] ); // phpcs:ignore -- Ok use of $_GET.
+		unset( $_GET['activate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Ok use of $_GET.
 
 		if ( ! $this->is_active() ) {
 			throw new Exception( $reason );
