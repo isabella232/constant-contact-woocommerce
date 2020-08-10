@@ -189,7 +189,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' ),
 		];
 
-		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
