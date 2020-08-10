@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * Abstract RequestHandler class.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\Api
