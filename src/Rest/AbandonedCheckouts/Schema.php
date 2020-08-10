@@ -87,15 +87,15 @@ class Schema {
 					'type'        => 'object',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
-					'properties' => [
+					'properties'  => [
 						'products' => [
 							'description' => esc_html__( 'Key-value listing of products in the cart. Keys are unique WooCommerce-generated keys identifying the cart in the database; values are objects representing the items in the cart.', 'cc-woo' ),
 							'type'        => 'array',
 							'context'     => [ 'view' ],
 							'readonly'    => true,
-							'properties' => self::get_products_properties(),
+							'properties'  => self::get_products_properties(),
 						],
-						'coupons' => [
+						'coupons'  => [
 							'description' => esc_html__( 'Array of coupon code strings used in the checkout.', 'cc-woo' ),
 							'type'        => 'array',
 							'context'     => [ 'view' ],
@@ -225,7 +225,7 @@ class Schema {
 						'context'     => [ 'view' ],
 						'readonly'    => true,
 					],
-					'total' => [
+					'total'    => [
 						'description' => esc_html__( 'Line total tax data.', 'cc-woo' ),
 						'type'        => 'string',
 						'context'     => [ 'view' ],
