@@ -20,7 +20,7 @@ class SettingsModel {
 	/**
 	 * Store admin's first name.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $first_name;
@@ -28,7 +28,7 @@ class SettingsModel {
 	/**
 	 * Store admin's last name.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $last_name;
@@ -36,7 +36,7 @@ class SettingsModel {
 	/**
 	 * Store admin's phone number.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $phone_number;
@@ -44,7 +44,7 @@ class SettingsModel {
 	/**
 	 * Name of the store.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $store_name;
@@ -52,7 +52,7 @@ class SettingsModel {
 	/**
 	 * Store currency type.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $currency;
@@ -60,7 +60,7 @@ class SettingsModel {
 	/**
 	 * Store country code.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $country_code;
@@ -68,7 +68,7 @@ class SettingsModel {
 	/**
 	 * Store admin's e-mail address.
 	 *
-	 * @var string
+	 * @var   string
 	 * @since 2019-03-07
 	 */
 	private $email_address;
@@ -76,7 +76,7 @@ class SettingsModel {
 	/**
 	 * The store admin has opt-in to import historical data.
 	 *
-	 * @var bool
+	 * @var   bool
 	 * @since 2019-03-07
 	 */
 	private $import_historical_data;
@@ -84,13 +84,16 @@ class SettingsModel {
 	/**
 	 * The store admin has confirmed they have permission to e-mail customers.
 	 *
-	 * @var bool
+	 * @var   bool
 	 * @since 2019-03-07
 	 */
 	private $permission_confirmed;
 
 	/**
 	 * SettingsModel constructor.
+	 *
+	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
+	 * @since  2019-03-07
 	 *
 	 * @param string $first_name             Store admin's first name.
 	 * @param string $last_name              Store admin's last name.
@@ -99,11 +102,6 @@ class SettingsModel {
 	 * @param string $currency               Currency of the store.
 	 * @param string $country_code           Country code of the store.
 	 * @param string $email_address          Store admin's e-mail address.
-	 * @param string $import_historical_data Store admin opts in to import historical data.
-	 * @param string $permission_confirmed   Store admin confirms their permission to e-mail customers.
-	 *
-	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
-	 * @since  2019-03-07
 	 */
 	public function __construct(
 		string $first_name,
@@ -128,6 +126,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_first_name(): string {
@@ -139,6 +138,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_last_name(): string {
@@ -150,6 +150,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_phone_number(): string {
@@ -161,6 +162,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_store_name(): string {
@@ -172,6 +174,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_currency(): string {
@@ -183,6 +186,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_country_code(): string {
@@ -194,6 +198,7 @@ class SettingsModel {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-07
+	 *
 	 * @return string
 	 */
 	public function get_email_address(): string {
