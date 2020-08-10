@@ -163,7 +163,7 @@ class Schema {
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-			]
+			],
 		];
 	}
 
