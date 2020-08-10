@@ -231,7 +231,7 @@ class Schema {
 						'context'     => [ 'view' ],
 						'readonly'    => true,
 					],
-				]
+				],
 			],
 			'line_subtotal'     => [
 				'description' => esc_html__( 'Line subtotal.', 'cc-woo' ),
