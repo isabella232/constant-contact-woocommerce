@@ -286,7 +286,7 @@ class Schema {
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
-			]
+			],
 		];
 	}
 
