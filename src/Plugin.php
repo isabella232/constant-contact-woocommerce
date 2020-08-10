@@ -110,6 +110,14 @@ final class Plugin extends ServiceRegistrar {
 			throw new Exception( $reason );
 		}
 
+		/**
+		 * Fires when plugin is deactivated.
+		 *
+		 * @author Zach Owen <zach@webdevstudios>
+		 * @since  1.3.2
+		 *
+		 * @param  string $message Deactivation message.
+		 */
 		do_action( 'cc_woo_disconnect', esc_html__( 'Plugin deactivated.', 'cc-woo' ) );
 
 		$this->do_deactivation_process();
