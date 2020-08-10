@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * ViewRegistrar.
  *
  * @author  Jeremy Ward <jeremy.ward@webdevstudios.com>
  * @package WebDevStudios\CCForWoo\View
