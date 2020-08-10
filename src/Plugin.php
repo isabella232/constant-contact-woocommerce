@@ -289,6 +289,13 @@ final class Plugin extends ServiceRegistrar {
 	 * @return void
 	 */
 	public function do_deactivation_process() {
+
+		/**
+		 * Fires when plugin is deactivated.
+		 *
+		 * @author Zach Owen <zach@webdevstudios>
+		 * @since  1.3.2
+		 */
 		do_action( 'wc_ctct_disconnect' );
 
 		$this->clear_abandoned_checkouts_expiration_check();
