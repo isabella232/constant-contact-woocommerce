@@ -69,7 +69,6 @@ class CampaignId implements Hookable {
 	 *
 	 * @author Michael Beckwith <michael@webdevstudios.com>
 	 * @since  2019-08-22
-	 * @return void
 	 */
 	public function save_campaign_id() {
 		$campaign_id = filter_input( INPUT_GET, 'source', FILTER_SANITIZE_STRING );
