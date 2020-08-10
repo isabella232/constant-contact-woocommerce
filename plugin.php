@@ -21,14 +21,14 @@
  */
 
 // Autoload things.
-$constant_contact_woocommerce_autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
+$cc_woo_autoloader = dirname( __FILE__ ) . '/vendor/autoload.php';
 
-if ( ! is_readable( $constant_contact_woocommerce_autoloader ) ) {
+if ( ! is_readable( $cc_woo_autoloader ) ) {
 	/* Translators: Placeholder is the current directory. */
 	throw new \Exception( sprintf( __( 'Please run `composer install` in the plugin folder "%s" and try activating this plugin again.', 'cc-woo' ), dirname( __FILE__ ) ) );
 }
 
-require_once $constant_contact_woocommerce_autoloader;
+require_once $cc_woo_autoloader;
 
-$constant_contact_woocommerce_plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__ );
-$constant_contact_woocommerce_plugin->run();
+$cc_woo_plugin = new \WebDevStudios\CCForWoo\Plugin( __FILE__ );
+$cc_woo_plugin->run();
