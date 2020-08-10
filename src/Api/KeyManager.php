@@ -142,7 +142,11 @@ SQL;
 	 * @since 2019-05-22
 	 */
 	public function disconnect_cc_woo() {
+
+		/* This action is documented in Plugin.php */
 		do_action( 'cc_woo_disconnect', esc_html__( 'REST API Key Revoked.', 'cc-woo' ) );
-		do_action( 'wc_ctct_disconnect' );
+
+		/* This action is documented in Plugin.php */
+		do_action( 'wc_ctct_disconnect' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Intentional improperly-prefixed hookname, used in webhooks.
 	}
 }
