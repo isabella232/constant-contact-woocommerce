@@ -25,19 +25,19 @@ class Schema {
 	 * @return array
 	 */
 	public static function get_collection_params() {
-	   return [
-		   'page'      => [
+		return [
+			'page'     => [
 				'description' => esc_html__( 'Current page of paginated results.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
-		   ],
-		   'per_page'  => [
+			],
+			'per_page' => [
 				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
 				'default'     => 10,
 			],
-		   'date_min'  => [
+			'date_min' => [
 				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'string',
@@ -47,7 +47,7 @@ class Schema {
 				'required'    => false,
 				'type'        => 'string',
 			],
-	   ];
+		];
 	}
 
 	/**
