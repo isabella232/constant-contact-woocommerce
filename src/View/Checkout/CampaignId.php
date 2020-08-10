@@ -44,13 +44,11 @@ class CampaignId implements Hookable {
 	/**
 	 * Save the user preference to the order meta.
 	 *
-	 * @param int $order_id The order ID.
-	 *
 	 * @author Michael Beckwith <michael@webdevstudios.com>
 	 * @since  2019-08-22
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
 	 * @since  1.3.1 Changed hook to `woocommerce_checkout_create_order` and changed "save order meta" function.
-	 * 
+	 *
 	 * @param  WC_Order $order WC Order instance.
 	 * @return void
 	 */
@@ -71,7 +69,6 @@ class CampaignId implements Hookable {
 	 *
 	 * @author Michael Beckwith <michael@webdevstudios.com>
 	 * @since  2019-08-22
-	 * @return void
 	 */
 	public function save_campaign_id() {
 		$campaign_id = filter_input( INPUT_GET, 'source', FILTER_SANITIZE_STRING );

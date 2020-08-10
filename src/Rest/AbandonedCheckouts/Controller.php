@@ -111,7 +111,7 @@ class Controller extends WP_REST_Controller {
 		$limit_args  = [ $per_page, $offset ];
 
 		$response = [
-			'checkouts'         => $this->prepare_checkout_data_for_api_response( CheckoutHandler::get_checkout_data( $select, $dates_where['predicates'] ?? '', $dates_where['args'] ?? [], $order_by, $order, $limit, $limit_args ) ),
+			'checkouts'     => $this->prepare_checkout_data_for_api_response( CheckoutHandler::get_checkout_data( $select, $dates_where['predicates'] ?? '', $dates_where['args'] ?? [], $order_by, $order, $limit, $limit_args ) ),
 			'currency_code' => $this->get_currency_code(),
 			'page'          => $page,
 		];
