@@ -114,13 +114,13 @@ class SettingsModel {
 		string $country_code,
 		string $email_address
 	) {
-		$this->first_name             = $first_name;
-		$this->last_name              = $last_name;
-		$this->phone_number           = $phone_number;
-		$this->store_name             = $store_name;
-		$this->currency               = $currency;
-		$this->country_code           = $country_code;
-		$this->email_address          = $email_address;
+		$this->first_name    = $first_name;
+		$this->last_name     = $last_name;
+		$this->phone_number  = $phone_number;
+		$this->store_name    = $store_name;
+		$this->currency      = $currency;
+		$this->country_code  = $country_code;
+		$this->email_address = $email_address;
 	}
 
 	/**
