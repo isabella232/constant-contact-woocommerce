@@ -238,7 +238,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_filtered_settings( array $settings ) {
-		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' );
+
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
