@@ -7,14 +7,26 @@
 			"WebDevStudios\\CCForWoo\\": "src/"
 		}
 	},
+	"extra": {
+		"phpcodesniffer-search-depth": 5
+	},
 	"scripts": {
 		"test": [ "./vendor/bin/phpunit" ],
 		"generate-fixtures": [ "@php ./tests/cypress/bin/generate-cypress-fixtures.php" ],
 		"dist": [
 			"rm -rf ./vendor",
+			"rm -rf ./phpcs.xml.dist",
 			"@composer install --no-dev -a",
 			"@composer archive --format=zip --file constant-contact-woocommerce",
 			"mv constant-contact-woocommerce.zip $HOME/Desktop"
+		],
+		"install-codestandards": "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
+		"lint": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcs --standard=phpcs.xml.dist",
+		"post-install-cmd": [
+			"@install-codestandards"
+		],
+		"post-update-cmd": [
+			"@install-codestandards"
 		]
 	},
 	"autoload-dev": {
