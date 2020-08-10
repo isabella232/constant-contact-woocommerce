@@ -1,4 +1,4 @@
-<?php // phpcs:ignore -- Class name okay, PSR-4.
+<?php
 /**
  * Schema for wc/cc-woo/abandoned-checkouts endpoint.
  *
