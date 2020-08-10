@@ -189,7 +189,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' ),
 		];
 
-		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
@@ -237,7 +238,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_filtered_settings( array $settings ) {
-		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' );
+
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
