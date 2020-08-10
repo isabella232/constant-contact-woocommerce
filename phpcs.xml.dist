@@ -35,14 +35,19 @@
 	<!-- Configure text domain. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="cc-woo"/>
+			<property name="text_domain" type="array">
+				<element value="cc-woo" />
+			</property>
 		</properties>
 	</rule>
 
 	<!-- Configure function and Class "prefixes". -->
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<property name="prefixes" type="array" value="WebDevStudios\CCForWoo,cc_woo"/>
+			<property name="prefixes" type="array">
+				<element value="cc_woo" />
+				<element value="WebDevStudios" />
+			</property>
 		</properties>
 	</rule>
 
