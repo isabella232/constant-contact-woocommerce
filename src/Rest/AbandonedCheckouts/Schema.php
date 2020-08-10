@@ -64,25 +64,25 @@ class Schema {
 			'title'      => 'cc_woo_abandoned_checkout',
 			'type'       => 'object',
 			'properties' => [
-				'checkout_id' => [
+				'checkout_id'           => [
 					'description' => esc_html__( 'Database ID for the abandoned checkout.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'user_id' => [
+				'user_id'               => [
 					'description' => esc_html__( 'WordPress user ID of the user the checkout belongs to; defaults to 0 if a guest or non-logged-in user.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'user_email' => [
+				'user_email'            => [
 					'description' => esc_html__( 'The billing email the user entered at checkout before abandoning it. Note that this may be different than the email address the user has in their WordPress user profile.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_contents' => [
+				'checkout_contents'     => [
 					'description' => esc_html__( 'Object representation of the checkout that was abandoned, and its contents, coupon codes, and billing data.', 'cc-woo' ),
 					'type'        => 'object',
 					'context'     => [ 'view' ],
@@ -103,55 +103,55 @@ class Schema {
 						],
 					],
 				],
-				'checkout_updated' => [
+				'checkout_updated'      => [
 					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_updated_ts' => [
+				'checkout_updated_ts'   => [
 					'description' => esc_html__( 'Unix timestamp of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_created' => [
+				'checkout_created'      => [
 					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_created_ts' => [
+				'checkout_created_ts'   => [
 					'description' => esc_html__( 'Unix timestamp of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_hash' => [
+				'checkout_hash'         => [
 					'description' => esc_html__( 'MD5 hash of checkout\'s user ID and email address.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_subtotal' => [
+				'cart_subtotal'         => [
 					'description' => esc_html__( 'Cart subtotal.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_total' => [
+				'cart_total'            => [
 					'description' => esc_html__( 'Cart total.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_subtotal_tax' => [
+				'cart_subtotal_tax'     => [
 					'description' => esc_html__( 'Cart subtotal tax.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_total_tax' => [
+				'cart_total_tax'        => [
 					'description' => esc_html__( 'Cart total tax.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
