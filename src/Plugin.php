@@ -296,7 +296,7 @@ final class Plugin extends ServiceRegistrar {
 		 * @author Zach Owen <zach@webdevstudios>
 		 * @since  1.3.2
 		 */
-		do_action( 'wc_ctct_disconnect' );
+		do_action( 'wc_ctct_disconnect' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Intentional improperly-prefixed hookname, used in webhooks.
 
 		$this->clear_abandoned_checkouts_expiration_check();
 
