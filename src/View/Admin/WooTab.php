@@ -494,6 +494,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			],
 			[
 				'title' => '',
+				'id'    => 'cc_woo_customer_data_message',
 				'type'  => 'title',
 				'desc'  => esc_html__( "Start marketing to your customers right away by importing all your contacts now.\n\nDo you want to import your current contacts? By selecting yes below, you agree you have permission to market to your current contacts.", 'cc-woo' ),
 			],
