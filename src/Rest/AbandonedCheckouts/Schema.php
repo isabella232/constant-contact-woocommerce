@@ -1,4 +1,4 @@
-<?php // phpcs:ignore -- Class name okay, PSR-4.
+<?php
 /**
  * Schema for wc/cc-woo/abandoned-checkouts endpoint.
  *
@@ -25,29 +25,29 @@ class Schema {
 	 * @return array
 	 */
 	public static function get_collection_params() {
-	   return [
-		   'page' => [
-				'description' => esc_html__( 'Current page of paginated results.', 'woocommerce' ),
+		return [
+			'page'     => [
+				'description' => esc_html__( 'Current page of paginated results.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
-		   ],
-		   'per_page' => [
-				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'woocommerce' ),
+			],
+			'per_page' => [
+				'description' => esc_html__( 'How many abandoned checkouts to show per page.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'integer',
 				'default'     => 10,
 			],
-		   'date_min' => [
-				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+			'date_min' => [
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created after this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'string',
 			],
 			'date_max' => [
-				'description' => esc_html__( 'Filters results to only show abandoned checkouts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'woocommerce' ),
+				'description' => esc_html__( 'Filters results to only show abandoned checkouts created before this date. Accepts dates in any format acceptable for comparison of MySQL DATETIME column values.', 'cc-woo' ),
 				'required'    => false,
 				'type'        => 'string',
 			],
-	   ];
+		];
 	}
 
 	/**
@@ -64,38 +64,38 @@ class Schema {
 			'title'      => 'cc_woo_abandoned_checkout',
 			'type'       => 'object',
 			'properties' => [
-				'checkout_id' => [
+				'checkout_id'           => [
 					'description' => esc_html__( 'Database ID for the abandoned checkout.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'user_id' => [
+				'user_id'               => [
 					'description' => esc_html__( 'WordPress user ID of the user the checkout belongs to; defaults to 0 if a guest or non-logged-in user.', 'cc-woo' ),
 					'type'        => 'integer',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'user_email' => [
+				'user_email'            => [
 					'description' => esc_html__( 'The billing email the user entered at checkout before abandoning it. Note that this may be different than the email address the user has in their WordPress user profile.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_contents' => [
+				'checkout_contents'     => [
 					'description' => esc_html__( 'Object representation of the checkout that was abandoned, and its contents, coupon codes, and billing data.', 'cc-woo' ),
 					'type'        => 'object',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
-					'properties' => [
+					'properties'  => [
 						'products' => [
 							'description' => esc_html__( 'Key-value listing of products in the cart. Keys are unique WooCommerce-generated keys identifying the cart in the database; values are objects representing the items in the cart.', 'cc-woo' ),
 							'type'        => 'array',
 							'context'     => [ 'view' ],
 							'readonly'    => true,
-							'properties' => self::get_products_properties(),
+							'properties'  => self::get_products_properties(),
 						],
-						'coupons' => [
+						'coupons'  => [
 							'description' => esc_html__( 'Array of coupon code strings used in the checkout.', 'cc-woo' ),
 							'type'        => 'array',
 							'context'     => [ 'view' ],
@@ -103,55 +103,55 @@ class Schema {
 						],
 					],
 				],
-				'checkout_updated' => [
+				'checkout_updated'      => [
 					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_updated_ts' => [
+				'checkout_updated_ts'   => [
 					'description' => esc_html__( 'Unix timestamp of when the checkout was last updated, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_created' => [
+				'checkout_created'      => [
 					'description' => esc_html__( 'The MySQL-format datetime of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_created_ts' => [
+				'checkout_created_ts'   => [
 					'description' => esc_html__( 'Unix timestamp of when the checkout was first created, in GMT+0 time zone.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'checkout_hash' => [
+				'checkout_hash'         => [
 					'description' => esc_html__( 'MD5 hash of checkout\'s user ID and email address.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_subtotal' => [
+				'cart_subtotal'         => [
 					'description' => esc_html__( 'Cart subtotal.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_total' => [
+				'cart_total'            => [
 					'description' => esc_html__( 'Cart total.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_subtotal_tax' => [
+				'cart_subtotal_tax'     => [
 					'description' => esc_html__( 'Cart subtotal tax.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-				'cart_total_tax' => [
+				'cart_total_tax'        => [
 					'description' => esc_html__( 'Cart total tax.', 'cc-woo' ),
 					'type'        => 'string',
 					'context'     => [ 'view' ],
@@ -163,7 +163,7 @@ class Schema {
 					'context'     => [ 'view' ],
 					'readonly'    => true,
 				],
-			]
+			],
 		];
 	}
 
@@ -177,43 +177,43 @@ class Schema {
 	 */
 	public static function get_products_properties() {
 		return [
-			'key' => [
+			'key'               => [
 				'description' => esc_html__( 'Unique WooCommerce-generated key identifying the cart in the database. This differs from the parent-level cart_hash property.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'product_id' => [
+			'product_id'        => [
 				'description' => esc_html__( 'The WooCommerce product ID.', 'cc-woo' ),
 				'type'        => 'integer',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'variation_id' => [
+			'variation_id'      => [
 				'description' => esc_html__( 'The WooCommerce product variation ID, if applicable.', 'cc-woo' ),
 				'type'        => 'integer',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'variation' => [
+			'variation'         => [
 				'description' => esc_html__( 'Object representation of any applicable variations, where keys are variation names and values are the actual variation selection.', 'cc-woo' ),
 				'type'        => 'object',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'quantity' => [
+			'quantity'          => [
 				'description' => esc_html__( 'Item quantity.', 'cc-woo' ),
 				'type'        => 'integer',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'data_hash' => [
+			'data_hash'         => [
 				'description' => esc_html__( 'MD5 hash of cart items to determine if contents are modified.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'line_tax_data' => [
+			'line_tax_data'     => [
 				'description' => esc_html__( 'Line subtotal tax and total tax data.', 'cc-woo' ),
 				'type'        => 'object',
 				'context'     => [ 'view' ],
@@ -225,15 +225,15 @@ class Schema {
 						'context'     => [ 'view' ],
 						'readonly'    => true,
 					],
-					'total' => [
+					'total'    => [
 						'description' => esc_html__( 'Line total tax data.', 'cc-woo' ),
 						'type'        => 'string',
 						'context'     => [ 'view' ],
 						'readonly'    => true,
 					],
-				]
+				],
 			],
-			'line_subtotal' => [
+			'line_subtotal'     => [
 				'description' => esc_html__( 'Line subtotal.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
@@ -245,31 +245,31 @@ class Schema {
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'line_total' => [
+			'line_total'        => [
 				'description' => esc_html__( 'Line total.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'line_tax' => [
+			'line_tax'          => [
 				'description' => esc_html__( 'Line total tax.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'data' => [
+			'data'              => [
 				'description' => esc_html__( 'Misc. product data in key-value pairs.', 'cc-woo' ),
 				'type'        => 'object',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'product_title' => [
+			'product_title'     => [
 				'description' => esc_html__( 'The product title.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
 			],
-			'product_sku' => [
+			'product_sku'       => [
 				'description' => esc_html__( 'The product SKU.', 'cc-woo' ),
 				'type'        => 'string',
 				'context'     => [ 'view' ],
@@ -286,7 +286,7 @@ class Schema {
 				'type'        => 'string',
 				'context'     => [ 'view' ],
 				'readonly'    => true,
-			]
+			],
 		];
 	}
 

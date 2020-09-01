@@ -189,7 +189,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			$this->import_existing_customer_section => esc_html__( 'Import your contacts', 'cc-woo' ),
 		];
 
-		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections );
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_sections_' . $this->id, $sections ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
@@ -237,7 +238,9 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return array
 	 */
 	private function get_filtered_settings( array $settings ) {
-		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] );
+
+		/* This filter is documented in WooCommerce */
+		return apply_filters( 'woocommerce_get_settings_' . $this->id, $settings, $GLOBALS['current_section'] ?? '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Third-party hook usage.
 	}
 
 	/**
@@ -250,7 +253,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	private function get_default_settings_options() {
 		$settings = [];
 
-		switch ( $GLOBALS['current_section'] ) {
+		switch ( $GLOBALS['current_section'] ?? '' ) {
 			case '':
 			default:
 				$settings = $this->get_store_information_settings();
@@ -306,7 +309,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 		}
 
 		foreach ( $fields as $field ) {
-			$field['option_key'] = $field['option_key'] ?? $field['id'];
+			$field['option_key'] = $field['option_key'] ?? $field['id'] ?? '';
 			$settings[]          = $field;
 		}
 
@@ -892,6 +895,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @return bool
 	 */
 	private function has_active_settings_section() : bool {
-		return ! empty( $GLOBALS['current_section'] );
+		return ! empty( $GLOBALS['current_section'] ?? '' );
 	}
 }
