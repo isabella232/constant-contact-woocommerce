@@ -14,6 +14,7 @@
  * Author: Constant Contact
  * Author URI: https://www.constantcontact.com/
  * Text Domain: cc-woo
+ * WC requires at least: 3.6.0
  * WC tested up to: 4.0.1
  * Requires PHP: 7.2
  * License: GPL-3.0+
