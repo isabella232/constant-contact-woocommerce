@@ -19,11 +19,17 @@ namespace WebDevStudios\CCForWoo\Meta;
 class ConnectionStatus {
 	/**
 	 * Meta key for the connection status option.
+	 *
+	 * @since 2019-03-21
+	 * @var   string
 	 */
 	const CC_CONNECTION_ESTABLISHED_KEY = 'cc_woo_import_connection_established';
 
 	/**
 	 * Meta key for the User ID of the successful connection.
+	 *
+	 * @since 2019-03-21
+	 * @var   string
 	 */
 	const CC_CONNECTION_USER_ID = 'cc_woo_api_user_id';
 
@@ -31,23 +37,23 @@ class ConnectionStatus {
 	 * First connection established key.
 	 *
 	 * @since 2019-05-30
-	 * @var string
+	 * @var   string
 	 */
 	const CC_FIRST_CONNECTION = 'cc_woo_first_connection';
 
 	/**
 	 * Value to check whether the store has attempted a connection with CC.
 	 *
-	 * @var bool
 	 * @since 2019-03-21
+	 * @var   bool
 	 */
 	private $attempted;
 
 	/**
 	 * Whether the store is connected to CC.
 	 *
-	 * @var bool
 	 * @since 2019-03-21
+	 * @var   bool
 	 */
 	private $connected;
 
@@ -56,6 +62,7 @@ class ConnectionStatus {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 *
 	 * @return bool
 	 */
 	public function connection_was_attempted() {
@@ -73,6 +80,7 @@ class ConnectionStatus {
 	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 *
 	 * @return bool
 	 */
 	public function is_connected() : bool {
@@ -82,11 +90,11 @@ class ConnectionStatus {
 	/**
 	 * Set the connection status.
 	 *
-	 * @param int $connected Connected state.
-	 * @param int $user_id   Constant Contact User ID for the connection.
-	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-21
+	 *
+	 * @param  int $connected Connected state.
+	 * @param  int $user_id   Constant Contact User ID for the connection.
 	 */
 	public function set_connection( int $connected, int $user_id ) {
 		$this->connected = $connected;

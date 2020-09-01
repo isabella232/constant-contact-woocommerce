@@ -1,4 +1,4 @@
-<?php // phpcs:ignore -- Class name okay, PSR-4.
+<?php
 /**
  * Constant Contact + WooCommerce
  *
@@ -104,12 +104,20 @@ final class Plugin extends ServiceRegistrar {
 	 * @throws Exception If the plugin isn't active, throw an Exception.
 	 */
 	private function deactivate( $reason ) {
-		unset( $_GET['activate'] ); // phpcs:ignore -- Ok use of $_GET.
+		unset( $_GET['activate'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Ok use of $_GET.
 
 		if ( ! $this->is_active() ) {
 			throw new Exception( $reason );
 		}
 
+		/**
+		 * Fires when plugin is deactivated.
+		 *
+		 * @author Zach Owen <zach@webdevstudios>
+		 * @since  1.3.2
+		 *
+		 * @param  string $message Deactivation message.
+		 */
 		do_action( 'cc_woo_disconnect', esc_html__( 'Plugin deactivated.', 'cc-woo' ) );
 
 		$this->do_deactivation_process();
@@ -281,7 +289,14 @@ final class Plugin extends ServiceRegistrar {
 	 * @return void
 	 */
 	public function do_deactivation_process() {
-		do_action( 'wc_ctct_disconnect' );
+
+		/**
+		 * Fires when plugin is deactivated.
+		 *
+		 * @author Zach Owen <zach@webdevstudios>
+		 * @since  1.3.2
+		 */
+		do_action( 'wc_ctct_disconnect' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Intentional improperly-prefixed hookname, used in webhooks.
 
 		$this->clear_abandoned_checkouts_expiration_check();
 

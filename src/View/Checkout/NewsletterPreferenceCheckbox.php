@@ -147,8 +147,6 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	/**
 	 * Save the user preference to the order meta.
 	 *
-	 * @param int $order_id The order ID.
-	 *
 	 * @author Jeremy Ward <jeremy.ward@webdevstudios.com>
 	 * @since  2019-03-18
 	 * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>

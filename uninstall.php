@@ -17,7 +17,7 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * @author Rebekah Van Epps <rebekah.vanepps@webdevstudios.com>
  * @since  2019-10-10
  */
-function cc_delete_abandoned_checkouts_table() {
+function cc_woo_delete_abandoned_checkouts_table() {
 	global $wpdb;
 
 	$table_name = $wpdb->prefix . 'cc_abandoned_checkouts';
@@ -30,4 +30,4 @@ function cc_delete_abandoned_checkouts_table() {
 	delete_option( 'cc_abandoned_checkouts_db_version' );
 }
 
-cc_delete_abandoned_checkouts_table();
+cc_woo_delete_abandoned_checkouts_table();
