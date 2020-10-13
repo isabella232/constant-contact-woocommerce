@@ -16,7 +16,7 @@ Constant Contact is built to simplify the complex and confusing task of marketin
 
 **Unleash the power of your business — and drive more revenue — by integrating Constant Contact with WooCommerce today.**
 
-https://youtu.be/vn_GFcBCspc
+https://youtu.be/YXWxySMcCsE
 
 With Constant Contact you can:
 
