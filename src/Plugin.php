@@ -46,7 +46,7 @@ final class Plugin extends ServiceRegistrar {
 	 * @since 1.0.0
 	 * @var string
 	 */
-	const PLUGIN_VERSION = '1.3.2';
+	const PLUGIN_VERSION = '1.3.3';
 
 	/**
 	 * Whether the plugin is currently active.
