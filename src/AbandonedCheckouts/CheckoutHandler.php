@@ -1,4 +1,4 @@
-<?php // phpcs:ignore -- Class name okay, PSR-4.
+<?php
 /**
  * Class to listen to WooCommerce checkouts and possibly store checkouts that are "abandoned".
  *
@@ -268,8 +268,8 @@ class CheckoutHandler extends Service {
 				get_current_user_id(),
 				$billing_email,
 				maybe_serialize( [
-					'products'        => array_values( WC()->cart->get_cart() ),
-					'coupons'         => WC()->cart->get_applied_coupons(),
+					'products' => array_values( WC()->cart->get_cart() ),
+					'coupons'  => WC()->cart->get_applied_coupons(),
 				] ),
 				$current_time,
 				strtotime( $current_time ),
