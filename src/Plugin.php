@@ -300,11 +300,17 @@ final class Plugin extends ServiceRegistrar {
 
 		$this->clear_abandoned_checkouts_expiration_check();
 
+		delete_option( CheckoutsTable::DB_VERSION_OPTION_NAME );
+		delete_option( ConnectionStatus::CC_CONNECTION_USER_ID );
+		delete_option( ConnectionStatus::CC_FIRST_CONNECTION );
+		delete_option( 'constant_contact_for_woo_has_setup' );
+
 		if ( ! get_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY ) ) {
 			return;
 		}
 
 		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
+
 	}
 
 	/**
