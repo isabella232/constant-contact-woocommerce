@@ -24,6 +24,7 @@ use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutHandler;
 use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutsTable;
 use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutRecovery;
 use WebDevStudios\CCForWoo\Rest\Registrar as RestRegistrar;
+use WebDevStudios\CCForWoo\View\Admin\WooTab;
 
 /**
  * "Core" plugin class.
@@ -305,6 +306,16 @@ final class Plugin extends ServiceRegistrar {
 		delete_option( ConnectionStatus::CC_CONNECTION_USER_ID );
 		delete_option( ConnectionStatus::CC_FIRST_CONNECTION );
 		delete_option( 'constant_contact_for_woo_has_setup' );
+
+		// WooCommerce Options
+		delete_option( WooTab::FIRST_NAME_FIELD );
+		delete_option( WooTab::LAST_NAME_FIELD );
+		delete_option( WooTab::PHONE_NUMBER_FIELD );
+		delete_option( WooTab::STORE_NAME_FIELD );
+		delete_option( WooTab::CURRENCY_FIELD );
+		delete_option( WooTab::COUNTRY_CODE_FIELD );
+		delete_option( WooTab::EMAIL_FIELD );
+		delete_option( WooTab::ALT_LOGIN_URL );
 	}
 
 	/**
