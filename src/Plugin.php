@@ -24,7 +24,6 @@ use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutHandler;
 use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutsTable;
 use WebDevStudios\CCForWoo\AbandonedCheckouts\CheckoutRecovery;
 use WebDevStudios\CCForWoo\Rest\Registrar as RestRegistrar;
-use WebDevStudios\CCForWoo\View\Admin\WooTab;
 
 /**
  * "Core" plugin class.
@@ -301,21 +300,21 @@ final class Plugin extends ServiceRegistrar {
 
 		$this->clear_abandoned_checkouts_expiration_check();
 
-		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
 		delete_option( CheckoutsTable::DB_VERSION_OPTION_NAME );
 		delete_option( ConnectionStatus::CC_CONNECTION_USER_ID );
 		delete_option( ConnectionStatus::CC_FIRST_CONNECTION );
-		delete_option( 'constant_contact_for_woo_has_setup' );
+		delete_option( ConnectionStatus::CC_CONNECTION_ESTABLISHED_KEY );
 
 		// WooCommerce Options
-		delete_option( WooTab::FIRST_NAME_FIELD );
-		delete_option( WooTab::LAST_NAME_FIELD );
-		delete_option( WooTab::PHONE_NUMBER_FIELD );
-		delete_option( WooTab::STORE_NAME_FIELD );
-		delete_option( WooTab::CURRENCY_FIELD );
-		delete_option( WooTab::COUNTRY_CODE_FIELD );
-		delete_option( WooTab::EMAIL_FIELD );
-		delete_option( WooTab::ALT_LOGIN_URL );
+		delete_option( 'cc_woo_store_information_first_name' );
+		delete_option( 'cc_woo_store_information_last_name' );
+		delete_option( 'cc_woo_store_information_phone_number' );
+		delete_option( 'cc_woo_store_information_store_name' );
+		delete_option( 'cc_woo_store_information_currency' );
+		delete_option( 'cc_woo_store_information_currency' );
+		delete_option( 'cc_woo_store_information_contact_email');
+		delete_option( 'cc_woo_store_information_alt_login_url' );
+		delete_option( 'constant_contact_for_woo_has_setup' );
 	}
 
 	/**
