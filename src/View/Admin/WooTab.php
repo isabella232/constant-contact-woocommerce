@@ -77,7 +77,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
 
 	/**
-	 * Alternative Login URL
+	 * Alternative Login URL.
 	 *
 	 * @since 2021-06-02
 	 */
