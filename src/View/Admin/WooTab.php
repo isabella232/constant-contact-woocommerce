@@ -488,8 +488,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'      => self::CHECKBOX_LOCATION,
 				'default' => 'false',
 				'options' => [
-					'woocommerce_after_checkout_billing_form' => esc_html__( 'woocommerce_after_checkout_billing_form', 'cc-woo' ),
-					'woocommerce_review_order_before_submit'  => esc_html__( 'woocommerce_review_order_before_submit', 'cc-woo' ),
+					'woocommerce_after_checkout_billing_form' => esc_html__( 'After Checkout Billing Form', 'cc-woo' ),
+					'woocommerce_review_order_before_submit'  => esc_html__( 'Before order submit button', 'cc-woo' ),
 				],
 			],
 			[
@@ -662,7 +662,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
 			get_option( self::EMAIL_FIELD ),
-			get_option( self::CHECKBOX_LOCATION )
+			get_option( self::CHECKBOX_LOCATION, 'woocommerce_after_checkout_billing_form' )
 		);
 
 		$validator = new SettingsValidator( $model );
