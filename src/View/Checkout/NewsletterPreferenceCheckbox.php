@@ -61,7 +61,9 @@ class NewsletterPreferenceCheckbox implements Hookable {
 	 * @since 2019-03-13
 	 */
 	public function register_hooks() {
-		add_action( 'woocommerce_after_checkout_billing_form', [ $this, 'add_field_to_billing_form' ] );
+
+		$checkbox_location = get_option( 'cc_woo_store_information_checkbox_location', 'woocommerce_after_checkout_billing_form' );
+		add_action( $checkbox_location, [ $this, 'add_field_to_billing_form' ] );
 		add_action( 'woocommerce_checkout_update_user_meta', [ $this, 'save_user_preference' ] );
 		add_action( 'woocommerce_created_customer', [ $this, 'save_user_preference' ] );
 		add_action( 'woocommerce_checkout_create_order', [ $this, 'save_user_preference_to_order' ] );
