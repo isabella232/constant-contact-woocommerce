@@ -507,7 +507,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'id'      => self::CHECKBOX_LOCATION,
 				'default' => 'false',
 				'options' => [
-					'woocommerce_after_checkout_billing_form' => esc_html__( 'After Checkout Billing Form', 'cc-woo' ),
+					'woocommerce_after_checkout_billing_form' => esc_html__( 'After checkout billing form', 'cc-woo' ),
 					'woocommerce_review_order_before_submit'  => esc_html__( 'Before order submit button', 'cc-woo' ),
 				],
 			],
