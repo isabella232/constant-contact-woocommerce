@@ -3,6 +3,10 @@
   "version": "1.3.3",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=7"
+  },
   "dependencies": {
     "filter-validate-email": "^1.0.4"
   },
