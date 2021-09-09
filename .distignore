@@ -1,0 +1,11 @@
+.distignore
+.gitignore
+/.git
+/.github
+/node_modules
+/tests
+/webpack
+cypress.example.json
+phpcs.xml.dist
+phpunit.xml
+README.md
