@@ -77,6 +77,20 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
 
 	/**
+	 * Alternative Login URL.
+	 *
+	 * @since 2021-06-02
+	 */
+	const ALT_LOGIN_URL = 'cc_woo_store_information_alt_login_url';
+
+	/**
+	 * Store checkbox location.
+	 *
+	 * @since 2021-07-26
+	 */
+	const CHECKBOX_LOCATION = 'cc_woo_store_information_checkbox_location';
+
+	/**
 	 * Settings section ID.
 	 *
 	 * @var string
@@ -365,7 +379,13 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since  2019-03-21
 	 */
 	public function render_cta_button() {
-		$url = 'https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce';
+
+		$url = get_option( self::ALT_LOGIN_URL, '' );
+
+		if ( '' === $url ) {
+			$url = 'https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce';
+		}
+
 		?>
 		<a
 			class="button button-primary"
@@ -472,6 +492,23 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				'options' => [
 					'false' => esc_html__( 'No - do not check this box by default', 'cc-woo' ),
 					'true'  => esc_html__( 'Yes - check this box by default', 'cc-woo' ),
+				],
+			],
+			[
+				'title'             => esc_html__( 'Alternative Login Url', 'cc-woo' ),
+				'desc'              => esc_html__( 'Only use if directed to by Pro Support.', 'cc-woo' ),
+				'id'                => self::ALT_LOGIN_URL,
+				'type'              => 'text',
+			],
+			[
+				'title'   => esc_html__( 'Checkbox Filter Location', 'cc-woo' ),
+				'desc'    => esc_html__( 'Change filter location where checkbox is rendered.', 'cc-woo' ),
+				'type'    => 'select',
+				'id'      => self::CHECKBOX_LOCATION,
+				'default' => 'false',
+				'options' => [
+					'woocommerce_after_checkout_billing_form' => esc_html__( 'After checkout billing form', 'cc-woo' ),
+					'woocommerce_review_order_before_submit'  => esc_html__( 'Before order submit button', 'cc-woo' ),
 				],
 			],
 			[
@@ -643,7 +680,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::STORE_NAME_FIELD, '' ),
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
-			get_option( self::EMAIL_FIELD )
+			get_option( self::EMAIL_FIELD ),
+			get_option( self::CHECKBOX_LOCATION, 'woocommerce_after_checkout_billing_form' )
 		);
 
 		$validator = new SettingsValidator( $model );
