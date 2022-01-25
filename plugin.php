@@ -15,7 +15,7 @@
  * Author URI: https://www.constantcontact.com/
  * Text Domain: cc-woo
  * WC requires at least: 3.6.0
- * WC tested up to: 4.0.1
+ * WC tested up to: 6.1.1
  * Requires PHP: 7.2
  * License: GPL-3.0+
  * License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
