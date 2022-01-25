@@ -379,13 +379,7 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	 * @since  2019-03-21
 	 */
 	public function render_cta_button() {
-
-		$url = get_option( self::ALT_LOGIN_URL, '' );
-
-		if ( '' === $url ) {
-			$url = 'https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce';
-		}
-
+		$url = 'https://login.constantcontact.com/login/?goto=https%3A%2F%2Fapp.constantcontact.com%2Fpages%2Fecomm%2Fdashboard%23woocommerce';
 		?>
 		<a
 			class="button button-primary"
@@ -493,12 +487,6 @@ class WooTab extends WC_Settings_Page implements Hookable {
 					'false' => esc_html__( 'No - do not check this box by default', 'cc-woo' ),
 					'true'  => esc_html__( 'Yes - check this box by default', 'cc-woo' ),
 				],
-			],
-			[
-				'title'             => esc_html__( 'Alternative Login Url', 'cc-woo' ),
-				'desc'              => esc_html__( 'Only use if directed to by Pro Support.', 'cc-woo' ),
-				'id'                => self::ALT_LOGIN_URL,
-				'type'              => 'text',
 			],
 			[
 				'title'   => esc_html__( 'Checkbox Filter Location', 'cc-woo' ),
