@@ -3,6 +3,10 @@
   "version": "1.3.3",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "node": ">=14",
+    "npm": ">=7"
+  },
   "dependencies": {
     "filter-validate-email": "^1.0.4"
   },
@@ -10,9 +14,14 @@
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "babel-loader": "^8.1.0",
-    "cypress": "^4.2.0",
-    "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
+    "browserslist": "^4.16.7",
+    "cypress": "^7.7.0",
+    "elliptic": "^6.5.4",
+    "ini": "^1.3.7",
+    "ssri": "^8.0.1",
+    "webpack": "^5.45.0",
+    "webpack-cli": "^3.3.11",
+    "y18n": "^4.0.1"
   },
   "scripts": {
     "watch": "webpack --config webpack.config.js --mode development --watch --progress",

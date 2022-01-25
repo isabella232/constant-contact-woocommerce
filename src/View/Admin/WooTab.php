@@ -77,6 +77,13 @@ class WooTab extends WC_Settings_Page implements Hookable {
 	const EMAIL_FIELD = 'cc_woo_store_information_contact_email';
 
 	/**
+	 * Store checkbox location.
+	 *
+	 * @since 2021-07-26
+	 */
+	const CHECKBOX_LOCATION = 'cc_woo_store_information_checkbox_location';
+
+	/**
 	 * Settings section ID.
 	 *
 	 * @var string
@@ -475,6 +482,17 @@ class WooTab extends WC_Settings_Page implements Hookable {
 				],
 			],
 			[
+				'title'   => esc_html__( 'Checkbox Filter Location', 'cc-woo' ),
+				'desc'    => esc_html__( 'Change filter location where checkbox is rendered.', 'cc-woo' ),
+				'type'    => 'select',
+				'id'      => self::CHECKBOX_LOCATION,
+				'default' => 'false',
+				'options' => [
+					'woocommerce_after_checkout_billing_form' => esc_html__( 'After checkout billing form', 'cc-woo' ),
+					'woocommerce_review_order_before_submit'  => esc_html__( 'Before order submit button', 'cc-woo' ),
+				],
+			],
+			[
 				'type' => 'sectionend',
 				'id'   => 'cc_woo_store_information_settings',
 			],
@@ -643,7 +661,8 @@ class WooTab extends WC_Settings_Page implements Hookable {
 			get_option( self::STORE_NAME_FIELD, '' ),
 			get_option( self::CURRENCY_FIELD, '' ),
 			get_option( self::COUNTRY_CODE_FIELD ),
-			get_option( self::EMAIL_FIELD )
+			get_option( self::EMAIL_FIELD ),
+			get_option( self::CHECKBOX_LOCATION, 'woocommerce_after_checkout_billing_form' )
 		);
 
 		$validator = new SettingsValidator( $model );
